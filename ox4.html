@@ -1,0 +1,3258 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>국어 O·X 변형 문제집</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Serif+KR:wght@500;700;900&family=Noto+Sans+KR:wght@400;500;700;900&family=Gaegu:wght@700&display=swap" rel="stylesheet">
+<style>
+:root {
+  --paper:#F6F7F2; --paper-line:rgba(29,52,97,0.06);
+  --white:#FFFFFF; --ink:#1D3461; --ink-soft:#3C5481;
+  --red:#C23B2B; --red-bg:#FBE7E3; --red-soft:#e8a59e;
+  --gold:#A56B00; --gold-bg:#FBF1DC;
+  --green:#3D6B2C; --green-bg:#E7F0DE;
+  --card:#FFFFFF; --line:#D8DCD0; --muted:#6B7280;
+  --shadow:0 1px 3px rgba(29,52,97,0.06),0 4px 16px rgba(29,52,97,0.04);
+}
+*{box-sizing:border-box;margin:0;padding:0;}
+html,body{height:100%;overflow:hidden;}
+body{font-family:'Noto Sans KR',sans-serif;color:#202425;-webkit-font-smoothing:antialiased;
+  background:repeating-linear-gradient(0deg,var(--paper-line) 0,var(--paper-line) 1px,transparent 1px,transparent 28px),var(--paper);}
+
+/* ── Top bar ── */
+.top-bar{
+  position:sticky;top:0;z-index:200;
+  background:var(--ink);color:#fff;
+  display:flex;align-items:center;gap:14px;
+  padding:0 18px;height:50px;
+  box-shadow:0 2px 8px rgba(0,0,0,.18);
+}
+.top-bar h1{
+  font-family:'Noto Serif KR',serif;font-weight:900;font-size:15.5px;
+  flex:1;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;
+}
+.score-pill{
+  background:rgba(255,255,255,.14);border:1.5px solid rgba(255,255,255,.28);
+  border-radius:99px;padding:4px 13px;font-size:12.5px;font-weight:700;
+  white-space:nowrap;
+}
+.score-pill em{font-style:normal;color:#7CDFB0;}
+
+/* ── Set tabs ── */
+.tabs-bar{
+  background:var(--white);border-bottom:2px solid var(--line);
+  overflow-x:auto;-webkit-overflow-scrolling:touch;height:44px;
+}
+.tabs-inner{display:flex;padding:0 10px;min-width:max-content;height:100%;}
+.stab{
+  display:flex;align-items:center;gap:5px;
+  padding:0 16px;font-size:13px;font-weight:600;
+  color:var(--muted);cursor:pointer;
+  border-bottom:3px solid transparent;
+  transition:color .15s,border-color .15s;white-space:nowrap;
+  user-select:none;height:100%;
+}
+.stab:hover{color:var(--ink);}
+.stab.active{color:var(--ink);border-bottom-color:var(--ink);}
+.stab .dot{
+  width:6px;height:6px;border-radius:50%;
+  background:var(--gold);opacity:0;flex:0 0 auto;
+}
+.stab.in-progress .dot{opacity:1;}
+
+/* ── Two-pane layout ── */
+.layout{
+  display:grid;
+  grid-template-columns:350px 1fr;
+  height:calc(100vh - 50px - 44px);
+}
+
+/* ── Passage pane ── */
+.pp{
+  display:flex;flex-direction:column;
+  border-right:2px solid var(--line);
+  background:var(--white);
+  overflow:hidden;
+}
+.pp-head{
+  padding:12px 15px 10px;
+  border-bottom:1.5px solid var(--line);
+  flex:0 0 auto;
+}
+.pp-head .eye{font-size:10px;letter-spacing:.13em;color:var(--red);font-weight:700;text-transform:uppercase;margin-bottom:3px;}
+.pp-head h3{font-family:'Noto Serif KR',serif;font-weight:900;font-size:16px;color:var(--ink);line-height:1.25;}
+.pp-head .src{font-size:11.5px;color:var(--muted);font-style:italic;margin-top:2px;}
+
+/* Work selector tabs */
+.work-tabs{display:flex;border-bottom:1.5px solid var(--line);flex:0 0 auto;overflow-x:auto;}
+.wtab{
+  padding:7px 14px;font-size:12.5px;font-weight:700;
+  color:var(--muted);cursor:pointer;
+  border-bottom:2.5px solid transparent;margin-bottom:-1.5px;
+  white-space:nowrap;flex:0 0 auto;
+}
+.wtab.active{color:var(--gold);border-bottom-color:var(--gold);}
+
+/* Passage scrollable body */
+.pp-body{flex:1;overflow-y:auto;padding:14px 15px 20px;position:relative;}
+.p-label{font-size:11px;font-weight:700;letter-spacing:.08em;color:var(--muted);margin-bottom:8px;}
+.p-text{
+  font-family:'Noto Serif KR',serif;font-size:14px;
+  line-height:1.95;color:#1a1f22;white-space:pre-wrap;word-break:keep-all;
+}
+.p-empty{
+  padding:24px 0 16px;text-align:center;
+  color:var(--muted);font-size:13.5px;line-height:1.7;
+}
+.p-empty small{display:block;font-size:11.5px;margin-top:4px;opacity:.75;}
+.paste-btn{
+  display:block;margin:14px auto 0;padding:7px 20px;
+  background:none;border:1.5px dashed var(--gold);
+  color:var(--gold);border-radius:8px;font-size:13px;font-weight:700;cursor:pointer;
+}
+.paste-btn:hover{background:var(--gold-bg);}
+
+/* Edit area */
+.edit-wrap{display:none;flex-direction:column;gap:9px;padding:12px 15px 16px;flex:0 0 auto;}
+.edit-wrap textarea{
+  width:100%;height:280px;
+  font-family:'Noto Serif KR',serif;font-size:13.5px;line-height:1.85;
+  padding:10px 12px;border:1.5px solid var(--line);border-radius:8px;
+  resize:vertical;outline:none;
+}
+.edit-wrap textarea:focus{border-color:var(--gold);}
+.edit-btns{display:flex;gap:8px;justify-content:flex-end;}
+.save-btn{
+  padding:6px 18px;background:var(--ink);color:#fff;
+  border:none;border-radius:7px;font-size:13px;font-weight:700;cursor:pointer;
+}
+.cancel-btn{
+  padding:6px 18px;background:none;
+  border:1.5px solid var(--line);border-radius:7px;
+  font-size:13px;cursor:pointer;color:var(--muted);
+}
+
+/* ── Questions pane ── */
+.qp{
+  overflow-y:auto;
+  padding:16px 20px 60px;
+}
+
+/* filter bar */
+.fbar{
+  display:flex;align-items:center;justify-content:space-between;
+  flex-wrap:wrap;gap:8px;margin-bottom:18px;
+  padding-bottom:12px;border-bottom:1.5px solid var(--line);
+}
+.chips{display:flex;gap:6px;}
+.chip{
+  border:1.5px solid var(--line);background:var(--white);
+  border-radius:99px;padding:5px 12px;font-size:12.5px;
+  cursor:pointer;color:#3a3f42;font-weight:500;
+}
+.chip.active{background:var(--gold-bg);border-color:var(--gold);color:var(--gold);font-weight:700;}
+.reset-btn{
+  border:1.5px dashed var(--ink-soft);background:none;
+  color:var(--ink-soft);border-radius:99px;padding:5px 12px;font-size:12.5px;cursor:pointer;
+}
+.reset-btn:hover{background:rgba(29,52,97,.05);}
+
+/* question block */
+.qblock{margin-bottom:26px;}
+.qhead{
+  display:flex;align-items:flex-start;justify-content:space-between;gap:10px;
+  padding:10px 0 8px 10px;border-left:4px solid var(--gold);margin-bottom:9px;
+}
+.qtext{font-size:14px;font-weight:700;color:var(--ink);line-height:1.45;flex:1;}
+.qtext .qn{font-family:'Noto Serif KR',serif;font-weight:900;}
+.reveal-q{
+  flex:0 0 auto;padding:5px 11px;
+  background:none;border:1.5px solid var(--muted);
+  border-radius:7px;font-size:11.5px;color:var(--muted);cursor:pointer;white-space:nowrap;
+}
+.reveal-q:hover{border-color:var(--ink);color:var(--ink);}
+
+/* item card */
+.item{
+  background:var(--card);border:1.5px solid var(--line);
+  border-radius:10px;padding:12px 14px 13px;margin-bottom:8px;
+  box-shadow:var(--shadow);
+}
+.i-top{display:flex;align-items:flex-start;gap:9px;}
+.tag{
+  flex:0 0 auto;font-size:11px;font-weight:700;
+  padding:3px 7px;border-radius:5px;margin-top:1.5px;
+}
+.tag.orig{background:#E4EAF3;color:var(--ink);}
+.tag.var{background:var(--gold-bg);color:var(--gold);}
+.stmt{font-size:14.5px;line-height:1.6;flex:1;}
+
+/* O/X */
+.oxrow{display:flex;gap:7px;margin-top:11px;}
+.oxbtn{
+  flex:1;display:flex;align-items:center;justify-content:center;
+  border:2px solid var(--line);border-radius:8px;background:var(--white);
+  padding:7px 0;font-family:'Gaegu',sans-serif;font-size:22px;font-weight:700;
+  cursor:pointer;color:#aab0b5;transition:.1s ease;
+}
+.oxbtn:hover:not(.locked){border-color:var(--ink-soft);color:var(--ink-soft);}
+.oxbtn.pick-o{background:#EBF0F8;border-color:var(--ink);color:var(--ink);}
+.oxbtn.pick-x{background:var(--red-bg);border-color:var(--red);color:var(--red);}
+.oxbtn.locked{cursor:default;}
+
+/* answer reveal */
+.a-toggle{
+  display:none;margin-top:9px;width:100%;
+  padding:5px 0;background:none;
+  border:1.5px dashed var(--ink-soft);border-radius:8px;
+  font-size:12.5px;color:var(--ink-soft);cursor:pointer;
+}
+.a-toggle.vis{display:block;}
+.a-toggle:hover{background:rgba(29,52,97,.04);}
+.a-box{
+  display:none;margin-top:8px;padding:12px 14px;
+  border-radius:8px;border-left:4px solid var(--line);background:#F8F9FA;
+  font-size:13.5px;line-height:1.65;
+}
+.a-box.vis{display:block;}
+.a-box.ok{border-left-color:#6F9A52;background:var(--green-bg);}
+.a-box.ng{border-left-color:var(--red);background:var(--red-bg);}
+.a-verdict{
+  font-family:'Gaegu',sans-serif;font-size:16px;font-weight:700;
+  margin-bottom:5px;display:flex;align-items:center;gap:5px;
+}
+.a-verdict.ok{color:var(--green);}
+.a-verdict.ng{color:var(--red);}
+.a-ans{font-weight:700;color:var(--ink);font-size:13px;}
+.a-exp{margin-top:5px;color:#333;}
+.a-exp b{color:var(--ink);}
+
+/* ── Mobile ── */
+@media(max-width:700px){
+  html,body{height:auto;overflow:auto;}
+  .layout{grid-template-columns:1fr;height:auto;}
+  .pp{max-height:250px;border-right:none;border-bottom:2px solid var(--line);}
+  .pp-body{max-height:160px;}
+  .qp{padding:14px 12px 60px;}
+}
+</style>
+</head>
+<body>
+
+<div class="top-bar">
+  <h1>국어 고전·현대 문학 O·X 변형 문제집</h1>
+  <div class="score-pill">정답 <em id="scoreEl">0</em>/330</div>
+</div>
+
+<div class="tabs-bar">
+  <div class="tabs-inner" id="tabsEl"></div>
+</div>
+
+<div class="layout">
+  <!-- Passage pane -->
+  <aside class="pp" id="passagePane">
+    <div class="pp-head">
+      <div class="eye">지문 · 본문</div>
+      <h3 id="ppTitle"></h3>
+      <div class="src" id="ppSrc"></div>
+    </div>
+    <div class="work-tabs" id="workTabsEl"></div>
+    <div class="pp-body" id="ppBody"></div>
+    <div class="edit-wrap" id="editWrap">
+      <textarea id="editTA" placeholder="여기에 지문을 그대로 붙여 넣으세요..."></textarea>
+      <div class="edit-btns">
+        <button class="cancel-btn" onclick="cancelEdit()">취소</button>
+        <button class="save-btn" onclick="saveEdit()">저장</button>
+      </div>
+    </div>
+  </aside>
+
+  <!-- Questions pane -->
+  <main class="qp" id="qpEl">
+    <div class="fbar">
+      <div class="chips" id="chipsEl">
+        <button class="chip active" data-f="all">전체 보기</button>
+        <button class="chip" data-f="orig">원본만</button>
+        <button class="chip" data-f="var">변형만</button>
+      </div>
+      <button class="reset-btn" id="resetBtn">이 세트 초기화</button>
+    </div>
+    <div id="qlist"></div>
+  </main>
+</div>
+
+<script>
+const DATA = {
+  "sets": [
+    {
+      "id": "set9",
+      "title": "오월 소식 · 와사등",
+      "source": "정지용, 「오월 소식」 / 김광균, 「와사등」",
+      "passages": [
+        {
+          "label": "(가) 오월 소식 — 정지용",
+          "text": "오동나무꽃으로 불 밝힌 이곳 첫여름이 그립지 아니한가?\n어린 나그네 꿈이 시시로 파랑새가 되어 오려니.\n나무 밑으로 가나 책상 턱에 이마를 고일 때나,\n네가 남기고 간 기억만이 소곤소곤거리는구나.\n\n모처럼 만에 날아온 소식에 반가운 마음이 울렁거리어\n가여운 글자마다 먼 황해가 남실거리나니.\n\n……나는 갈매기 같은 종선을 한창 치달리고 있다……\n\n쾌활한 오월 넥타이가 내처 난데없는 순풍이 되어,\n하늘과 딱 닿은 푸른 물결 우에 솟은,\n외따른 섬 로맨틱을 찾아갈까나.\n\n일본 말과 아라비아 글씨를 가르치러 간\n쬐그만 이 페스탈로치야, 꾀꼬리 같은 선생님이야,\n날마다 밤마다 섬 둘레가 근심스런 풍랑에 씹히는가 하노니,\n은은히 밀려오는 듯 머얼리 우는 ⓐ오르간 소리……\n- 정지용, 「오월 소식」\n*종선: 큰 배에 딸린 작은 배."
+        },
+        {
+          "label": "(나) 와사등 — 김광균",
+          "text": "차단─한 등불이 하나 비인 하늘에 걸려 있다\n내 호올로 어델 가라는 슬픈 신호냐\n\n긴─ 여름 해 황망히 나래를 접고\n늘어선 고층 창백한 묘석같이 황혼에 젖어\n찬란한 야경 무성한 잡초인 양 헝클어진 채\n사념 벙어리 되어 입을 다물다\n\n피부의 바깥에 스미는 어둠\n낯설은 거리의 ⓑ아우성 소리\n까닭도 없이 눈물겹고나\n\n공허한 군중의 행렬에 섞이어\n내 어디서 그리 무거운 비애를 지니고 왔기에\n길─게 늘인 그림자 이다지 어두워\n\n내 어디로 어떻게 가라는 슬픈 신호기\n차단─한 등불이 하나 비인 하늘에 걸리어 있다\n- 김광균, 「와사등」\n*와사등: 석탄 가스를 도관에 흐르게 하여 불을 켜는 등."
+        }
+      ],
+      "questions": [
+        {
+          "num": 1,
+          "desc": "(가)와 (나)에 대한 설명으로 가장 적절한 것은? (정답 ④)",
+          "items": [
+            {
+              "tag": "1-① 원본",
+              "text": "(가)는 (나)와 달리 배경 묘사를 통해 화자의 상황을 나타내고 있다.",
+              "answer": "X",
+              "explain": "(가)는 '하늘과 딱 닿은 푸른 물결 위에 솟은 외따른 섬'을 묘사하며 그리운 이를 향한 화자의 상황을 나타내고 있다. (나) 역시 '늘어선 고층 창백한 묘석같이 황혼에 젖어'라는 배경 묘사를 통해 도시에서 부정적인 감각을 받는 화자의 상황을 나타내고 있다. 따라서 두 작품 모두 배경 묘사를 통해 화자의 상황을 드러내고 있으므로 (가)에만 해당한다는 진술은 적절하지 않다."
+            },
+            {
+              "tag": "1-① 변형",
+              "text": "(가)와 (나)는 모두 배경 묘사를 통해 화자가 처한 상황을 나타내고 있다.",
+              "answer": "O",
+              "explain": "(가)는 외따른 섬이라는 배경을, (나)는 창백한 묘석 같은 고층 건물과 황혼에 젖은 도시 풍경을 배경으로 묘사하여 각각 화자가 처한 상황(그리움, 도시적 비애)을 드러내고 있다."
+            },
+            {
+              "tag": "1-② 원본",
+              "text": "(가)는 (나)와 달리 자연물을 의인화하여 역동적인 분위기를 조성하고 있다.",
+              "answer": "X",
+              "explain": "(가)의 '네가 남기고 간 기억만이 소곤소곤거리는구나'에서 의인법이 사용되었지만, 의인화된 대상이 자연물인 '기억'이 아니라 추상 명사이다. 또한 역동적인 분위기를 조성한다고 보기 어렵다. (나)에도 자연물을 의인화한 표현은 나타나지 않는다."
+            },
+            {
+              "tag": "1-② 변형",
+              "text": "(가)에서 '기억만이 소곤소곤거리는구나'는 의인법에 해당하지만, 의인화된 대상이 자연물이 아니라 추상 명사이므로 '자연물을 의인화하였다'는 진술은 적절하지 않다.",
+              "answer": "O",
+              "explain": "'기억'은 자연물이 아닌 추상 명사이므로 이를 의인화한 표현을 두고 '자연물을 의인화했다'고 볼 수 없다. 또한 이 표현이 역동적인 분위기를 조성하는 것도 아니다."
+            },
+            {
+              "tag": "1-③ 원본",
+              "text": "(나)는 (가)와 달리 공간의 이동에 따라 변화하는 시적 분위기를 드러내고 있다.",
+              "answer": "X",
+              "explain": "(나)의 시적 배경은 도시의 밤거리로 일정하게 유지되며, 공간의 이동이 나타나지 않는다. 시 전반에 걸쳐 화자는 도시 문명 속의 고독감과 비애감을 일관되게 드러낼 뿐 시적 분위기가 변화하지 않는다. (가)에서도 공간 이동은 나타나지 않는다."
+            },
+            {
+              "tag": "1-③ 변형",
+              "text": "(가)와 (나) 모두 공간의 이동 없이 일관된 정서가 유지되며, 공간 이동에 따른 시적 분위기의 변화는 나타나지 않는다.",
+              "answer": "O",
+              "explain": "(가)는 일본 경도에서의 그리움, (나)는 도시의 밤거리에서의 고독감이 시 전반에 걸쳐 일관되게 유지될 뿐, 두 작품 모두 공간 이동에 따른 분위기 변화가 나타나지 않는다."
+            },
+            {
+              "tag": "1-④ 원본",
+              "text": "(가)와 (나)는 모두 의문형 종결 어미를 사용하여 화자의 정서를 강조하고 있다.",
+              "answer": "O",
+              "explain": "(가)에서는 '그립지 아니한가?'라는 의문형 종결 어미를 통해 화자가 느끼는 그리움의 정서를 강조하고 있고, (나)에서는 '내 호올로 어델 가라는 슬픈 신호냐'라는 의문형 종결 어미를 통해 화자의 애상적 정서를 강조하고 있다. 두 작품 모두 해당하는 공통 표현 방식이다."
+            },
+            {
+              "tag": "1-④ 변형",
+              "text": "(가)의 '그립지 아니한가?'와 (나)의 '슬픈 신호냐'는 의문형 종결 어미를 통해 각각 그리움과 애상감이라는 화자의 정서를 강조한다는 공통점이 있다.",
+              "answer": "O",
+              "explain": "두 시구 모두 의문형 어미를 사용하여 화자의 정서를 직접 드러내고 있으며, (가)는 그리움을, (나)는 방향을 잃은 비애감을 의문형의 형식으로 강조하고 있다."
+            },
+            {
+              "tag": "1-⑤ 원본",
+              "text": "(가)와 (나)는 모두 시의 처음과 끝에 유사한 시구를 배치하여 안정감을 주고 있다.",
+              "answer": "X",
+              "explain": "(나)에서는 1연과 5연에 '차단─한 등불이 하나 비인 하늘에 걸려(걸리어) 있다'라는 유사한 시구를 반복하여 안정감을 주고 있다. 그러나 (가)에서는 시의 처음과 끝에 유사한 시구를 배치하는 수미상관의 구조가 나타나지 않는다."
+            },
+            {
+              "tag": "1-⑤ 변형",
+              "text": "(나)는 수미상관의 구조를 통해 안정감을 주지만, (가)에는 시의 처음과 끝에 유사한 시구를 반복 배치하는 구조가 나타나지 않는다.",
+              "answer": "O",
+              "explain": "(나)의 1연과 5연에 '차단─한 등불이 하나 비인 하늘에 걸려(걸리어) 있다'가 반복되어 수미상관 구조를 이루는 반면, (가)에는 이러한 구조가 없으므로 두 작품이 '모두' 수미상관을 사용했다는 진술은 적절하지 않다."
+            }
+          ]
+        },
+        {
+          "num": 2,
+          "desc": "ⓐ(오르간 소리)와 ⓑ(아우성 소리)에 대한 이해로 가장 적절한 것은? (정답 ③)",
+          "items": [
+            {
+              "tag": "2-① 원본",
+              "text": "ⓐ는 화자의 내적 갈등을 유발하는 소리이다.",
+              "answer": "X",
+              "explain": "ⓐ(오르간 소리)는 화자가 그리워하는 대상이 있는 먼 곳에서 은은히 들려오는 것처럼 느끼는 소리로, 그리운 이로부터 소식을 듣고 싶은 화자의 소망이 반영된 것이다. 화자의 내적 갈등을 유발하는 소리로 볼 수 없다."
+            },
+            {
+              "tag": "2-① 변형",
+              "text": "ⓐ는 화자의 내적 갈등이 아니라, 그리운 대상으로부터 소식을 듣고 싶은 소망이 반영된 소리로 보는 것이 적절하다.",
+              "answer": "O",
+              "explain": "ⓐ는 파도 소리 또는 그것이 오르간 소리처럼 들리는 것으로 볼 수 있으며, 그리운 이에 대한 소망이 투영된 소리이다. 갈등을 유발하는 것이 아니라 그리움의 정서를 형상화한 것이다."
+            },
+            {
+              "tag": "2-② 원본",
+              "text": "ⓑ는 화자에게 미래에 대한 기대감을 불러일으키는 소리이다.",
+              "answer": "X",
+              "explain": "ⓑ(아우성 소리)는 화자가 낯선 도시 거리에서 경험하는 군중의 소리로, 화자에게 도시 문명에 대한 고독감과 소외감을 불러일으킨다. 미래에 대한 기대감을 불러일으키는 소리로 볼 수 없다."
+            },
+            {
+              "tag": "2-② 변형",
+              "text": "ⓑ는 기대감이 아니라 낯선 도시에서의 고독감과 소외감을 화자에게 불러일으키는 소리이다.",
+              "answer": "O",
+              "explain": "군중의 '아우성 소리'는 도시 속에서 홀로 떠도는 화자에게 '까닭도 없이 눈물겹'다는 반응을 유발하는 것으로, 긍정적 기대감과는 거리가 멀다."
+            },
+            {
+              "tag": "2-③ 원본",
+              "text": "ⓐ는 ⓑ와 달리, 대상에 대한 화자의 소망이 반영되어 있는 소리이다.",
+              "answer": "O",
+              "explain": "ⓐ는 그리운 이가 있는 먼 섬에서 들리는 것처럼 느끼는 소리로, 그리운 이로부터 소식을 듣고 싶은 화자의 소망이 반영되어 있다. ⓑ는 낯선 도시에서 화자에게 고독감을 불러일으키는 소리로, 화자의 특정 소망이 반영되어 있다고 보기 어렵다. 따라서 대상에 대한 소망이 반영된 것은 ⓐ에만 해당한다."
+            },
+            {
+              "tag": "2-③ 변형",
+              "text": "ⓑ와 달리 ⓐ에는 멀리 있는 그리운 이로부터 소식을 듣고 싶다는 화자의 소망이 투영되어 있다.",
+              "answer": "O",
+              "explain": "ⓐ는 그리운 이가 있는 섬 쪽에서 들려오는 것처럼 느끼는 소리로, 화자의 소망이 반영된 것이다. 반면 ⓑ는 도시 군중의 소리로, 화자의 특정 소망이 반영된 소리가 아니라 고독감을 심화하는 소리이다."
+            },
+            {
+              "tag": "2-④ 원본",
+              "text": "ⓑ는 ⓐ와 달리, 화자가 맞닥뜨린 현실을 견딜 수 있는 계기가 되는 소리이다.",
+              "answer": "X",
+              "explain": "ⓑ는 화자에게 도시 문명에서 느끼는 고독감을 불러일으키는 소리이지, 화자가 맞닥뜨린 현실인 도시 문명을 견딜 수 있는 계기가 되는 소리가 아니다. 오히려 화자는 '까닭도 없이 눈물겹'다며 부정적인 반응을 보인다."
+            },
+            {
+              "tag": "2-④ 변형",
+              "text": "ⓑ는 화자에게 도시 현실을 견뎌 낼 힘을 주는 소리가 아니라, 오히려 고독감과 비애를 심화하는 소리이다.",
+              "answer": "O",
+              "explain": "'낯설은 거리의 아우성 소리'는 화자에게 '까닭도 없이 눈물겹'다는 감정을 불러일으킬 뿐, 현실을 견디게 해 주는 위안의 소리가 아니다."
+            },
+            {
+              "tag": "2-⑤ 원본",
+              "text": "ⓐ와 ⓑ는 모두 화자가 추구하는 삶의 모습을 구체적으로 형상화하고 있는 소리이다.",
+              "answer": "X",
+              "explain": "ⓐ는 화자가 그리워하는 대상이 있는 먼 곳에서 들리는 것처럼 느끼는 소리이고, ⓑ는 낯선 도시 문명 속에서 화자의 비애감을 불러일으키는 소리이다. 두 소리 모두 화자가 추구하는 삶의 모습을 형상화한다고 볼 수 없다."
+            },
+            {
+              "tag": "2-⑤ 변형",
+              "text": "ⓐ는 그리움의 정서를, ⓑ는 도시에서의 비애감을 드러내는 소리로, 두 소리 모두 화자가 바라는 이상적 삶의 모습을 형상화하고 있는 것은 아니다.",
+              "answer": "O",
+              "explain": "ⓐ와 ⓑ는 각각 화자의 그리움과 고독감을 드러내는 기능을 할 뿐, 화자가 추구하는 삶의 방향이나 이상적 모습을 구체화하는 소리로 보기 어렵다."
+            }
+          ]
+        },
+        {
+          "num": 3,
+          "desc": "<보기>(모더니즘 시·감각적 이미지)를 참고하여 (가), (나)를 감상한 내용으로 적절하지 않은 것은? (정답 ④)",
+          "items": [
+            {
+              "tag": "3-① 원본",
+              "text": "(가)에서 '순풍이 되어' '외따른 섬 로맨틱을 찾아'간다는 것은 상상 속 이미지와 이국적 시어를 통해 대상에게 다가가고 싶은 화자의 정서를 표현한 것으로 볼 수 있다.",
+              "answer": "O",
+              "explain": "화자는 강화도 교원으로 발령 난 '너'에게 다가가고 싶은 마음을 '순풍이 되어' '외따른 섬 로맨틱을 찾아갈까나'라는 상상으로 표현하고 있다. '로맨틱'이라는 이국적 시어를 사용하여 대상을 향한 그리움을 모더니즘적으로 형상화한 것이다."
+            },
+            {
+              "tag": "3-① 변형",
+              "text": "(가)에서 '외따른 섬 로맨틱을 찾아갈까나'는 상상 속 이미지에 '로맨틱'이라는 이국적 시어를 결합하여 그리운 대상에게 다가가고 싶은 화자의 정서를 표현한 것으로 볼 수 있다.",
+              "answer": "O",
+              "explain": "'찾아갈까나'라는 상상의 표현과 '로맨틱'이라는 외래어 조합은 정지용 모더니즘 시의 특징인 이국적 시어 활용과 이미지 중심 표현을 잘 보여 준다."
+            },
+            {
+              "tag": "3-② 원본",
+              "text": "(나)에서 '늘어선 고층', '신호기'는 도시 문명의 모습을 잘 드러내는 소재로, 도시의 삶에 대해 화자가 느끼는 고적한 정서를 나타내기 위해 활용한 것으로 볼 수 있다.",
+              "answer": "O",
+              "explain": "'늘어선 고층'은 근대 도시 문명을 대표하는 소재이고, '신호기'(와사등)는 가스로 켜는 도시의 가로등으로, 두 소재 모두 근대 도시 문명의 특징적 풍경을 보여 준다. 이를 통해 도시에서 화자가 느끼는 고독감과 애상적 정서를 나타내는 데 활용되었다."
+            },
+            {
+              "tag": "3-② 변형",
+              "text": "(나)의 '늘어선 고층'과 '신호기'는 삭막한 근대 도시의 풍경을 드러내는 대표적 소재로, 화자의 고독감과 애상적 정서를 구체화하기 위해 활용된 것이다.",
+              "answer": "O",
+              "explain": "이 소재들은 1930년대 급속한 도시화 과정에서 나타난 근대 문명의 상징으로, 도시 문명 속에서 방향을 잃고 방황하는 화자의 감정을 드러내는 데 효과적으로 활용되고 있다."
+            },
+            {
+              "tag": "3-③ 원본",
+              "text": "(가)에서 '오동나무꽃으로 불 밝힌', '남기고 간 기억만이 소곤소곤거리는'과 (나)에서 '피부의 바깥에 스미는 어둠', '길—게 늘인 그림자'는 감각적 이미지를 강조한 점에서 이전의 시와 구별되는 시인의 개성이 드러난 것으로 볼 수 있다.",
+              "answer": "O",
+              "explain": "(가)의 '오동나무꽃으로 불 밝힌'은 시각 이미지, '소곤소곤거리는'은 청각 이미지이며, (나)의 '피부의 바깥에 스미는 어둠'은 시각을 촉각화한 공감각적 이미지, '길─게 늘인 그림자'는 시각 이미지이다. 이러한 감각적 이미지의 활용은 미학적 언어로 낭만성이나 사상성을 앞세운 이전 시와 구별되는 모더니즘 시인의 개성이다."
+            },
+            {
+              "tag": "3-③ 변형",
+              "text": "(가)와 (나)에 활용된 시각·청각·공감각적 이미지들은 감각에 대한 지향성을 강조하는 모더니즘 시의 특징을 보여 주는 것으로, 낭만적 경향이나 사상성을 앞세운 이전 시와 구별되는 개성이 드러난 것이다.",
+              "answer": "O",
+              "explain": "정지용과 김광균 모두 감각적·회화적 이미지를 통해 정서를 표현함으로써 1920~30년대 모더니즘 시가 이전 시와 구별되는 특성을 잘 드러내고 있다."
+            },
+            {
+              "tag": "3-④ 원본",
+              "text": "(가)에서 '꿈이' '파랑새가 되어 오'거나 '섬 둘레가' '풍랑에 씹히는' 것과 (나)에서 '어디서 그리 무거운 비애를 지니고'는 회화적 이미지를 통해 풍경을 표현함으로써 모더니즘적 경향을 구현하고자 한 것이다.",
+              "answer": "X",
+              "explain": "(가)의 '꿈이 파랑새가 되어 오'거나 '섬 둘레가 풍랑에 씹히는' 표현은 회화적 이미지에 해당하지만, 풍경을 표현한 것이 아니라 대상을 그리워하는 화자의 감정을 표현한 것이다. (나)의 '어디서 그리 무거운 비애를 지니고'는 회화적 이미지를 통해 풍경을 구현한 것이 아니라 화자의 공허함과 쓸쓸함이라는 정서를 드러낸 것이다."
+            },
+            {
+              "tag": "3-④ 변형",
+              "text": "(가)의 '꿈이 파랑새가 되어 오'거나 '섬 둘레가 풍랑에 씹히는' 것은 회화적 이미지이지만 풍경이 아닌 화자의 감정을 표현한 것이고, (나)의 '무거운 비애를 지니고'는 회화적 이미지를 통해 풍경을 구현한 것이 아니다.",
+              "answer": "O",
+              "explain": "두 표현 모두 회화적 이미지를 활용하고 있지만 그 목적은 풍경 묘사가 아니다. (가)는 화자의 그리움이라는 감정을, (나)는 화자의 내면적 공허함을 각각 형상화하는 것이다."
+            },
+            {
+              "tag": "3-⑤ 원본",
+              "text": "(가)에서 '페스탈로치'와 '꾀꼬리 같은 선생님'은 강화도에 교원으로 발령 난 이에 대한 정다움과 애정을, (나)에서 '창백한 묘석'과 '무성한 잡초'는 삭막한 근대 도시의 풍경을 비유적으로 드러낸 것이다.",
+              "answer": "O",
+              "explain": "(가)에서 화자는 강화도 교원으로 발령 난 '너'를 교육의 성인 '페스탈로치'와 '꾀꼬리 같은 선생님'으로 비유하며 정다움과 애정을 드러낸다. (나)에서 도시의 고층 건물들을 '창백한 묘석'에, 화려한 야경을 '무성한 잡초'에 빗대어 도시의 삭막함을 비유적으로 드러내고 있다."
+            },
+            {
+              "tag": "3-⑤ 변형",
+              "text": "(가)에서 '페스탈로치'와 '꾀꼬리 같은 선생님'이라는 비유는 편지를 보낸 교원에 대한 화자의 정다움과 애정을, (나)에서 '창백한 묘석'과 '무성한 잡초'는 삭막한 근대 도시의 이면을 비유적으로 드러낸 것이다.",
+              "answer": "O",
+              "explain": "화자가 그리운 상대를 페스탈로치와 꾀꼬리 같은 선생님으로 호칭한 것은 친근감과 애정의 표현이며, (나)에서 고층 건물과 야경을 묘석·잡초에 빗댄 것은 도시 문명의 차갑고 삭막한 속성을 역설적으로 드러낸 것이다."
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "set10",
+      "title": "눈 오는 날에 · 유등제",
+      "source": "조지훈, 「눈 오는 날에」 / 이수익, 「유등제」",
+      "passages": [
+        {
+          "label": "(가) 눈 오는 날에 — 조지훈",
+          "text": "검정 수목 두루마기에\n흰 동정 달아 입고\n창에 기대면\n\n박 넌출 상기 남은\n기울은 울타리 위로 장독대 위로\n새하얀 눈이\n나려 쌓인다\n\n홀로 지니던 값진 보람과\n빛나는 자랑을 모조리 불사르고\n소슬한 바람 속에\n낙엽처럼 무념(無念)히 썩어 가면은\n\n이 허망한 시공(時空) 위에\n내 외로운 영혼 가까이\n㉠꽃다발처럼 꽃다발처럼\n하이얀 눈발이\n나려 쌓인다\n\n마음 이리 고요한 날은\n아련히 들려오는\n㉡서라벌 천년(千年)의 풀피리 소리\n\n비애(悲哀)로 하여 내 혼이 야위기에는\n절망이란 오히려\n나리는 눈처럼 포근하고나.\n- 조지훈, 「눈 오는 날에」\n\n※ [A]는 6연('비애로 하여 ~ 포근하고나')에 해당함."
+        },
+        {
+          "label": "(나) 유등제 — 이수익",
+          "text": "유등제를 한번 보고 싶다.\n해 저문 강가로 나아가\n머나먼 행렬을 이루면서 밝은 연등 불빛 흘러가는\n그 조용한 눈물의 제의를\n보고 싶다.\n\n㉢나도 함께 따라갈 수 있다면\n얼마나 더 좋으랴.\n세상의 온갖 설움을 푼 몸이 두둥실\n물 위에 떠서\n㉣한 줌씩 불빛 던지며 어둠을 헤치고 흘러가면\n마침내 닿을 그곳이 불귀의 하늘이어도\n나는 좋으리.\n\n길가엔\n깨끗이 옷을 차려입은 사람들\n멀어져 가는 점점의 등불을 바라보며\n㉤차마 돌아서지 못하는 발걸음, 섰던 자리에 묶여\n두 손 모아 간절히 비나니\n부디 저 길이 극락에 이르소서.\n\n유등제를 한번 보고 싶다.\n해 저문 강가로 나아가\n수천, 수만 개의 연꽃 등불 밤하늘 별빛인 양\n물 위에 떠서\n아득히 행렬을 이루면서 어둠 속으로 흘러가는\n그 눈물 글썽이는 축복의 제의를\n나는\n보고 싶다.\n- 이수익, 「유등제」\n\n※ [B]는 마지막 연('유등제를 한번 보고 싶다 ~ 보고 싶다')에 해당함."
+        }
+      ],
+      "questions": [
+        {
+          "num": 1,
+          "desc": "(가)와 (나)에 대한 설명으로 가장 적절한 것은? (정답 ②)",
+          "items": [
+            {
+              "tag": "1-① 원본",
+              "text": "(가)는 (나)와 달리 시간의 흐름을 중심으로 대상의 성질이 변화하는 양상을 표현하고 있다.",
+              "answer": "X",
+              "explain": "(가)에서 눈이 내리는 자연 현상이 지속되고 있다는 점에서 시간의 흐름이 나타난다고 볼 수 있지만, 대상의 성질이 변화하는 양상은 나타나지 않는다."
+            },
+            {
+              "tag": "1-① 변형",
+              "text": "(가)에서 눈이 내리는 상황이 지속되며 시간의 흐름은 나타나지만, 대상의 성질이 변화하는 양상이 표현된 것은 아니다.",
+              "answer": "O",
+              "explain": "(가)에는 강설(降雪)과 적설(積雪)이 이어지며 시간의 흐름이 드러나지만, 특정 대상의 성질 자체가 변화해 가는 양상은 제시되지 않는다."
+            },
+            {
+              "tag": "1-② 원본",
+              "text": "(가)는 (나)와 달리 추상적 대상의 구체화를 통해 화자의 내면적 고통을 드러내고 있다.",
+              "answer": "O",
+              "explain": "(가)의 3연에서 추상적 대상인 '보람'과 '자랑'을 '모조리 불사르고'라는 표현을 통해 구체화하며 화자의 내면적 고통을 드러내고 있다. 그러나 (나)에서는 추상적 대상의 구체화를 통해 화자의 내면적 고통을 드러내는 부분이 나타나지 않는다."
+            },
+            {
+              "tag": "1-② 변형",
+              "text": "(가)는 '보람'과 '자랑'이라는 추상적 대상을 '모조리 불사르고'와 같이 구체화하여 화자의 내면적 고통을 드러낸다.",
+              "answer": "O",
+              "explain": "추상적인 '보람'과 '자랑'을 불사른다는 구체적 행위로 표현함으로써, 삶의 가치를 잃어 가는 화자의 내면적 고통이 효과적으로 드러난다. 이는 (나)에는 나타나지 않는 (가)만의 특징이다."
+            },
+            {
+              "tag": "1-③ 원본",
+              "text": "(나)는 (가)와 달리 어순의 도치를 통해 화자가 느끼는 심리적 갈등을 부각하고 있다.",
+              "answer": "X",
+              "explain": "(나)의 4연에서 목적어에 해당하는 어구가 도치되어 유등제를 보고 싶어 하는 화자의 정서가 부각되어 있다고 볼 수 있지만, 이를 통해 화자가 느끼는 심리적 갈등이 부각되고 있지는 않다."
+            },
+            {
+              "tag": "1-③ 변형",
+              "text": "(나)에 어순의 도치가 나타나기는 하지만, 이를 통해 부각되는 것은 유등제를 보고 싶어 하는 정서이지 화자의 심리적 갈등이 아니다.",
+              "answer": "O",
+              "explain": "(나)의 도치는 유등제를 보고 싶다는 화자의 소망을 강조하는 기능을 할 뿐, 화자 내면의 심리적 갈등을 부각하는 것은 아니다."
+            },
+            {
+              "tag": "1-④ 원본",
+              "text": "(나)는 (가)와 달리 역동적 이미지를 활용하여 공간의 속성을 나타내고 있다.",
+              "answer": "X",
+              "explain": "(가)와 (나) 모두에 대상의 움직임이 제시되어 있기는 하지만, 역동적 이미지를 활용하여 공간의 속성을 나타낸 부분은 두 작품 모두에 제시되어 있지 않다."
+            },
+            {
+              "tag": "1-④ 변형",
+              "text": "(가)와 (나) 모두 대상의 움직임이 제시되지만, 역동적 이미지를 통해 공간의 속성을 드러내는 부분은 나타나지 않는다.",
+              "answer": "O",
+              "explain": "두 작품 모두 눈이 내리거나 등불이 흘러가는 움직임이 나타나지만, 이를 활용해 특정 공간의 속성을 부각하는 방식은 사용하지 않으므로 (나)에만 해당한다는 진술은 적절하지 않다."
+            },
+            {
+              "tag": "1-⑤ 원본",
+              "text": "(가)와 (나)는 모두 특정 시어를 활용하여 시상의 반전을 이루고 있다.",
+              "answer": "X",
+              "explain": "(가)에서는 화자의 심리가 점차 안정을 찾아가는 모습이 제시되어 있기는 하지만 특정 시어의 사용을 통해 시상의 반전을 이루고 있다고 보기 어렵다. (나)에도 유등제를 보고 싶어 하는 화자의 정서가 반복적으로 제시될 뿐 시상의 반전이 나타난 부분은 없다."
+            },
+            {
+              "tag": "1-⑤ 변형",
+              "text": "(가)와 (나) 모두 특정 시어를 통해 시상을 급격히 반전시키는 구조는 나타나지 않는다.",
+              "answer": "O",
+              "explain": "(가)는 심리적 안정을 찾아가는 점진적 흐름이, (나)는 유등제를 향한 소망의 반복이 나타날 뿐, 어느 작품도 특정 시어를 계기로 한 시상의 반전을 보이지 않는다."
+            }
+          ]
+        },
+        {
+          "num": 2,
+          "desc": "㉠~㉤에 대한 이해로 적절하지 않은 것은? (정답 ④)",
+          "items": [
+            {
+              "tag": "2-① 원본",
+              "text": "㉠: '꽃다발'의 형상을 통해 내리는 눈을 아름답게 인식하는 화자의 태도를 드러내고 있다.",
+              "answer": "O",
+              "explain": "㉠의 '꽃다발'은 눈이 내려 쌓이는 형상을 빗대어 표현한 것으로, 화자가 내려 쌓이는 눈을 아름다운 꽃다발과 같이 인식하고 있음을 알 수 있다."
+            },
+            {
+              "tag": "2-① 변형",
+              "text": "㉠에서 '꽃다발처럼'이라는 표현은 내려 쌓이는 눈을 아름답게 인식하는 화자의 태도를 드러낸다.",
+              "answer": "O",
+              "explain": "눈이 내리는 형상을 '꽃다발'에 빗댐으로써, 화자가 눈을 아름답고 포근한 것으로 받아들이고 있음이 드러난다."
+            },
+            {
+              "tag": "2-② 원본",
+              "text": "㉡: '고요한 날'이라는 배경에 청각적 이미지가 환기되며 시적 분위기를 형성하고 있다.",
+              "answer": "O",
+              "explain": "㉡에는 고요함 속에 호젓한 '풀피리 소리'라는 청각적 이미지가 어우러지며 경건하고 차분한 시적 분위기가 연출되고 있다."
+            },
+            {
+              "tag": "2-② 변형",
+              "text": "㉡의 '서라벌 천년의 풀피리 소리'는 '고요한 날'이라는 배경에 청각적 이미지를 더해 차분한 시적 분위기를 형성한다.",
+              "answer": "O",
+              "explain": "고요한 분위기 속에 아련히 들려오는 풀피리 소리라는 청각적 이미지가 더해져, 경건하고 차분한 시적 정서를 자아낸다."
+            },
+            {
+              "tag": "2-③ 원본",
+              "text": "㉢: '유등제'의 '연등'을 따라가는 가정적 상황을 설정하여 화자의 소망을 나타내고 있다.",
+              "answer": "O",
+              "explain": "㉢의 화자는 자신이 경험하고 있는 번뇌와 고민으로부터 벗어나고자 하는 소망을 지니며, '함께 따라갈 수 있다면'과 같은 가정적 상황을 설정하여 이러한 소망을 드러내고 있다."
+            },
+            {
+              "tag": "2-③ 변형",
+              "text": "㉢의 '나도 함께 따라갈 수 있다면'은 가정적 상황을 설정하여 삶의 고통에서 벗어나고 싶은 화자의 소망을 드러낸다.",
+              "answer": "O",
+              "explain": "유등을 따라가고 싶다는 가정을 통해, 세상의 설움에서 벗어나고자 하는 화자의 간절한 소망이 형상화되어 있다."
+            },
+            {
+              "tag": "2-④ 원본",
+              "text": "㉣: '어둠'을 헤치는 '불빛'을 부각하여 일상의 체험 속에서 발견하게 된 희망을 강조하고 있다.",
+              "answer": "X",
+              "explain": "㉣에서 '불빛'과 '어둠'의 대비를 통해 '불빛'이 부각되고 있기는 하지만, 이 '불빛'을 일상의 체험 속에서 발견하게 된 희망으로 이해하는 것은 적절하지 않다. '불빛'은 화자가 유등제라는 가정적 상황에서 자신의 번뇌와 고민을 떠나보내고자 하는 수단일 뿐, 일상의 체험 속에서 발견한 희망은 아니다."
+            },
+            {
+              "tag": "2-④ 변형",
+              "text": "㉣의 '불빛'은 '어둠'과 대비되어 부각되지만, 이는 일상 속에서 발견한 희망이 아니라 유등제라는 가정적 상황에서 번뇌를 떠나보내는 수단이다.",
+              "answer": "O",
+              "explain": "'불빛'은 화자가 상상하는 유등제 속에서 자신의 설움과 고민을 떠나보내는 매개일 뿐, 일상의 체험 속에서 발견하게 된 희망으로 보는 것은 적절하지 않다."
+            },
+            {
+              "tag": "2-⑤ 원본",
+              "text": "㉤: '차마'라는 시어를 통해 '사람들'이 가진 간절한 마음을 드러내고 있다.",
+              "answer": "O",
+              "explain": "㉤에는 '차마'라는 시어를 통해, 연등을 띄운 채 그것이 흘러가는 것을 바라보며 쉽사리 그 자리를 떠나지 못하는 '사람들'의 간절한 마음이 형상화되어 있다."
+            },
+            {
+              "tag": "2-⑤ 변형",
+              "text": "㉤의 '차마 돌아서지 못하는 발걸음'은 흘러가는 등불을 바라보며 자리를 떠나지 못하는 '사람들'의 간절한 마음을 드러낸다.",
+              "answer": "O",
+              "explain": "'차마'라는 시어와 '돌아서지 못하는 발걸음'이라는 표현을 통해, 유등을 떠나보내며 간절히 비는 사람들의 마음이 효과적으로 드러난다."
+            }
+          ]
+        },
+        {
+          "num": 3,
+          "desc": "<보기>(고단한 삶·역설적 위안·의식의 확장)를 바탕으로 (가)와 (나)를 감상한 내용으로 적절하지 않은 것은? (정답 ④)",
+          "items": [
+            {
+              "tag": "3-① 원본",
+              "text": "(가)의 '새하얀 눈이 / 나려 쌓'이는 생활 주변의 자연 현상과 (나)의 '해 저문 강가'에서 벌어지는 '유등제'라는 특정한 의식은 모두 화자가 느끼는 삶의 고통을 위안하는 것이라고 볼 수 있다.",
+              "answer": "O",
+              "explain": "(가)의 화자는 눈이 내리고 쌓이는 상황에서 마음속 고요와 포근함을 느끼므로 강설·적설이라는 자연 현상은 삶의 고통을 위안해 주는 것이며, (나)의 화자는 해 저문 강가에서 유등제를 통해 삶의 고통에서 벗어나고자 하므로 유등제라는 의식 역시 화자의 고통을 위안하는 것으로 볼 수 있다."
+            },
+            {
+              "tag": "3-① 변형",
+              "text": "(가)의 강설·적설이라는 자연 현상과 (나)의 유등제라는 의식은 모두 화자가 느끼는 삶의 고통을 위안하는 기능을 한다.",
+              "answer": "O",
+              "explain": "(가)의 화자는 눈을 통해 포근함과 위안을, (나)의 화자는 유등제를 통해 고통에서 벗어나려는 위안을 얻는다는 점에서 두 소재는 공통적으로 위안의 기능을 한다."
+            },
+            {
+              "tag": "3-② 원본",
+              "text": "(가)의 '빛나는 자랑을 모조리 불사르고', '허망한 시공'과 (나)의 '세상의 온갖 설움'은 모두 두 작품의 화자가 인식하고 있는 고통스러운 삶의 세계를 형상화한 것이라고 볼 수 있다.",
+              "answer": "O",
+              "explain": "(가)의 화자는 보람과 자랑이 사라지는 허망함을 느끼고, (나)의 화자는 세상의 온갖 설움을 떠나보내기를 희망하므로, 해당 시구들은 모두 화자가 인식하는 고통스러운 삶의 세계를 형상화한 것이다."
+            },
+            {
+              "tag": "3-② 변형",
+              "text": "(가)의 '허망한 시공'과 (나)의 '세상의 온갖 설움'은 모두 화자가 인식하고 있는 고통스러운 삶의 세계를 드러낸 표현이다.",
+              "answer": "O",
+              "explain": "두 표현 모두 화자가 처한 고단하고 괴로운 삶의 현실을 형상화한 것으로, 위안의 대상이 되는 고통의 근원을 보여 준다."
+            },
+            {
+              "tag": "3-③ 원본",
+              "text": "(가)는 '내 외로운 영혼', '내 혼'을 통해 화자가 자신의 내밀한 세계에 초점을 맞추고 있는 것이 드러나는 반면, (나)는 '수천, 수만 개의' 아득한 '행렬'을 언급하였다는 점에서 화자가 자신만이 아닌 다른 사람들로 의식이 확장되고 있다고 볼 수 있다.",
+              "answer": "O",
+              "explain": "(가)의 화자는 '내 외로운 영혼', '내 혼' 등을 통해 자신의 내면세계에 초점을 맞추고 있으며, (나)의 화자는 유등제에 참가한 사람들의 모습과 심리를 추측하며 '수천, 수만 개의' 아득한 '행렬'이라는 표현으로 다른 사람들에게로 의식을 확장하고 있다."
+            },
+            {
+              "tag": "3-③ 변형",
+              "text": "(가)는 '내 외로운 영혼', '내 혼'을 통해 화자 자신의 내밀한 세계에 초점을 두는 반면, (나)는 '수천, 수만 개의' 행렬로 다른 사람들에게로 의식을 확장한다.",
+              "answer": "O",
+              "explain": "(가)가 개인의 내면에 집중하는 것과 달리, (나)는 유등제에 참여한 수많은 사람들의 모습으로 의식이 확장되며 공동체적 시선을 드러낸다."
+            },
+            {
+              "tag": "3-④ 원본",
+              "text": "(가)의 '눈발'은 언젠가는 내리는 상황이 끝나고 '쌓인' '눈'은 녹기 마련이라는 점에서, (나)의 '유등'은 '불귀의 하늘'에 도달한 후 '강가'로 돌아올 수 없다는 점에서 삶의 고통이 근본적으로 제거되지는 못한 것이라고 볼 수 있다.",
+              "answer": "X",
+              "explain": "(가)의 강설과 적설은 끊임없이 지속될 수 없는 일시적인 것이므로 삶의 고통을 근본적으로 제거하지 못한다고 볼 수 있다. 그러나 (나)의 '유등제'는 삶의 고통을 '불귀의 하늘'로 전함으로써 화자와 사람들이 겪는 삶의 고통을 떠나보내는 의미가 있다. 따라서 '유등'이 '강가'로 돌아오지 못하므로 삶의 고통이 근본적으로 제거되지 못한 것이라는 진술은 적절하지 않다."
+            },
+            {
+              "tag": "3-④ 변형",
+              "text": "(나)의 '유등'이 '불귀의 하늘'로 흘러가는 것은 삶의 고통을 떠나보내는 의미를 지니므로, 이를 두고 삶의 고통이 근본적으로 제거되지 못했다고 보는 것은 적절하지 않다.",
+              "answer": "O",
+              "explain": "유등이 돌아오지 못한다는 것은 오히려 삶의 고통을 완전히 떠나보낸다는 긍정적 의미로 해석되므로, 이를 고통이 제거되지 못한 근거로 삼는 것은 적절하지 않다. (참고로 (가)의 눈은 일시적이라는 점에서 고통이 근본적으로 제거되지 못함을 보여 준다.)"
+            },
+            {
+              "tag": "3-⑤ 원본",
+              "text": "(가)에서 '절망이란' '눈처럼 포근하'다고 한 표현과 (나)의 '눈물 글썽이는 축복의 제의'라는 표현은 모두 모순된 표현을 통해 삶의 고통을 감내해 내려는 태도를 드러낸 것이라고 볼 수 있다.",
+              "answer": "O",
+              "explain": "(가)의 화자는 절망을 오히려 포근하다고 표현하고, (나)의 화자는 유등제를 슬픈 의식이면서도 축복의 제의라고 표현한다. 이러한 모순된(역설적) 표현은 두 작품의 화자가 삶의 고통을 부정적으로만 인식하는 데 머무르지 않고 그 고통을 감내해 내려는 태도를 보인 것이다."
+            },
+            {
+              "tag": "3-⑤ 변형",
+              "text": "(가)의 '절망이란 눈처럼 포근하'다는 표현과 (나)의 '눈물 글썽이는 축복의 제의'는 모두 역설적 표현을 통해 삶의 고통을 감내하려는 태도를 드러낸다.",
+              "answer": "O",
+              "explain": "절망을 포근하다고 하거나 눈물의 제의를 축복이라고 하는 모순 형용은, 고통을 부정적으로만 받아들이지 않고 견뎌 내려는 화자의 태도를 역설적으로 드러낸 것이다."
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "set2",
+      "title": "만전춘별사 · 김삼현 시조 · 작자 미상 시조(이별 나는 구멍)",
+      "source": "작자 미상, 「만전춘별사」 / 김삼현 / 작자 미상",
+      "questions": [
+        {
+          "num": 1,
+          "desc": "(가)~(다)의 표현상 특징으로 가장 적절한 것은? (정답 ⑤)",
+          "items": [
+            {
+              "tag": "1-① 원본",
+              "text": "(가)와 (나)는 모두 대구적 표현을 활용하여 화자의 인식 변화 과정을 드러내고 있다.",
+              "answer": "X",
+              "explain": "(가)는 임과 함께하고 싶은 바람과 이별 후의 안타까움이 나타나 인식 변화 과정으로 볼 여지는 있으나 대구적 표현을 활용하지는 않는다. (나)는 자신을 잊고 남을 생각하는 임의 마음을 태우고 싶다는 바람을 드러낼 뿐, 인식 변화 과정도 대구적 표현도 나타나지 않는다."
+            },
+            {
+              "tag": "1-① 변형",
+              "text": "(가)는 동일한 문장을 반복하여 임에 대한 사랑과 그리움을 강조하고 있다.",
+              "answer": "O",
+              "explain": "‘얼음 위에 댓잎 자리 보아 임과 나와 얼어 죽을망정’, ‘넋이라도 임을 한데 지내겠다고 여겼더니’와 같은 동일 문장의 반복을 통해 임에 대한 사랑과 그리움이 강조되고 있다."
+            },
+            {
+              "tag": "1-② 원본",
+              "text": "(가)와 (다)는 모두 물음의 방식을 활용하여 부정적 현실에 대한 극복 의지를 드러내고 있다.",
+              "answer": "X",
+              "explain": "(다)의 화자는 ‘이별 나는 구멍도 때우는가’라고 물으며 이별이라는 부정적 현실을 극복하려는 의지를 보여 준다고 볼 여지가 있으나, (가)는 ‘어느 잠이 오리오’, ‘벼기더시니 뉘러시니잇가’ 등의 물음을 통해 그리움과 안타까움을 드러낼 뿐 부정적 현실의 극복 의지를 드러내고 있지는 않다."
+            },
+            {
+              "tag": "1-② 변형",
+              "text": "(다)의 화자는 임과의 이별을 막기 위해 ‘장사’에게 ‘이별 나는 구멍도 때우는가’라고 묻고 있다는 점에서, 부정적 상황을 극복하고자 하는 의지를 드러낸 것으로도 볼 수 있다.",
+              "answer": "O",
+              "explain": "이별을 막을 방법이 있는지 장사에게 묻는 행위 자체가, 이별이라는 부정적 상황을 어떻게든 극복해 보려는 화자의 의지로 해석될 수 있다."
+            },
+            {
+              "tag": "1-③ 원본",
+              "text": "(나)와 (다)는 모두 말을 건네는 방식을 활용하여 화자의 안타까움을 나타내고 있다.",
+              "answer": "X",
+              "explain": "(다)는 화자와 ‘장사’의 대화를 통해 안타까움을 드러내지만, (나)는 화자의 독백을 통해 임을 향한 마음을 드러낼 뿐 말을 건네는 방식을 활용하고 있지 않다."
+            },
+            {
+              "tag": "1-③ 변형",
+              "text": "(다)는 화자와 ‘장사’의 대화를 통해 임과 이별해야 하는 화자의 안타까움을 드러내고 있다.",
+              "answer": "O",
+              "explain": "(다)는 ‘장사’와의 문답 형식을 통해 영웅들조차 이별을 막지 못했다는 점을 확인하며, 결국 임과 헤어질 수밖에 없는 화자의 안타까움을 드러낸다."
+            },
+            {
+              "tag": "1-④ 원본",
+              "text": "(가)는 자연물에 감정을 이입하여, (나)는 영탄적 표현을 활용하여 대상의 행동 변화를 촉구하고 있다.",
+              "answer": "X",
+              "explain": "(가)는 객관적 상관물인 ‘도화’를 통해 임과 이별한 화자의 처지를 드러낼 뿐 감정을 이입하여 대상의 행동 변화를 촉구하는 것은 아니며, (나) 역시 ‘남 향한 마음을 다 태우려 하노라’와 같은 영탄적 표현으로 임을 향한 마음을 드러낼 뿐 대상의 행동 변화를 촉구하고 있지 않다."
+            },
+            {
+              "tag": "1-④ 변형",
+              "text": "(가)는 객관적 상관물인 ‘도화’를 활용하여 임과 이별한 화자의 처지를 드러내고 있다.",
+              "answer": "O",
+              "explain": "‘도화’가 시름없이 봄바람에 웃는 모습은, 이별의 슬픔에 잠긴 화자의 처지와 대비되는 객관적 상관물로 기능한다."
+            },
+            {
+              "tag": "1-⑤ 원본",
+              "text": "(가)는 동일한 문장을 반복하며, (다)는 인물의 속성을 나열하며 전달하고자 하는 의미를 강조하고 있다.",
+              "answer": "O",
+              "explain": "(가)는 ‘얼음 위에 댓잎 자리 보아 임과 나와 얼어 죽을망정’, ‘넋이라도 임을 한데 지내겠다고 여겼더니’ 등 동일 문장을 반복하고, (다)는 ‘진시황’, ‘한 무제’, ‘제갈량’, ‘서초 패왕’ 등 역사적 인물의 능력을 나열하여 이들조차 이별을 막을 수 없었음을 강조하고 있다."
+            },
+            {
+              "tag": "1-⑤ 변형",
+              "text": "(나)는 동일한 문장을 반복하며, (가)는 인물의 속성을 나열하며 전달하고자 하는 의미를 강조하고 있다.",
+              "answer": "X",
+              "explain": "표현 방식과 작품이 뒤바뀐 진술이다. 동일 문장의 반복은 (나)가 아닌 (가)에서, 인물 속성의 나열은 (가)가 아닌 (다)에서 나타난다."
+            }
+          ]
+        },
+        {
+          "num": 2,
+          "desc": "㉠~㉣에 대한 이해로 가장 적절한 것은? (정답 ⑤)",
+          "items": [
+            {
+              "tag": "2-① 원본",
+              "text": "㉠은 화자의 심정을 조롱하는 자연물이고, ㉡은 화자의 심정을 이해하는 자연물이다.",
+              "answer": "X",
+              "explain": "㉠(도화)이 ‘시름 없어 소춘풍’하는 것은 단지 봄이 와서 그런 것일 뿐 화자를 조롱하는 것과 무관하며, ㉡(비오리)은 작품의 맥락상 화자에게 돌아오지 않는 임을 뜻하므로 화자의 심정을 이해하는 자연물로 볼 수 없다."
+            },
+            {
+              "tag": "2-① 변형",
+              "text": "㉠이 ‘시름 없어 소춘풍’하는 것은 봄이 왔기 때문일 뿐, 화자를 조롱하는 것과는 관련이 없다.",
+              "answer": "O",
+              "explain": "㉠은 화자의 처지와 대비되는 객관적 상관물로서, 계절의 변화에 따라 자연스레 피어난 모습을 보일 뿐 화자를 의도적으로 조롱하는 존재는 아니다."
+            },
+            {
+              "tag": "2-② 원본",
+              "text": "㉠은 화자의 즐거움을 방해하는 자연물이고, ㉢은 화자의 괴로움을 심화하는 사람이다.",
+              "answer": "X",
+              "explain": "㉢(임의 마음이 향한 대상)이 화자의 괴로움을 심화하는 사람이라는 설명은 적절하나, ㉠(도화)은 화자의 처지와 대비되는 자연물일 뿐 화자의 ‘즐거움’을 방해하는 것은 아니다(화자에게는 애초에 즐거움이 없는 상황이다)."
+            },
+            {
+              "tag": "2-② 변형",
+              "text": "㉢은 임이 화자가 아닌 다른 사람에게 마음을 주고 있음을 보여 준다는 점에서 화자의 괴로움을 심화하는 존재로 볼 수 있다.",
+              "answer": "O",
+              "explain": "임의 마음이 화자가 아닌 ㉢을 향하고 있다는 점에서, ㉢의 존재는 화자가 느끼는 소외감과 괴로움을 심화하는 요인이 된다."
+            },
+            {
+              "tag": "2-③ 원본",
+              "text": "㉡은 화자와 유사한 처지에 놓인 자연물이고, ㉢은 화자가 우월감을 가지고 있는 사람이다.",
+              "answer": "X",
+              "explain": "㉡은 화자에게 돌아오지 않는 임을 뜻하므로 화자가 그리워하며 기다리는 대상이지 화자와 유사한 처지의 존재가 아니며, ㉢은 임의 마음을 차지한 존재이므로 오히려 화자보다 우월한 위치에 있는 사람으로 볼 수 있다."
+            },
+            {
+              "tag": "2-③ 변형",
+              "text": "㉡은 작품의 맥락상 화자에게 돌아오지 않는 임을 의미하며, 화자가 돌아오기를 기다리는 대상이다.",
+              "answer": "O",
+              "explain": "‘여울은 어디 두고 소에 자러 오느냐’라는 구절에서, ㉡(비오리)은 떠나가 돌아오지 않는 임을 비유하며 화자가 애타게 기다리는 존재로 해석된다."
+            },
+            {
+              "tag": "2-④ 원본",
+              "text": "㉡은 화자의 호기심을 유발하는 자연물이고, ㉣은 화자의 호기심을 해소하는 사람이다.",
+              "answer": "X",
+              "explain": "㉡은 떠나가 돌아오지 않는 임을 의미할 뿐 화자의 호기심과는 관련이 없으며, (다)의 화자도 단순한 호기심이 아니라 이별을 막을 방법이 있는지를 알고자 ㉣에게 묻는 것이다."
+            },
+            {
+              "tag": "2-④ 변형",
+              "text": "㉣은 화자의 처지를 환기시켜 주는 사람으로 볼 수 있다.",
+              "answer": "O",
+              "explain": "㉣(장사)은 역대 영웅들도 이별을 막을 수 없었다는 사실을 일깨워 줌으로써, 화자 역시 이별을 받아들일 수밖에 없는 처지임을 환기시켜 준다."
+            },
+            {
+              "tag": "2-⑤ 원본",
+              "text": "㉢은 화자의 처지와 대비되는 사람이고, ㉣은 화자의 처지를 환기시켜 주는 사람이다.",
+              "answer": "O",
+              "explain": "임의 마음을 차지한 ㉢은 임의 사랑을 받지 못하는 화자의 처지와 대비되는 인물이며, ㉣은 이별을 막을 수 없다는 사실을 알려 주어 화자가 자신의 처지를 새삼 깨닫게 하는 인물이다."
+            },
+            {
+              "tag": "2-⑤ 변형",
+              "text": "㉣은 화자의 호기심을 해소해 주는 사람으로, 화자는 단순한 호기심에서 ㉣에게 질문을 던진 것이다.",
+              "answer": "X",
+              "explain": "화자가 ㉣에게 묻는 것은 단순한 호기심 때문이 아니라, 임과의 이별이라는 절박한 현실을 어떻게든 피해 보고자 하는 마음에서 비롯된 것이다."
+            }
+          ]
+        },
+        {
+          "num": 3,
+          "desc": "<보기>(물리적 시간·공간의 주관적 해석, 추상적 대상의 사물화)를 참고하여 (가)~(다)를 감상한 내용으로 적절하지 않은 것은? (정답 ③)",
+          "items": [
+            {
+              "tag": "3-① 원본",
+              "text": "(가)에서 화자가 ‘얼음 위’에서 얼어 죽더라도 ‘오늘 밤’이 ‘더디 새’길 바라는 것은 일정하게 흐르는 물리적인 시간에 변화를 주고 싶다는 발상으로, 임과의 만남을 지속하고 싶은 화자의 바람을 드러낸 것으로 볼 수 있다.",
+              "answer": "O",
+              "explain": "‘밤’은 화자의 바람과 무관하게 일정하게 흐르는 물리적 시간인데, 화자는 이를 ‘더디 새’게 해 달라고 바람으로써 임과 함께하는 시간을 늘리고 싶은 소망을 드러낸다."
+            },
+            {
+              "tag": "3-① 변형",
+              "text": "‘밤’이라는 물리적 시간을 화자가 주관적으로 해석함으로써, 임과의 만남을 지속하고 싶은 화자의 바람이 표현되고 있다.",
+              "answer": "O",
+              "explain": "실제로는 일정하게 흐르는 ‘밤’을 화자가 더디 새기를 바라는 것으로 표현한 것은, 물리적 시간을 주관적으로 재해석하여 임과의 만남을 연장하고픈 소망을 드러낸 것이다."
+            },
+            {
+              "tag": "3-② 원본",
+              "text": "(가)에서 임과의 이별로 ‘경경 고침상’에서 잠을 이루지 못한 화자가 ‘넋이라도 임을 한데 지내겠다고 여겼’던 것은 육체와 달리 추상적 대상인 ‘넋’은 임과 함께할 수 있다는 발상으로, 임과의 이별로 인한 힘겨움과 그리움을 드러낸 것으로 볼 수 있다.",
+              "answer": "O",
+              "explain": "‘넋’은 눈에 보이지 않는 추상적 대상으로, 화자는 현실에서 함께할 수 없는 임과 ‘넋’만큼은 함께 지낼 수 있으리라 여김으로써 이별의 힘겨움과 그리움을 드러내고 있다."
+            },
+            {
+              "tag": "3-② 변형",
+              "text": "‘넋’은 추상적 대상으로, 화자는 육체와 달리 넋만은 임과 함께할 수 있다는 발상을 통해 이별의 힘겨움과 그리움을 드러내고 있다.",
+              "answer": "O",
+              "explain": "육체적으로는 떨어져 있는 임과 화자가, 추상적 존재인 ‘넋’으로는 함께할 수 있다고 여기는 발상에는 이별의 고통과 임에 대한 그리움이 투영되어 있다."
+            },
+            {
+              "tag": "3-③ 원본",
+              "text": "(가)에서 화자가 ‘비오리’가 잠을 자거나 추위에 얼 수 있는 공간으로 ‘소’를 인식하는 것은 임에 대한 그리움으로 물리적 공간을 평소와 다르게 인식하는 발상으로, 이별한 임과의 재회를 원하는 화자의 소망을 드러낸 것으로 볼 수 있다.",
+              "answer": "X",
+              "explain": "‘여울’과 ‘소’는 모두 추위에 얼 수 있는 공간이며 ‘비오리’가 잠도 잘 수 있는 일반적인 공간으로, 화자가 이를 평소와 ‘다르게’ 인식하고 있다고 보기 어렵다. 따라서 이를 물리적 공간의 주관적 재해석이나 재회의 소망을 드러낸 것으로 보는 것은 적절하지 않다."
+            },
+            {
+              "tag": "3-③ 변형",
+              "text": "‘비오리’가 잠을 자거나 추위에 얼 수 있는 공간으로 ‘소’를 인식하는 것은 물리적 공간을 평소와 다르게 인식하는 발상에 해당하지 않는다.",
+              "answer": "O",
+              "explain": "‘여울’과 ‘소’는 모두 본래 추위에 얼 수 있고 새가 머무를 수 있는 일반적인 물의 공간이므로, 이를 특별히 ‘다르게’ 인식한 발상으로 보기는 어렵다."
+            },
+            {
+              "tag": "3-④ 원본",
+              "text": "(나)에서 화자의 ‘영혼’이 ‘술에 섞여 임의 속에’ 들어가 ‘남 향한 마음을 다 태우’고 싶다는 것은 추상적 대상인 사람의 영혼과 마음을 물리적인 변화를 줄 수 있는 대상으로 사물화한 것으로, 자신을 멀리하는 임에 대한 화자의 원망을 드러낸 것으로 볼 수 있다.",
+              "answer": "O",
+              "explain": "‘영혼’과 ‘마음’은 본래 물리적 변화를 줄 수 없는 추상적 대상인데, 화자는 자신의 영혼이 술에 섞여 임의 속에 흘러들어 임의 마음을 ‘태우’는 것으로 표현하여, 자신을 멀리하고 남을 향한 임의 마음에 대한 원망을 드러낸다."
+            },
+            {
+              "tag": "3-④ 변형",
+              "text": "화자의 ‘영혼’과 ‘마음’이라는 추상적 대상을 물리적인 변화를 줄 수 있는 대상으로 사물화한 것은 자신을 멀리하는 임에 대한 원망을 드러낸 것이다.",
+              "answer": "O",
+              "explain": "영혼이 술에 섞여 임의 속을 돌아다니며 임의 마음을 ‘태운다’는 표현은, 추상적 대상의 사물화를 통해 자신을 외면하는 임에 대한 원망의 정서를 효과적으로 형상화한 것이다."
+            },
+            {
+              "tag": "3-⑤ 원본",
+              "text": "(다)에서 화자가 ‘이별 나는 구멍’을 때울 수 있는가를 묻는 것은 이별 상황을 수선할 수 있는 대상으로 사물화한 것으로, 임과의 이별을 원하지 않는 화자의 심정을 드러낸 것으로 볼 수 있다.",
+              "answer": "O",
+              "explain": "‘이별’이라는 추상적인 상황을 솥의 구멍처럼 때워서 수선할 수 있는 사물로 표현함으로써, 이별을 원하지 않는 화자의 절박한 심정을 구체적으로 드러내고 있다."
+            },
+            {
+              "tag": "3-⑤ 변형",
+              "text": "‘이별 나는 구멍’을 때울 수 있는가를 묻는 것은 추상적인 이별을 사물처럼 다루는 발상으로, 임과의 이별을 원하지 않는 화자의 심정을 드러낸다.",
+              "answer": "O",
+              "explain": "이별이라는 추상적 개념을 솥의 ‘구멍’이라는 구체적 사물에 빗대어 수선 가능성을 묻는 것은, 이별을 피하고 싶어 하는 화자의 간절한 마음을 형상화한 발상이다."
+            }
+          ]
+        }
+      ],
+      "passages": [
+        {
+          "label": "(가) 만전춘별사",
+          "text": "얼음 위에 댓잎 자리 보아 임과 나와 얼어 죽을망정\n얼음 위에 댓잎 자리 보아 임과 나와 얼어 죽을망정\n정(情) 둔 오늘 밤 더디 새오시라 더디 새오시라\n\n경경(耿耿) 고침상(孤枕上)에 어느 잠이 오리오\n서창(西窓)을 열어하니 도화(桃花)가 발(發)하도다\n㉠도화는 시름 없어 소춘풍(笑春風)하도다 소춘풍하도다\n\n넋이라도 임을 한데 지내겠다고 여겼더니\n넋이라도 임을 한데 지내겠다고 여겼더니\n벼기더시니 뉘러시니잇가 뉘러시니잇가\n\n㉡오리야 오리야 아련 비오리야\n여울은 어디 두고 소(沼)에 자러 오느냐\n소마저 얼면 여울도 좋으니 여울도 좋으니\n- 작자 미상, 「만전춘별사」\n*경경 고침상: 근심에 싸여 있는 외로운 잠자리. *소춘풍: 봄바람을 희롱함.\n*벼기더시니: 우기시던 이가. 또는 어기신 이가."
+        },
+        {
+          "label": "(나) 시조 — 김삼현",
+          "text": "내 영혼 술에 섞여 임의 속에 흘러들어\n굽이굽이 창자를 다 찾아다닐망정\n날 잊고 ㉢남 향한 마음을 다 태우려 하노라\n- 김삼현"
+        },
+        {
+          "label": "(다) 시조 — 작자 미상",
+          "text": "창밖에 가마솥 때우라는 ㉣장사 이별 나는 구멍도 때우는가\n장사의 대답하는 말이 진시황 한 무제는 천지를 호령하되 위엄으로 못 막고 제갈량의 천하 경영하는 재주로도 막았다는 말 못 들었고 하물며 서초 패왕의 힘으로도 능히 못 막았으니 이 구멍 때우라는 말이 아마도 우스워라\n진실로 장사의 말과 같을진대 긴 이별인가 하노라\n- 작자 미상"
+        }
+      ]
+    },
+    {
+      "id": "set3",
+      "title": "사친가",
+      "source": "작자 미상, 「사친가」",
+      "questions": [
+        {
+          "num": 1,
+          "desc": "윗글에 대한 설명으로 적절하지 않은 것은? (정답 ②)",
+          "items": [
+            {
+              "tag": "1-① 원본",
+              "text": "‘정월’, ‘이월’, ‘삼월’ 등과 같은 시간 표지를 활용하여 내용을 구분하고 있다.",
+              "answer": "O",
+              "explain": "이 작품은 ‘정월’부터 매달의 절기·명절·풍습을 소개하는 월령체 형식으로, 시간 표지를 활용해 단락(달)을 구분하고 있다."
+            },
+            {
+              "tag": "1-① 변형",
+              "text": "‘정월’, ‘이월’, ‘삼월’ 등의 시간 표지는 단순한 배경 제시일 뿐 내용 구분의 기능을 하지 않는다.",
+              "answer": "X",
+              "explain": "각 달의 표지는 단순한 배경 제시에 그치지 않고, 월령체 형식에 따라 매달의 내용을 구획하는 단락 구분의 기능을 명확히 수행한다."
+            },
+            {
+              "tag": "1-② 원본",
+              "text": "‘소년’, ‘후인’, ‘아이’ 등을 청자로 삼아 바람직한 삶의 태도를 가르치고 있다.",
+              "answer": "X",
+              "explain": "[A]에서는 ‘소년’을 대상으로 ‘부모 봉양 생각하라’와 같이 효의 실천을 권하지만, [D]에서는 ‘아이’를 대상으로 바람직한 삶의 태도를 가르치는 부분이 보이지 않는다. [B]의 ‘후인’은 개자추의 죽음을 슬퍼하는 사람들을 가리킬 뿐, 그들을 청자로 삼아 가르침을 주는 것이 아니다."
+            },
+            {
+              "tag": "1-② 변형",
+              "text": "[A]에서는 ‘소년’을 청자로 삼아 효의 실천을 권하고 있지만, [B]의 ‘후인’과 [D]의 ‘아이’를 청자로 삼아 바람직한 삶의 태도를 가르치는 부분은 나타나지 않는다.",
+              "answer": "O",
+              "explain": "[A]만이 ‘소년’을 청자로 삼아 효를 권할 뿐, [B]의 ‘후인’은 개자추를 애도하는 사람들을 가리키는 표현이고 [D]의 ‘아이’는 가르침의 청자가 아니라 서술 대상으로만 등장한다."
+            },
+            {
+              "tag": "1-③ 원본",
+              "text": "‘대보름’, ‘한식일’, ‘답청절’ 등과 같은 절기나 명절과 관련지어 내용을 구성하고 있다.",
+              "answer": "O",
+              "explain": "정월 대보름, 이월 한식일, 삼월 답청절 등 각 달의 절기·명절에 사람들이 즐기는 풍속을 다양하게 제시하며 내용을 구성하고 있다."
+            },
+            {
+              "tag": "1-③ 변형",
+              "text": "이 작품은 대보름, 한식일, 답청절 등 구체적 절기·명절과는 무관하게 추상적인 효의 개념만을 서술하고 있다.",
+              "answer": "X",
+              "explain": "이 작품은 추상적 서술이 아니라, 각 달의 구체적인 절기·명절과 그에 따른 풍속을 긴밀히 관련지어 내용을 전개하는 월령체 가사이다."
+            },
+            {
+              "tag": "1-④ 원본",
+              "text": "‘슬프(도)다 우리 부모 ∼ 모르시나’와 같은 문장 구조를 반복하여 주제를 드러내고 있다.",
+              "answer": "O",
+              "explain": "이 구절은 당시 사람들이 즐기는 풍속이나 절기를 누리지 못하는 부모님을 떠올리며 화자의 효심을 드러내는 구절로, 매달 반복되며 ‘사친’이라는 주제를 강화한다."
+            },
+            {
+              "tag": "1-④ 변형",
+              "text": "‘슬프(도)다 우리 부모 ~ 모르시나’라는 동일한 문장 구조의 반복은 매달의 내용을 마무리하며 화자의 효심과 안타까움이라는 주제를 강화하는 기능을 한다.",
+              "answer": "O",
+              "explain": "이 구절이 각 달의 끝에서 반복적으로 등장함으로써, 절기를 누리지 못하는 부모님에 대한 화자의 안타까움과 효심이라는 작품의 주제 의식이 효과적으로 강화된다."
+            },
+            {
+              "tag": "1-⑤ 원본",
+              "text": "‘그달을 허송하니(고)’, ‘그달 그믐 다 지나고’와 같은 문장을 사용해 시간의 경과를 표현하고 있다.",
+              "answer": "O",
+              "explain": "이 구절들은 앞에서 언급한 한 달이 어느새 다 지나가 버렸음을 드러내는 구절로, 시간의 경과를 명시적으로 표현하는 기능을 한다."
+            },
+            {
+              "tag": "1-⑤ 변형",
+              "text": "‘그달을 허송하니(고)’, ‘그달 그믐 다 지나고’는 시간의 경과가 아니라 화자의 단순한 후회만을 표현하기 위한 상투적 어구이다.",
+              "answer": "X",
+              "explain": "이 구절들은 단순한 상투어가 아니라, 한 달이 다 지나가 버렸다는 시간의 경과를 명시적으로 드러내며 다음 달로의 전환을 알리는 기능을 한다."
+            }
+          ]
+        },
+        {
+          "num": 2,
+          "desc": "㉠~㉤에 대한 설명으로 적절하지 않은 것은? (정답 ③)",
+          "items": [
+            {
+              "tag": "2-① 원본",
+              "text": "㉠은 부모님께서 물려주신 것을 의미하며, 자식들이 부모를 봉양하고 효를 실천해야 하는 당위성을 부각하고 있다.",
+              "answer": "O",
+              "explain": "‘신체발부 사대절’(몸과 머리털, 피부, 사지)은 유교적 가치관에 따르면 모두 부모에게서 물려받은 것으로, 자식이 부모를 봉양해야 하는 당위성의 근거로 활용된다."
+            },
+            {
+              "tag": "2-① 변형",
+              "text": "㉠(신체발부 사대절)은 부모님과 무관하게 자식 스스로 얻은 것으로, 효를 실천해야 하는 당위성과는 거리가 있다.",
+              "answer": "X",
+              "explain": "유교적 가치관에서 ‘신체발부 사대절’은 자식이 스스로 얻은 것이 아니라 부모로부터 물려받은 것으로 여겨지며, 바로 이 점이 자식이 효를 실천해야 하는 당위성의 근거가 된다."
+            },
+            {
+              "tag": "2-② 원본",
+              "text": "㉡은 자식을 사랑하는 부모님의 마음을 빗댄 것으로, 자식으로서 응당 보답하려는 마음을 가져야 한다는 점을 강조하고 있다.",
+              "answer": "O",
+              "explain": "‘태산같이 높은 덕과 하해같이 깊은 정’은 부모님이 베푼 사랑이 한없이 크고 깊음을 비유한 표현으로, 자식으로서 그 은혜에 보답하는 것이 당연함을 강조한다."
+            },
+            {
+              "tag": "2-② 변형",
+              "text": "㉡(태산같이 높은 덕과 하해같이 깊은 정)은 부모님이 자식에게 베푼 사랑이 한없이 크다는 것을 비유한 표현이다.",
+              "answer": "O",
+              "explain": "태산과 하해라는 거대한 자연물에 빗댄 비유를 통해, 부모의 사랑과 은혜가 헤아릴 수 없을 만큼 크고 깊다는 점을 효과적으로 형상화하고 있다."
+            },
+            {
+              "tag": "2-③ 원본",
+              "text": "㉢은 현실 세계에서 구할 수 없는 것으로, 부모님 살아생전에 효도를 실천하는 것이 자식에게 어려운 일임을 드러내고 있다.",
+              "answer": "X",
+              "explain": "㉢(불로초와 불사약)이 인력으로 얻을 수 없는 것은 맞지만, 이것이 곧 ‘효도 실천이 어렵다’는 의미는 아니다. 오히려 불로초·불사약을 구할 수 없기에 부모님이 돌아가시기 전에 자식으로서 최선을 다해야 함을 일깨우는 충고로 기능한다."
+            },
+            {
+              "tag": "2-③ 변형",
+              "text": "㉢(불로초와 불사약)을 인력으로 얻을 수 없다는 것은, 부모님이 돌아가시기 전에 자식으로서 최선을 다해 효도해야 함을 일깨우는 기능을 한다.",
+              "answer": "O",
+              "explain": "불로초·불사약으로도 부모님의 생명을 늘릴 수 없다는 인식은, 살아 계실 때 효를 다해야 한다는 화자의 다짐과 충고로 이어진다."
+            },
+            {
+              "tag": "2-④ 원본",
+              "text": "㉣은 부모님이 돌아가시고 난 이후의 상황을 표현한 것으로, 부모님이 돌아가시고 나면 다시는 만날 수 없는 안타까운 심정을 함축하고 있다.",
+              "answer": "O",
+              "explain": "㉣(공산낙목 한 줌 흙)은 부모님이 돌아가신 뒤 흙으로 돌아가 영원히 이별하게 되는 상황을 함축하며, 이에 대한 화자의 안타까움이 투영되어 있다."
+            },
+            {
+              "tag": "2-④ 변형",
+              "text": "㉣(공산낙목 한 줌 흙)은 부모님이 살아 계실 때의 행복한 순간을 의미하는 표현이다.",
+              "answer": "X",
+              "explain": "㉣은 부모님 생전의 행복한 순간이 아니라, 부모님이 돌아가신 후 한 줌 흙으로 돌아가 다시는 만날 수 없게 되는 상황을 의미하는 표현이다."
+            },
+            {
+              "tag": "2-⑤ 원본",
+              "text": "㉤은 부모님을 그리워하고 부모님의 뜻을 받들어야 하는 순간들을 의미하며, 자식으로서 항시 부모를 사랑하는 마음을 지녀야 한다는 것을 내포하고 있다.",
+              "answer": "O",
+              "explain": "㉤(일 년 삼백육십 일에 일일 사친 십이시라)은 ‘일 년’의 시간을 넘어 ‘매일매일의 모든 시간’으로 의미가 확장되며, 부모를 향한 사랑을 꾸준히 실천해야 함을 강조한다."
+            },
+            {
+              "tag": "2-⑤ 변형",
+              "text": "㉤(일 년 삼백육십 일에 일일 사친 십이시라)은 일 년 중 특정한 시기에만 부모를 사랑하는 마음을 가지면 충분하다는 의미를 내포한다.",
+              "answer": "X",
+              "explain": "㉤은 오히려 일 년 내내, 그리고 하루의 모든 시간 동안 부모를 사랑하는 마음을 항상 지니고 꾸준히 실천해야 함을 강조하는 표현이다."
+            }
+          ]
+        },
+        {
+          "num": 3,
+          "desc": "[C]와 [D]에 대한 이해로 가장 적절한 것은? (정답 ③)",
+          "items": [
+            {
+              "tag": "3-① 원본",
+              "text": "[C]가 삼월 삼짇날에 사람들이 하는 놀이에 초점을 맞추고 있다면, [D]는 사월 초파일에 도성에서 벌어지는 국가 행사에 초점을 맞추고 있다.",
+              "answer": "X",
+              "explain": "[C]에는 삼월 삼짇날 풍습이 제시되지만, [D]의 사월 초파일에 도성에서 따로 국가 행사가 벌어지고 있다는 내용은 나타나지 않는다."
+            },
+            {
+              "tag": "3-① 변형",
+              "text": "[C]에는 삼월 삼짇날에 사람들이 하는 풍습이 제시되어 있지만, [D]에 도성에서 벌어지는 별도의 국가 행사가 제시되어 있는 것은 아니다.",
+              "answer": "O",
+              "explain": "[D]에는 태평성대를 칭송하는 분위기와 관등절 풍속이 나타날 뿐, 도성에서 거행되는 별도의 국가 행사에 대한 구체적 서술은 확인되지 않는다."
+            },
+            {
+              "tag": "3-② 원본",
+              "text": "[C]가 농사일이 바빠 봄이 온 것을 잊고 살아가는 아쉬움에 초점을 맞추고 있다면, [D]는 상서로운 징조가 나타난 것에 대한 기대감에 초점을 맞추고 있다.",
+              "answer": "X",
+              "explain": "[C]에는 바쁜 농부들의 모습과 함께 봄 풍경을 즐기는 사람들의 모습이 나타나지만, 이 농부들이 봄이 온 것을 아예 잊고 살아간다고 보기는 어렵다."
+            },
+            {
+              "tag": "3-② 변형",
+              "text": "[C]에는 봄을 맞아 바쁜 농부들의 모습이 나타나지만, 이들이 봄이 온 것을 아예 잊고 살아가는 것은 아니다.",
+              "answer": "O",
+              "explain": "[C]의 농부들은 ‘신춘을 만났다’며 봄을 인식하고 있으며, 단지 농사일로 바쁜 모습이 함께 그려질 뿐 봄을 잊고 사는 것으로 볼 근거는 없다."
+            },
+            {
+              "tag": "3-③ 원본",
+              "text": "[C]가 새봄을 맞은 자연의 변화와 사람들의 흥겨움에 초점을 맞추고 있다면, [D]는 태평성대를 이룬 임금과 그를 칭송하는 사람들의 모습에 초점을 맞추고 있다.",
+              "answer": "O",
+              "explain": "[C]는 ‘제비 새끼’, ‘호랑나비’, ‘산화는 붉은 비단’ 등 자연물을 통해 봄의 아름다운 풍경과 사람들의 흥겨움을 드러내고, [D]는 ‘만백성 화합하는 경성가’, ‘태평성대’, ‘산호만세’ 등을 통해 태평성대를 이룬 임금과 이를 칭송하는 사람들의 모습을 드러낸다."
+            },
+            {
+              "tag": "3-③ 변형",
+              "text": "[D]는 ‘만백성 화합하는 경성가’, ‘태평성대’ 등의 표현을 통해 태평성대를 이룬 임금과 그를 칭송하는 분위기를 드러낸다.",
+              "answer": "O",
+              "explain": "‘삼각산 제일봉에 봉황 앉아 춤을 추고’, ‘만백성 화합하는 경성가를 오늘날에 보리로다’, ‘요지일월 순지건곤’ 등은 태평성대를 이룬 임금을 칭송하는 분위기를 잘 보여 준다."
+            },
+            {
+              "tag": "3-④ 원본",
+              "text": "[C]가 답청절을 맞아 자연을 즐기러 뿔뿔이 흩어지는 사람들의 모습에 초점을 맞추고 있다면, [D]는 관등절을 맞아 함께 모여 행사를 준비하는 사람들의 모습에 초점에 맞추고 있다.",
+              "answer": "X",
+              "explain": "[D]는 관등절을 맞아 등을 달고 만세를 부르는 모습이 나타날 뿐, 사람들이 함께 모여 행사를 ‘준비’하는 과정에 초점이 맞춰진 것은 아니다."
+            },
+            {
+              "tag": "3-④ 변형",
+              "text": "[D]가 관등절을 맞아 함께 모여 행사를 준비하는 사람들의 모습에 초점을 맞추고 있는 것은 아니다.",
+              "answer": "O",
+              "explain": "[D]에는 등불을 켜고 만세를 부르는 결과적 장면이 그려질 뿐, 행사를 준비하는 과정 자체에 초점이 맞추어져 있지는 않다."
+            },
+            {
+              "tag": "3-⑤ 원본",
+              "text": "[C]가 삼월을 맞은 제비 새끼와 호랑나비의 분주함에 초점을 맞추고 있다면, [D]는 사월을 맞은 아이들이 경성가를 부르며 즐겁게 놀러 다니는 모습에 초점을 맞추고 있다.",
+              "answer": "X",
+              "explain": "[C]의 제비와 나비의 분주함은 아름다운 봄 풍경의 일부로 제시될 뿐이며, [D]에서 ‘경성가’가 언급되기는 하나 이를 부르며 놀러 다니는 주체로서 아이들의 모습이 구체적으로 제시되지는 않는다."
+            },
+            {
+              "tag": "3-⑤ 변형",
+              "text": "[D]에는 사월을 맞은 아이들이 경성가를 부르며 즐겁게 놀러 다니는 모습이 구체적으로 제시되어 있다.",
+              "answer": "X",
+              "explain": "[D]에 ‘경성가’라는 표현이 등장하기는 하나, 이를 부르며 놀러 다니는 주체로서 아이들의 모습이 구체적으로 묘사되어 있지는 않다."
+            }
+          ]
+        },
+        {
+          "num": 4,
+          "desc": "<보기>(‘사친’의 의미와 작품의 다양한 면모)를 참고하여 [A]~[E]를 감상한 내용으로 적절하지 않은 것은? (정답 ④)",
+          "items": [
+            {
+              "tag": "4-① 원본",
+              "text": "[A]와 [E]에서 화자는 ‘부모 봉양 생각하라’나 ‘부모 생각뿐이로다’와 같이 효를 실천하는 태도를 언급하여, ‘사친’이라는 핵심 주제를 드러내고 있다.",
+              "answer": "O",
+              "explain": "[A]의 ‘부모 봉양 생각하라’와 [E]의 ‘부모 생각뿐이로다’는 모두 효의 실천을 적극적으로 강조하며 작품의 핵심 주제인 ‘사친’을 직접적으로 드러낸다."
+            },
+            {
+              "tag": "4-① 변형",
+              "text": "[A]와 [E]에서 화자는 적극적으로 효의 실천을 강조하며 ‘사친’이라는 핵심 주제를 분명하게 드러내고 있다.",
+              "answer": "O",
+              "explain": "두 구절 모두 부모를 떠올리고 봉양해야 함을 직접적으로 언급함으로써, 작품 전체를 관통하는 ‘사친’의 주제 의식을 뚜렷하게 표현하고 있다."
+            },
+            {
+              "tag": "4-② 원본",
+              "text": "[B]와 [D]에서 화자는 ‘개자추’, ‘이영백’, ‘적인걸’, ‘요’, ‘순’ 등 중국 고사 속 인물들을 언급하여, 충효나 태평성대와 같이 당대인들이 중시했던 가치를 표현하고 있다.",
+              "answer": "O",
+              "explain": "[B]의 개자추(충신·한식 유래)·이영백(효심)·적인걸(충직한 신하), [D]의 요·순(태평성대를 이룬 성군)은 모두 당대인들이 중시한 충효·태평성대의 가치를 표현하는 데 활용된다."
+            },
+            {
+              "tag": "4-② 변형",
+              "text": "[B]의 ‘개자추’, ‘이영백’, ‘적인걸’과 [D]의 ‘요’, ‘순’은 모두 당대인들이 중시했던 충효나 태평성대와 같은 유교적 가치를 표현하기 위해 동원된 인물들이다.",
+              "answer": "O",
+              "explain": "이들 고사 속 인물은 각각 충신·효자·태평성대의 성군을 상징하며, 화자가 추구하는 유교적 가치를 구체적으로 드러내는 장치로 활용된다."
+            },
+            {
+              "tag": "4-③ 원본",
+              "text": "[C]와 [E]에서 화자는 ‘촌가에 농부들은 ~ 농구를 둘러메고’, ‘남린 북사 보리타작~농부가로다’와 같이 당시 농촌의 생활상을 언급하여, 각 계절이나 시기에 맞추어 살아가는 농민들에 대한 관심을 드러내고 있다.",
+              "answer": "O",
+              "explain": "[C]는 삼월을 맞아 농기구를 메고 다니는 농부들의 모습을, [E]는 단오절 즈음 보리타작하는 이웃집의 모습을 보여 주며 농민들의 생활상에 대한 관심을 드러낸다."
+            },
+            {
+              "tag": "4-③ 변형",
+              "text": "[C]의 ‘촌가에 농부들은 ~ 농구를 둘러메고’와 [E]의 ‘남린 북사 보리타작’은 각 계절에 맞추어 살아가는 농민들의 생활상에 대한 화자의 관심을 보여 준다.",
+              "answer": "O",
+              "explain": "두 장면 모두 계절의 흐름에 따라 농사일을 이어 가는 농민들의 모습을 구체적으로 담아내어, 화자가 농촌의 생활상에 관심을 기울이고 있음을 보여 준다."
+            },
+            {
+              "tag": "4-④ 원본",
+              "text": "[B]와 [D]에서 화자는 ‘원산에 봄이 드니 ~ 한식을 지었도다’, ‘만사 인간 ~ 우지 마라’와 같이 적당한 때를 놓쳐 버린 상황을 언급하여, 마음의 여유가 없어 짧은 인생을 즐기지 못하는 것에 대한 아쉬움을 표현하고 있다.",
+              "answer": "X",
+              "explain": "[B]의 ‘개자추’ 고사는 한식의 유래를 설명하며 해당 절기의 특징을 드러내는 것일 뿐, 때를 놓친 것에 대한 아쉬움과는 관련이 없다. [D]의 ‘타기황앵 ~ 우지 마라’ 역시 즐거운 꿈을 깨우지 말라는 의미로, 마음의 여유가 없어 인생을 즐기지 못하는 상황을 드러내는 것이 아니다."
+            },
+            {
+              "tag": "4-④ 변형",
+              "text": "[B]에서 ‘개자추’의 고사를 떠올리는 것은 한식의 유래를 설명하는 것일 뿐, 적당한 때를 놓친 것에 대한 화자의 아쉬움을 드러내는 것은 아니다.",
+              "answer": "O",
+              "explain": "[B]의 개자추 고사는 한식이라는 절기의 유래와 의미를 알려 주는 기능을 할 뿐, 화자가 적절한 시기를 놓쳤다는 아쉬움을 표현하는 맥락과는 무관하다."
+            },
+            {
+              "tag": "4-⑤ 원본",
+              "text": "[A]와 [E]에서 화자는 ‘정월이라 십오 일에 ~ 흉풍도 보려니와’, ‘송백양류 긴긴 나무에 ~오락가락하는구나’와 같이 풍속이나 놀이를 언급하며, 그러한 것들을 모르고 지내시는 부모님에 대한 안타까움을 드러내고 있다.",
+              "answer": "O",
+              "explain": "[A]의 대보름 풍속(흉풍 점치기 등)과 [E]의 단오절 풍속(그네 타기 등)을 언급한 뒤, 이를 모르고 지내시는 부모님을 떠올리며 화자의 안타까움을 드러내고 있다."
+            },
+            {
+              "tag": "4-⑤ 변형",
+              "text": "[A]와 [E]에서 화자는 대보름과 단오절의 풍속을 언급하며, 이를 모르고 지내시는 부모님에 대한 안타까움을 드러내고 있다.",
+              "answer": "O",
+              "explain": "[A]는 대보름의 달구경·흉풍 점치기를, [E]는 단오절의 그네 타기 등을 언급한 뒤 ‘슬프도다 우리 부모 ~ 모르시나’라는 구절로 부모님에 대한 안타까움을 표현하고 있다."
+            }
+          ]
+        }
+      ],
+      "passages": [
+        {
+          "label": "사친가 — 작자 미상",
+          "text": "정월이라 십오 일에 달구경하는 소년들아\n흉풍(凶豐)도 보려니와 부모 봉양 생각하라\n㉠신체발부 사대절을 부모님께 타고났으니\n㉡태산같이 높은 덕과 하해같이 깊은 정을\n어이하여 잊으리오 천세 만세 믿었더니\n봉래 방장 영주산에 ㉢불로초와 불사약을\n인력(人力)으로 얻을쏜가 슬프다\n수욕정이 풍부지하고 자욕양이 친부재라\n㉣공산낙목 한 줌 흙 되어 영원한 이별 되겠구나\n㉤일 년 삼백육십 일에 일일 사친(事親) 십이시라\n서늘한 바람 적막하고 소식이 영영 끊기니\n슬프다 우리 부모 대보름인 줄 모르시나\n[A]\n\n그달을 허송하니 이월이라 한식일에\n천추절이 적막하다 개자추의 넋이로다\n원산에 봄이 드니 불탄 풀에 속잎 난다\n후인들이 슬퍼하여 한식을 지었도다\n당우삼대 성제들도 승피백운 하셨도다\n여산 송백 무릉 춘초(春草)는 만고영웅 일과처라\n무서산지 퇴일하니 이영백의 사정(私情)이오\n태행산 외로운 구름 보니 적인걸의 생각이라\n슬프도다 우리 부모 청명인 줄 모르시나\n[B]\n\n그달 그믐 다 지나고 삼월이라 삼짇날에\n제비 새끼 날아들어 옛집을 찾아오고\n호랑나비 분분하여 옛빛을 자랑한다\n기수(沂水)에 목욕하고 무우(舞雩)에 바람 쏘이며\n동쪽 언덕 올라 휘파람 불고 청류 이르러 시 짓는다\n산화(山花)는 붉은 비단이오 세류(細柳)는 푸른 실이로다\n촌가에 농부들은 신춘(新春)을 만났다고\n농구(農具)를 둘러메고 처처(處處)에 왕래하며\n백마금편 소년들은 화류춘풍 흥을 겨워\n쌍을 지어 노닐 적에 산화 작작(灼灼) 난만개라\n슬프도다 세월이여\n애오생지가련(哀吾生之可憐)하니 탄광음지여류(嘆光陰之如流)로다\n슬프도다 우리 부모 답청절을 모르시나\n[C]\n\n그달을 허송하고 사월이라 초파일에\n남풍지훈혜(南風之薰兮)하고 해오민지온혜(解悟民之溫兮)로다\n삼각산 제일봉에 봉황 앉아 춤을 추고\n한강수 깊은 물에 하도(河圖) 낙서(洛書) 나왔단 말인가\n만백성 화합하는 경성가를 오늘날에 보리로다\n요지일월 순지건곤 태평성대 이 아닌가\n만사(萬事) 인간 젊은 날에 소년행락 얼마하리\n타기황앵 아이들은 막교지상 우지 마라\n황금갑옷 떨쳐입고 실버들 속 들어갈 때\n우레같이 소리 질러 겨우 든 잠 깨어 보니\n장안 많은 집 등을 달아 산호만세 하는구나\n슬프도다 우리 부모 관등절을 모르시나\n[D]\n\n그달을 허송하고 오월이라 단오일에\n해는 늦어 창밖에 있으니 여름 구름은 기봉(奇峯)에 많구나\n산양 자규 우는구나\n광풍제월 넓은 곳에 솔개 날고 물고기 뛰노는구나\n백구야 날지 마라 너 잡을 내 아니라\n일신이 한가하기로 너와 놀자 찾았노라\n나물 먹고 물 마시고 팔을 베고 누웠으니\n대장부 살림살이 이 아니 넉넉한가\n일촌간장 맺힌 설움 부모 생각뿐이로다\n옥창(玉窓) 앵두 붉었으니 원정부지이별(怨征夫之離別)이오\n몽중(夢中) 매화 피었으니 음풍진어영욕(吟風塵於榮辱)이오\n남린 북사 보리타작 방방곡곡 농부가로다\n송백양류 긴긴 나무에 높다랗게 그네 매고\n녹의홍상 미인들은 오락가락하는구나\n슬프도다 우리 부모 단오절을 모르시나\n[E]\n- 작자 미상, 「사친가」"
+        }
+      ]
+    },
+    {
+      "id": "set4",
+      "title": "인간 문제",
+      "source": "강경애, 「인간 문제」",
+      "questions": [
+        {
+          "num": 1,
+          "desc": "윗글의 서술상 특징으로 적절한 것은? (정답 ④)",
+          "items": [
+            {
+              "tag": "1-① 원본",
+              "text": "여러 인물의 행동을 묘사하여 농민 사이에 서로 다른 입장을 드러내고 있다.",
+              "answer": "X",
+              "explain": "서술자는 관찰자에 머무르지 않고 인물의 내면까지 함께 묘사하며, 농민들 사이에 서로 다른 입장이 대립하는 모습은 나타나지 않는다."
+            },
+            {
+              "tag": "1-① 변형",
+              "text": "서술자는 관찰자적 시점에 머무르지 않고 인물의 내면까지 함께 묘사하고 있다.",
+              "answer": "O",
+              "explain": "서술자는 개똥·첫째 등 농민들의 불안한 심리와 덕호의 속셈을 모두 직접 서술하여, 단순한 외부 관찰에 그치지 않고 인물의 내면을 깊이 있게 드러낸다."
+            },
+            {
+              "tag": "1-② 원본",
+              "text": "회상 장면에서 서술자를 달리하여 타작날 사건의 추이에 대한 이해를 돕고 있다.",
+              "answer": "X",
+              "explain": "첫째가 풍헌 영감의 일을 회상하는 장면이 있지만, 이를 다루는 과정에서 서술자가 달라지지는 않는다."
+            },
+            {
+              "tag": "1-② 변형",
+              "text": "첫째가 과거(풍헌 영감의 일)를 회상하는 장면이 삽입되어 있지만, 이를 서술자를 달리하여 제시하고 있는 것은 아니다.",
+              "answer": "O",
+              "explain": "풍헌 영감의 입도 차압 사건은 첫째의 회상으로 제시되지만, 동일한 서술자가 일관되게 이야기를 전달할 뿐 서술자가 교체되지는 않는다."
+            },
+            {
+              "tag": "1-③ 원본",
+              "text": "덕호와 농민들의 갈등 상황을 서술하며 객관적인 관점에서 그 원인을 분석하고 있다.",
+              "answer": "X",
+              "explain": "개똥 등 농민과 덕호의 내면을 드러낸 서술이 곳곳에 나타나지만, 이는 인물의 내면을 직접 보여 주는 것일 뿐 객관적 관점에서 갈등의 원인을 분석하는 서술이라고 보기는 어렵다."
+            },
+            {
+              "tag": "1-③ 변형",
+              "text": "덕호와 농민들 사이의 갈등 상황이 서술되어 있지만, 이를 객관적인 관점에서 분석하고 있다고 보기는 어렵다.",
+              "answer": "O",
+              "explain": "서술자는 인물들의 내면(불안, 속셈 등)을 직접 드러낼 뿐, 갈등의 원인을 거리를 두고 객관적으로 분석하는 방식을 취하고 있지는 않다."
+            },
+            {
+              "tag": "1-④ 원본",
+              "text": "인물의 내면을 서술하여 타작날 벌어지는 덕호와 농민 사이의 갈등을 보여 주고 있다.",
+              "answer": "O",
+              "explain": "서술자는 덕호의 눈치를 보는 농민들의 긴장된 심리와, 농민들로부터 이득을 취하려는 덕호의 속내를 함께 서술하여 둘 사이의 갈등을 효과적으로 드러낸다."
+            },
+            {
+              "tag": "1-④ 변형",
+              "text": "서술자는 농민들의 내면뿐 아니라 이득을 취하려는 덕호의 내면도 함께 서술하여 둘 사이의 갈등을 부각하고 있다.",
+              "answer": "O",
+              "explain": "농민들이 덕호의 눈치를 보며 조마조마해하는 심리와, 빚 회계로 이득을 보려는 덕호의 속셈을 모두 서술함으로써 양측의 갈등 구도가 선명하게 드러난다."
+            },
+            {
+              "tag": "1-⑤ 원본",
+              "text": "인물의 행동에 담긴 의도를 설명하여 농민들의 단합이 이루어지는 과정을 부각하고 있다.",
+              "answer": "X",
+              "explain": "덕호의 행동에 담긴 의도와 개똥의 표정에 담긴 심리가 드러나 있기는 하지만, 이러한 서술이 농민들의 단합이 이루어지는 과정을 부각하고 있는 것은 아니다."
+            },
+            {
+              "tag": "1-⑤ 변형",
+              "text": "덕호의 행동에 담긴 의도와 개똥의 심리가 드러나 있지만, 이를 통해 농민들의 단합 과정이 부각되고 있는 것은 아니다.",
+              "answer": "O",
+              "explain": "인물의 의도와 심리에 대한 서술은 갈등 상황을 보여 주는 데 활용될 뿐, 농민들이 서로 단합해 가는 과정을 부각하기 위한 것은 아니다."
+            }
+          ]
+        },
+        {
+          "num": 2,
+          "desc": "㉠~㉤에 대한 설명으로 적절하지 않은 것은? (정답 ⑤)",
+          "items": [
+            {
+              "tag": "2-① 원본",
+              "text": "㉠: 수확한 벼 앞에서 뿌듯함과 기쁨을 느끼는 농민들의 감정이 드러나 있다.",
+              "answer": "O",
+              "explain": "나락 더미를 중심으로 돌아선 농민들이 ‘술에 취한 듯이 흥분’되어 있다는 서술을 통해, 풍성한 수확에 기뻐하고 뿌듯해하는 농민들의 모습이 드러난다."
+            },
+            {
+              "tag": "2-① 변형",
+              "text": "㉠은 수확한 벼 앞에서 뿌듯함과 기쁨을 느끼는 농민들의 감정을 드러낸다.",
+              "answer": "O",
+              "explain": "‘나락더미를 중심으로 돌아선 농민들은 술에 취한 듯이 흥분이 되어 있었다’는 서술은 풍년에 대한 농민들의 기쁨과 뿌듯함을 잘 보여 준다."
+            },
+            {
+              "tag": "2-② 원본",
+              "text": "㉡: 수확량에 대한 기대감과 호기심을 안고 모여드는 농민들의 모습을 묘사하고 있다.",
+              "answer": "O",
+              "explain": "볏섬이 점점 쌓여 가는 것을 보며 총 수확량이 몇 섬이나 될지 궁금해하며 모여드는 농민들의 모습이 ㉡에 드러난다."
+            },
+            {
+              "tag": "2-② 변형",
+              "text": "㉡은 수확량에 대한 기대와 호기심이 아니라 덕호에 대한 두려움 때문에 모여드는 농민들의 모습을 묘사한 것이다.",
+              "answer": "X",
+              "explain": "㉡은 두려움이 아니라 ‘몇 섬이 날까’ 하는 호기심과 기대감으로 동무의 어깨를 누르며 다가드는 농민들의 모습을 묘사한 것이다."
+            },
+            {
+              "tag": "2-③ 원본",
+              "text": "㉢: 덕호가 농민들에게 곡식을 빼돌린다는 의심의 눈초리를 보내곤 했던 것을 드러낸다.",
+              "answer": "O",
+              "explain": "곡식이 잘 나지 않을 때 덕호가 ‘미리 베다가 먹었느니’ 하고 야단을 치곤 했다는 서술은, 농민들이 수확량을 빼돌리지 않았는지 의심하는 덕호의 모습을 보여 준다."
+            },
+            {
+              "tag": "2-③ 변형",
+              "text": "㉢은 덕호가 농민들에게 곡식을 빼돌린다는 의심의 눈초리를 보내곤 했던 것을 드러낸다.",
+              "answer": "O",
+              "explain": "덕호가 ‘밭을 잘 거두지를 못하였느니 미리 베다가 먹었느니’ 하며 야단치곤 했다는 서술에서, 농민들을 의심하는 덕호의 평소 태도를 알 수 있다."
+            },
+            {
+              "tag": "2-④ 원본",
+              "text": "㉣: 누적된 피로에 허탈감이 더해져 의욕을 잃은 농민들의 모습을 묘사하고 있다.",
+              "answer": "O",
+              "explain": "벼의 수확량을 확인한 당일에 절반 가까운 양을 빼앗기게 되어, 깜박 잊었던 피로가 한꺼번에 밀려들며 볏짚단 위에 펄썩 주저앉는 농민들의 허탈감이 ㉣에 드러난다."
+            },
+            {
+              "tag": "2-④ 변형",
+              "text": "㉣은 누적된 피로와 허탈감으로 의욕을 잃은 농민들의 모습을 묘사하고 있다.",
+              "answer": "O",
+              "explain": "하루 종일의 피로가 한꺼번에 밀려드는 가운데 볏짚단 위에 주저앉는 모습은, 수확물을 거의 빼앗긴 데서 오는 허탈감과 의욕 상실을 함께 보여 준다."
+            },
+            {
+              "tag": "2-⑤ 원본",
+              "text": "㉤: 다른 농민의 입장을 배려하여 말하기 망설이는 풍헌 영감의 모습을 드러낸다.",
+              "answer": "X",
+              "explain": "만나는 사람마다 붙잡고 억울함을 호소하던 풍헌 영감의 모습으로 볼 때, 말을 잇지 못한 것은 다른 사람의 입장을 배려해서가 아니라 갑작스러운 입도 차압 통보에 큰 충격을 받았기 때문으로 보는 것이 적절하다."
+            },
+            {
+              "tag": "2-⑤ 변형",
+              "text": "㉤은 갑작스러운 통보에 놀라고 당황한 풍헌 영감이 큰 충격으로 말을 잇지 못하는 모습을 드러낸다.",
+              "answer": "O",
+              "explain": "‘이런 법이 있는가, 벼를 베기도 전에…’라며 말끝을 흐리는 모습은, 다른 사람에 대한 배려가 아니라 예상치 못한 입도 차압에 대한 충격과 황망함을 드러낸 것이다."
+            }
+          ]
+        },
+        {
+          "num": 3,
+          "desc": "‘회계’에 대한 이해로 적절하지 않은 것은? (정답 ①)",
+          "items": [
+            {
+              "tag": "3-① 원본",
+              "text": "개똥이는 타작날 ‘회계’를 하게 될 것이라고 예상하지 못한 것을 후회한다.",
+              "answer": "X",
+              "explain": "‘개똥이는 덕호가 말하기 전부터 빚 말을 내지 않으려나? 하는 불안에 가슴이 조마조마하였다’는 내용을 통해, 개똥이는 회계가 이루어질 가능성을 이미 예상하고 있었음을 알 수 있다. 따라서 예상하지 못한 것을 후회한다는 설명은 적절하지 않다."
+            },
+            {
+              "tag": "3-① 변형",
+              "text": "개똥이는 덕호가 빚 이야기를 꺼내기 전부터 불안해하고 있었다는 점에서, 타작날 회계가 이루어질 가능성을 어느 정도 예상하고 있었다.",
+              "answer": "O",
+              "explain": "덕호가 말을 꺼내기도 전에 개똥이 빚 이야기가 나올까 봐 조마조마해했다는 서술은, 그가 회계가 이루어질 가능성을 이미 예상하고 있었음을 보여 준다."
+            },
+            {
+              "tag": "3-② 원본",
+              "text": "덕호에게 ‘회계’는 꾸어 주었던 빚과 이자, 비룟값 등을 받는 일을 의미한다.",
+              "answer": "O",
+              "explain": "덕호가 ‘회계 끝내고 말지’라고 말하며 빚낸 돈과 이자, 비룟값, 장리쌀까지 셈하여 정리하려는 데서, 그에게 회계가 빚을 받아 내는 일을 의미함을 알 수 있다."
+            },
+            {
+              "tag": "3-② 변형",
+              "text": "덕호가 ‘회계’를 마치자고 말하는 것은 빚과 이자, 비룟값, 장리 빚을 계산하여 정리하자는 의미이다.",
+              "answer": "O",
+              "explain": "덕호는 빚낸 돈 15원에 대한 이자, 비룟값, 장리쌀까지 모두 셈하여 한꺼번에 정리하려 하므로, 회계는 이러한 항목들을 계산하여 받아 내는 일을 가리킨다."
+            },
+            {
+              "tag": "3-③ 원본",
+              "text": "유 서방의 ‘회계’ 과정에서의 역할은 덕호의 지시에 따라 볏섬을 나르는 것이다.",
+              "answer": "O",
+              "explain": "덕호가 ‘저기서 일곱 섬만 가져오게’라고 지시하자 유 서방이 곧바로 볏섬을 져다가 구루마에 싣는 모습에서, 그의 역할이 덕호의 지시에 따라 볏섬을 나르는 것임을 알 수 있다."
+            },
+            {
+              "tag": "3-③ 변형",
+              "text": "유 서방은 회계 과정에서 덕호의 지시 없이 스스로 판단하여 볏섬을 나누어 주는 역할을 한다.",
+              "answer": "X",
+              "explain": "유 서방은 ‘어서 저기서 일곱 섬만 가져오게’라는 덕호의 지시에 따라 즉시 볏섬을 나를 뿐, 스스로 판단하여 볏섬을 나누는 것이 아니다."
+            },
+            {
+              "tag": "3-④ 원본",
+              "text": "덕호는 ‘회계’를 타작날 끝내기 위해 꾸어 주었던 돈을 볏섬으로 환산하여 요구한다.",
+              "answer": "O",
+              "explain": "덕호는 타작을 마친 볏섬이 쌓여 있을 때 회계를 마치는 것이 좋겠다고 생각하고, 빌려준 돈과 이자를 ‘벼 넉 섬’, ‘일곱 섬’ 등으로 환산하여 요구한다."
+            },
+            {
+              "tag": "3-④ 변형",
+              "text": "덕호는 타작을 마친 볏섬이 쌓여 있는 시점을 이용하여 빚을 볏섬으로 환산해 받아 내려 하고 있다.",
+              "answer": "O",
+              "explain": "덕호는 ‘자네 여기서 다 회계 끝내고 말지’라고 말하며, 볏섬이 눈앞에 쌓여 있는 타작날 당일에 빚을 곡식으로 바로 환산해 받아 내려 한다."
+            },
+            {
+              "tag": "3-⑤ 원본",
+              "text": "덕호는 개똥이의 반응을 보며 지금 이자를 쳐서 빚을 받지 못하면 앞으로도 영 받지 못할 수도 있다는 생각을 하고 서둘러 회계를 마치려고 하고 있다.",
+              "answer": "O",
+              "explain": "덕호는 개똥이가 아무 대답이 없자 ‘저놈이 빚을 물지 않으려는 속이구나!’ 하고 생각하며, 이 자리에서 볏섬으로 차지하지 않으면 못 받을 것 같다는 조바심에 회계를 서두른다."
+            },
+            {
+              "tag": "3-⑤ 변형",
+              "text": "덕호는 개똥이의 반응을 보고 지금 받지 못하면 앞으로도 빚을 받지 못할 수 있다고 판단하여 회계를 서둘러 마무리하려 한다.",
+              "answer": "O",
+              "explain": "개똥이의 무반응을 빚을 갚지 않으려는 속셈으로 해석한 덕호는, 이 자리에서 볏섬으로 빚을 받아 내지 않으면 영영 받지 못할 것 같다는 불안에 회계를 재촉한다."
+            }
+          ]
+        },
+        {
+          "num": 4,
+          "desc": "<보기>(지주-소작인 착취 구조 폭로)를 참고하여 윗글을 감상한 것으로 적절하지 않은 것은? (정답 ⑤)",
+          "items": [
+            {
+              "tag": "4-① 원본",
+              "text": "개똥이 농사지은 벼를 빼앗기는 장면과 첫째의 회상 장면을 병치하여 첫째가 개똥이 당하는 일을 통해 농촌의 불합리한 계약 관계를 자각하는 과정을 형상화하고 있군.",
+              "answer": "O",
+              "explain": "개똥이 타작날 볏섬을 빼앗기는 장면을 보며 첫째가 풍헌 영감의 입도 차압을 떠올리는 회상 장면을 나란히 제시한 것은, 불공정한 지주-소작인 관계의 부조리함을 깨달아 가는 첫째의 모습을 형상화한 것으로 볼 수 있다."
+            },
+            {
+              "tag": "4-① 변형",
+              "text": "개똥이 벼를 빼앗기는 장면과 첫째의 회상 장면을 병치한 것은, 첫째가 농촌의 불합리한 계약 관계를 자각해 가는 과정을 형상화한 것으로 볼 수 있다.",
+              "answer": "O",
+              "explain": "개똥의 일을 계기로 첫째가 풍헌 영감의 과거 사건을 떠올리는 구성은, 개별적 사건들을 연결 지으며 구조적 부조리를 깨달아 가는 첫째의 인식 변화를 보여 준다."
+            },
+            {
+              "tag": "4-② 원본",
+              "text": "덕호가 빚 탕감을 곧바로 하지 못해 ‘좀 참아 달라구’ 사정한 풍헌의 요구를 들어주지 않고 입도 차압을 일방적으로 통보했던 일은 덕호의 몰인정한 모습을 드러내는군.",
+              "answer": "O",
+              "explain": "이미 살림이 넉넉한 지주인 덕호가 생활고에 시달리는 풍헌 영감의 사정을 들어주지 않고 입도 차압을 일방적으로 단행한 것은 그의 몰인정한 면모를 분명히 보여 준다."
+            },
+            {
+              "tag": "4-② 변형",
+              "text": "덕호가 풍헌의 빚 탕감 요청을 들어주지 않고 입도 차압을 통보했던 일은 그의 몰인정한 면모를 드러낸다.",
+              "answer": "O",
+              "explain": "풍헌이 ‘좀 참아 달라구’ 부탁했음에도 덕호가 이를 무시하고 벼를 베기도 전에 차압했다는 사실은, 가난한 소작인에 대한 덕호의 냉정함을 잘 보여 준다."
+            },
+            {
+              "tag": "4-③ 원본",
+              "text": "덕호가 개똥 어머니에게는 농민들을 ‘친자식들과 같이 사랑한’다고 말하면서도 타작을 서둘러 마무리하기 위해 석방을 요구하려는 속셈임을 서술한 것은 지주의 선량해 보이는 언행이 위장된 것임을 드러내는군.",
+              "answer": "O",
+              "explain": "덕호가 농민들을 ‘친자식들과 같이 사랑한다’는 선량한 말을 하면서도 실제로는 타작을 서둘러 마무리하려는 잇속을 차리는 속내를 드러낸 서술은, 마을의 선량한 어른으로 포장된 지주의 이중성을 폭로하는 장치이다."
+            },
+            {
+              "tag": "4-③ 변형",
+              "text": "덕호가 농민들을 ‘친자식들과 같이 사랑한다’고 말하면서도 실제로는 타작을 서둘러 마무리하려는 잇속을 챙기는 모습은 지주의 위선을 폭로하는 장치이다.",
+              "answer": "O",
+              "explain": "덕호의 인자한 듯한 말과, 눈 오기 전에 타작을 끝내고 곡가가 오르기 전에 빚을 청산하려는 실제 속셈 사이의 괴리는 그의 위선적인 면모를 효과적으로 드러낸다."
+            },
+            {
+              "tag": "4-④ 원본",
+              "text": "주재소에 가서 선처를 부탁하겠다는 덕호의 말에 고마워하고 개똥이들을 ‘죽일 놈들’이라고 칭하는 개똥 어머니의 모습은 경제적 약자로서 지주와의 상하 관계에서 벗어나기 어려운 농민들의 상황을 보여 주는군.",
+              "answer": "O",
+              "explain": "개똥 어머니가 덕호 앞에서 오히려 그의 어려움을 헤아리는 듯한 태도를 보이며 아들을 ‘죽일 놈들’이라 칭하는 것은, 지주에게 선처를 구할 수밖에 없는 농민의 절박하고 불평등한 처지를 잘 드러낸다."
+            },
+            {
+              "tag": "4-④ 변형",
+              "text": "개똥 어머니가 아들을 ‘죽일 놈들’이라 칭하는 것은 지주 앞에서 약자일 수밖에 없는 농민의 절박한 처지를 드러낸다.",
+              "answer": "O",
+              "explain": "덕호에게 선처를 구해야 하는 입장에서 오히려 자기 자식을 탓하는 개똥 어머니의 태도는, 지주-소작인 관계에서 농민이 결코 대등할 수 없는 절대적 약자임을 보여 준다."
+            },
+            {
+              "tag": "4-⑤ 원본",
+              "text": "덕호가 개똥이와 농민들을 두고 ‘더 고생시켜 세상의 법’을 가르쳐 주고 싶다고 생각하면서도 석방을 요구하겠다고 결심하는 대목은 지주가 계약 관계를 통해 농민의 토지 소유를 가로막고 있음을 폭로하기 위한 것이군.",
+              "answer": "X",
+              "explain": "덕호가 농민들을 석방하기로 결심하는 것은 어서 마당질을 끝내고 곡가가 오르기 전에 빚을 청산하려는 그 자신의 잇속과 관련된 판단이다. 이는 덕호의 이기적이고 위선적인 면모를 드러낼 뿐, 지주가 계약 관계를 통해 농민의 ‘토지 소유’ 자체를 가로막고 있음을 보여 주는 장면은 아니다."
+            },
+            {
+              "tag": "4-⑤ 변형",
+              "text": "덕호가 ‘더 고생시켜 세상의 법’을 가르치고 싶어 하면서도 석방을 요구하기로 결심하는 것은, 타작을 서둘러 끝내려는 덕호 자신의 이해관계에 따른 판단일 뿐이다.",
+              "answer": "O",
+              "explain": "덕호의 속내는 곡가가 오르기 전에 빚을 청산하고 눈 오기 전에 마당질을 끝내려는 자신의 경제적 이익에 따른 것으로, 농민에 대한 동정이나 토지 소유권 문제와는 거리가 멀다."
+            }
+          ]
+        }
+      ],
+      "passages": [
+        {
+          "label": "인간 문제 — 강경애",
+          "text": "  해가 지고 아득아득해서야 개똥네 마당질은 끝이 났다. 어둠 속으로 뿌옇게 솟아오른 나락 더미! ㉠나락더미를 중심으로 돌아선 농민들은 술에 취한 듯이 흥분이 되어 있었다.\n  유 서방과 덕호가 나왔다. 유 서방은 들어가서 등불을 켜 가지고 나왔다. 땃버리는 대두를 들고 나락 더미 앞으로 가서 나락을 손으로 헤쳐 가면서 말을 되었다. / \"한 말이요는 가서요우.\"\n  땃버리는 그 둥글둥글한 음성을 길게 빼어 가지고 소리 곡조로 마디마디를 꺾어 돌렸다. 뒤미처 쏴르륵 하고 섬 속으로 흘러 들어가는 벼알 소리! 그들의 가슴은 어떤 충동으로 스르르 뜨거워지는 것을 깨달았다. 그리고 무의식 간에 그들은 눈을 썩, 썩 비비치고 ㉡동무의 어깨를 누르며 바짝바짝 다가들었다. 그때마다 옆의 동무는, / \"이 사람아, 넘어지겠구먼!\"\n  허허 웃으며, 그들은 이런 말을 주고받았다. 한 섬, 두 섬, 석 섬, 볏섬은 차례로 묶여 놓인다. 그들은 제각기 몇 섬이 날까? 하는 호기심에 묶어 놓은 볏섬과 나락 더미를 번갈아 비교해 보았다.\n  땃버리가 마지막 말수를 되어 볏섬에 부으며, / \"열닷 섬 닷 말이요는 가서요우.\"\n  수심가라도 한 곡조 부르려는 듯이 그렇게 흥이 나서 음성을 내뽑았다.\n  \"열닷 섬 닷 말! 잘은 났다!\"\n  가슴을 졸이고 섰던 그들은 똑같이 이렇게 중얼거렸다. 땃버리는 톡톡 털고 일어났다. 그리고 개똥의 어깨를 탁 쳤다.\n  \"이 사람아 한턱내야 되리. 올 농사는 자네네만큼 된 사람이 없으리!\" / \"암, 허허.\"\n  개똥이는 이렇게 대답하며 흘금 덕호를 쳐다보았다. 덕호의 얼굴은 잘 보이지 않으나 그가 가만히 섰는 것을 보아 만족해하는 것을 알 수가 있었다. 곡식이 잘 나지 못한 때면 덕호는 잔걱정을 하며 가만히 서 있지를 못하고 왔다 갔다 하면서 밭을 잘 거두지를 못하였느니 ㉢미리 베다가 먹었느니 하고 야단을 치곤 하였던 것이다.\n  유 서방은 구루마를 갖다 대고 볏섬을 쾅쾅 실었다. 그들도 볏섬을 받들어 올려놓으며,\n  \"무겁다! 참 벼 한 섬이 이다지도 무거운가!\"\n  덕호가 들으라고 일부러 이렇게 말하였다. 덕호는 어둠 속으로 궐련만 뻑뻑 빨면서 섰더니,\n  \"개똥이! 자네 여기서 다 회계 끝내고 말지! 후일에 다시 쓰더라도…… 응? 자네 빚내 온 돈이 얼마인지?\"\n  개똥의 말을 들어 보려고 덕호는 이렇게 물었다. 개똥이는 덕호가 말하기 전부터 빚 말을 내지 않으려나? 하는 불안에 가슴이 조마조마하였다가 마침 이 말을 듣고 보니 전신의 맥이 탁 풀렸다. 아무 대답이 없는 개똥이를 안타까운 듯이 바라보던 덕호는 저놈이 빚을 물지 않으려는 속이구나! 하고 어떻게 하든지 이 자리에서 볏섬으로 차지하지 않으면 못 받을 것 같았다.\n  \"자네 15원 내 온 것이 간 정월달이 아닌가. 그러니 이달까지 꼭 열 달일세. 그래 이자까지 하면 20원이 넘네그리. 우선 벼 넉 섬은 날 줘야 하네. 그래도 내가 삼사 원은 못 받는 속일세. 그러구 비룟값과 장리쌀은 으레이 여기서 회계할 것이지…….\"\n  유 서방을 돌아보았다.\n  \"어서 저기서 일곱 섬만 가져오게. 그래도 나는 10여 원을 받지 못하는 셈일세. 그러나 할 수 있는가. 자네들도 농사를 해 먹고 살아가야겠으니 우리에게로 오는 반 섬과 자네게로 가는 반 섬 합해서 한 섬은 내가 주는 것이니 그리 알게. 그것은 이번 농사를 잘 지었다는 것 때문이어. 허허.\"\n  유 서방은 말 떨어지기가 무섭게 볏섬을 낑 하고 져다가 구루마에 실어 놓는다. 그들은 이제까지 깜박 잊었던 하루 종일의 피로가 조수와 같이 밀려드는 것을 깨달았다. ㉣그들은 볏짚단 위에 펄썩펄썩 주저앉았다. 그때 첫째의 머리에는 풍헌 영감의 모양이 휙 떠오른다.\n  입도 차압(立稻差押)을 당하고 정신없이 아래윗동네를 미친 듯이 달아다니며 만나는 사람마다 붙잡고,\n  \"여보게 이런 법이 있는가, 벼를 베기도 전에…….\"\n  ㉤그다음 말은 막히어 하지 못하였다. 첫째는 무슨 말인가 하여 풍헌의 뒤를 따라 논까지 가 보았다. 논귀에 세운 조그만 나무판자에는 무슨 글인지 써 있었다.\n  풍헌은 그 나무쪽을 가리키며,\n  \"글쎄 집달리라던가? 하는 양복쟁이가 이것을 꽂아 놓으면서, 벼를 베지 못한다구 허두먼…….\"\n  풍헌은 이렇게 말하며 누릇누릇한 벼 이삭을 바라본다. 첫째는 다가서며,\n  \"누구의 빚을 얼마나 졌습니까?\"\n  \"아 덕호의 빚이지. 그것 좀 참아 달라구 하는데, 이렇게까지 할 게야 뭐 있겠나! 전날 편지 배달부가 이런 것을 갖다가 주고 가두먼. 그래 나는 그게 무엇인가? 하고 두었더니, 글쎄 글쎄 이런 일이 날 줄이야 누가 꿈밖에나 생각하였겠나.\"\n  풍헌은 거지 안에서 다 해진 편지봉투를 꺼내어 보인다. 첫째 역시 그것을 한 자 알아볼 리가 없었다. 그래서 편지봉투만 이리저리 만지다가 풍헌을 주었다.\n\n[중략 부분 줄거리] 타작마당에서 바로 벼를 빼앗기게 되어 억울했던 개똥이 결국 울분을 참지 못하고 소리를 지르자 첫째와 농민들이 몰려가 유 서방을 넘어뜨리고 실어 놓은 볏섬을 끌어내리지만, 곧 순사들이 들이닥쳐 그들을 주재소로 끌고 간다. 개똥 어머니는 선처를 부탁하고자 덕호를 찾아간다.\n\n  개똥 어머니는 들어가서 머리를 숙이며,\n  \"그저 한때 살려 줍시유, 네? 한때만 사정 봐줍슈.\"\n  덕호는 기침을 하며 일어나서 자리로 몸을 가리고 앉았다.\n  \"글쎄 그놈들의 행세를 보아서는 분 나는 대로 용서 없이 고생을 시키겠지만 그러나 소위 면의 어룬이라는 나로서 더구나 저런 늙은이들이 불쌍해서 그럴 수야 있는가.\"\n  개똥 어머니는 너무 감격하여 소리쳐 울고 싶었다. 그리고 저런 후한 어른의 뜻을 몰라주는 개똥이와 그의 동무들이 끝없이 원망스러웠다. / \"그저 살려 줍슈. 저를 봐서…….\"\n  \"응. 그런데 마침 오늘이 공일이니까 면에 출근도 안 하니 내 직접 주재소에 가 보리…… 저희 놈들이 암만 그래도 몇십 년을 내 덕에 산 것이 아니겠나. 배은망덕이란 말이 이런 것을 두고 이름일세그려. 허 거정 나두 손두 없는 사람이라 저희들을 내 친자식들과 같이 사랑한단 말이어. 어제만 하더라도 내가 생각해서 벼 한 섬을 거저 주지 않았나. 그런데 그놈이 그 은공을 몰라본단 말이어. 하필 올뿐인가, 작년 재작년에도 그래 왔지.\"\n  \"그까짓 죽일 놈들을 생각하실 게 있습니까. 그저 후하신 맘으로 이 늙은것을 한때 보아주서야지우.\"\n  \"응. 그럼 돌아가게. 내 이따가 가 보리.\"\n  개똥 어머니는 코가 땅에 닿도록 절을 하고 밖으로 나왔다. 덕호는 도로 자리에 누우며 이놈들을 더 고생시켜 세상의 법이 어떻다는 것을 알리어 정신을 들려주렸더니 날은 점점 추워 오고 어서 눈 오기 전에 마당질은 끝내야겠으니 부득이 놓아주랄 수밖에 별수가 있나! 하고 생각하였다. 더구나 이 가을부터 미곡 통제안(米穀統制案)이 실시된다는 말이 있으니 그렇게 되면 곡가도 오를 것이다. 어서 바삐 그놈들의 빚도 현 곡가로 청산하여야겠다는 생각이 들자, 곧 그는 자리에서 일어났다.\n- 강경애, 「인간 문제」\n*입도 차압: 추수하기 전부터 벼를 압류함. *집달리: 집행관."
+        }
+      ]
+    },
+    {
+      "id": "set5",
+      "title": "세상에서 제일 무거운 틀니",
+      "source": "박완서, 「세상에서 제일 무거운 틀니」",
+      "questions": [
+        {
+          "num": 1,
+          "desc": "[A]와 [B]에 대한 설명으로 가장 적절한 것은? (정답 ⑤)",
+          "items": [
+            {
+              "tag": "1-① 원본",
+              "text": "[A]는 상징적 소재를 통해 인물이 겪을 미래의 사건을, [B]는 시·공간적 배경을 통해 인물이 속한 시대적 맥락을 보여 준다.",
+              "answer": "X",
+              "explain": "[A]에서 ‘틀니’를 사회적·이념적 중압감을 함축하는 상징적 소재로 볼 수는 있지만, 이를 통해 미래의 사건을 보여 주고 있지는 않다. [B]에는 시간적 배경이 구체적으로 나타나 있지 않으며, ‘나’의 집이라는 공간적 배경이 인물이 속한 시대적 맥락을 드러낸다고 보기도 어렵다."
+            },
+            {
+              "tag": "1-① 변형",
+              "text": "[A]에서 ‘틀니’는 화자가 느끼는 사회적·이념적 중압감을 함축하는 상징적 소재로 볼 수 있지만, 이를 통해 미래의 사건을 예고하고 있지는 않다.",
+              "answer": "O",
+              "explain": "‘틀니’는 작품 후반부에서 ‘나’가 깨닫듯 분단 현실이 주는 중압감을 함축하는 상징적 소재이지만, [A] 자체가 미래에 벌어질 구체적 사건을 암시하는 기능을 하는 것은 아니다."
+            },
+            {
+              "tag": "1-② 원본",
+              "text": "[A]는 공간의 이동을 통해 작중 분위기가 전환되는 상황을, [B]는 시간의 경과를 통해 인물의 성격이 변화하는 과정을 보여 준다.",
+              "answer": "X",
+              "explain": "[A]에는 ‘차중’, ‘길’에서 ‘내 집 문 앞’으로의 공간 이동이 나타나지만 이를 통해 작중 분위기가 전환된다고 보기 어렵고, [B]에는 소리가 연이어 들려오는 시간의 경과가 나타나지만 이를 통해 인물의 성격이 변화하는 과정이 드러나지는 않는다."
+            },
+            {
+              "tag": "1-② 변형",
+              "text": "[B]에는 대문 두드리는 소리와 어머니·남자의 대화 소리가 시간의 경과에 따라 이어지지만, 이를 통해 인물의 성격이 변화하는 과정이 드러나는 것은 아니다.",
+              "answer": "O",
+              "explain": "[B]는 대문 소리, 두 사람의 대화 소리, ‘나’가 일어나는 행동이 시간의 흐름에 따라 제시되는 장면이지만, 이는 ‘나’의 심리적 불안이 고조되는 과정을 보여 줄 뿐 인물의 성격 변화와는 관련이 없다."
+            },
+            {
+              "tag": "1-③ 원본",
+              "text": "[A]는 인물의 내면을 묘사하여 인물 간 갈등의 원인을, [B]는 인물의 행적을 요약적으로 서술하여 인물 간 갈등의 양상을 보여 준다.",
+              "answer": "X",
+              "explain": "[A]에는 틀니로 인한 통증을 느끼는 ‘나’의 내면 묘사가 나타나 있지만 이를 통해 인물 간 갈등의 원인이 드러나는 것은 아니며, [B]에는 인물의 행적을 요약적으로 서술한 내용이 나타나 있지 않다."
+            },
+            {
+              "tag": "1-③ 변형",
+              "text": "[A]에는 틀니로 인한 통증을 느끼는 ‘나’의 내면 묘사가 나타나 있지만, 이를 통해 인물 간 갈등의 원인이 드러나는 것은 아니다.",
+              "answer": "O",
+              "explain": "[A]는 ‘나’ 개인이 겪는 신체적 고통에 대한 내면 묘사일 뿐, 다른 인물과의 갈등 상황이나 그 원인을 보여 주는 장면은 아니다."
+            },
+            {
+              "tag": "1-④ 원본",
+              "text": "[A]는 과거형의 진술을 통해 자신의 행위에 대한 인물의 반성을, [B]는 현재형의 진술을 통해 외부 상황에 대한 인물의 추리를 보여 준다.",
+              "answer": "X",
+              "explain": "[A]에는 과거형의 진술이 나타나 있지만 이를 통해 자신의 행위에 대한 반성이 드러나지는 않는다. [B]에는 현재형의 진술이 나타나며, 이를 통해 외부 상황(대문을 찾아온 인물)에 대한 ‘나’의 추리가 드러난다는 후반부 설명은 적절하다."
+            },
+            {
+              "tag": "1-④ 변형",
+              "text": "[A]에는 과거형의 진술이 나타나 있지만, 이를 통해 자신의 행위에 대한 인물의 반성이 드러나는 것은 아니다.",
+              "answer": "O",
+              "explain": "[A]의 과거형 진술(틀니를 빼냈던 상황 등)은 단순히 사건의 전개를 보여 줄 뿐, 자신의 과거 행위를 반성하는 내용을 담고 있지는 않다."
+            },
+            {
+              "tag": "1-⑤ 원본",
+              "text": "[A]는 촉각적 묘사를 통해 인물의 신체적 고통이 심화되는 상황을, [B]는 청각적 묘사를 통해 인물의 심리적 불안이 고조되는 상황을 보여 준다.",
+              "answer": "O",
+              "explain": "[A]는 ‘턱뼈가 부서질 듯한 동통’과 같은 촉각적 묘사를 통해 틀니로 인한 신체적 고통이 점차 심해지는 상황을 보여 주고, [B]는 대문 두드리는 소리와 낮은 대화 소리 등 청각적 묘사를 통해 월북한 오빠가 찾아왔을지도 모른다는 ‘나’의 심리적 불안이 고조되는 상황을 보여 준다."
+            },
+            {
+              "tag": "1-⑤ 변형",
+              "text": "[B]는 청각적 묘사를 통해 인물의 심리적 불안이 점차 고조되는 상황을 보여 준다.",
+              "answer": "O",
+              "explain": "대문을 ‘조심스럽게’ 두들기는 소리, 낮게 이어지는 대화 소리 등 청각적 정보가 누적되면서 ‘나’의 불안과 긴장이 점점 고조되는 양상이 효과적으로 드러난다."
+            }
+          ]
+        },
+        {
+          "num": 2,
+          "desc": "윗글의 내용에 대한 이해로 적절하지 않은 것은? (정답 ①)",
+          "items": [
+            {
+              "tag": "2-① 원본",
+              "text": "‘나’는 틀니를 무거운 것으로 맞춘 탓에 그에 따른 신체 반응으로 통증을 겪는다.",
+              "answer": "X",
+              "explain": "‘나’는 일류 치과에서 고가로 틀니를 맞추었으며 틀니는 ‘내 손바닥에서 거의 무게를 지니지 않은’ 것으로 묘사된다. 또한 ‘나’는 자신의 아픔이 ‘틀니에서 기인한 아픔이 아니었던 것’임을 깨닫는다. 따라서 틀니를 무겁게 맞춘 탓에 통증을 겪는다는 설명은 사실과 다르다."
+            },
+            {
+              "tag": "2-① 변형",
+              "text": "‘나’의 턱뼈 통증은 실제로는 틀니 자체의 물리적 무게 때문이 아니라 다른 원인에서 비롯된 것임을 글의 후반부에서 깨닫게 된다.",
+              "answer": "O",
+              "explain": "‘나’는 자신의 아픔이 ‘틀니에서 기인한 아픔이 아니었던 것’임을, 즉 설희 엄마에 대한 선망과 질투, 그리고 분단 현실이 주는 중압감에서 비롯된 것임을 글의 마지막 부분에서 깨닫는다."
+            },
+            {
+              "tag": "2-② 원본",
+              "text": "‘나’는 오빠가 간첩이 된 경우 집에 돌아오지 못하게 되는 편이 낫다고 생각한다.",
+              "answer": "O",
+              "explain": "‘나’는 ‘간첩이 된 혈연과는 상봉이 몰고 올 사건과의 당면이 두려운 나머지’ 오빠가 ‘넘어오다 차라리 사살되었으면’ 하는 생각을 하게 된다."
+            },
+            {
+              "tag": "2-② 변형",
+              "text": "‘나’는 ‘간첩이 된 혈연과는 상봉이 몰고 올 사건과의 당면이 두려운 나머지’ 오빠가 차라리 사살되었으면 하는 생각까지 하게 된다.",
+              "answer": "O",
+              "explain": "본문의 ‘넘어오다 차라리 사살되었으면 하고’라는 서술은, 상봉이 가져올 위험이 두려운 나머지 ‘나’가 극단적인 생각까지 하게 되었음을 보여 준다."
+            },
+            {
+              "tag": "2-③ 원본",
+              "text": "‘나’는 오빠가 집을 찾아와 어머니에게 월북을 종용하고 있을지 모른다고 추측한다.",
+              "answer": "O",
+              "explain": "‘나’는 대문 밖에서 들려오는 소리를 듣고 ‘그 남자는 어머니에게 도리어 월북을 권하고 아니 협박하고 있는지도 모른다’고 추측한다."
+            },
+            {
+              "tag": "2-③ 변형",
+              "text": "‘나’는 대문을 두들긴 사람이 실은 월부 책 장수임을 처음부터 알고 있었으면서도, 오빠일지 모른다는 생각에 불안해한 것이다.",
+              "answer": "X",
+              "explain": "‘나’는 대문 소리를 듣고 곧바로 오빠가 찾아온 것이라 추측하며 극도로 불안해할 뿐, 방문자가 월부 책 장수라는 사실은 어머니가 돌아와 설명해 줄 때에야 비로소 알게 된다."
+            },
+            {
+              "tag": "2-④ 원본",
+              "text": "‘나’는 딸을 데리고 미국으로 떠난 설희 엄마를 향해 질투의 감정을 지니고 있었음을 고백한다.",
+              "answer": "O",
+              "explain": "설희 엄마는 ‘딸과 함께 미국으로 떠’났으며, ‘나’는 그녀가 ‘이 나라와 이 나라의 풍토가 주는 온갖 제약으로부터 자유로워진’ 것에 대해 ‘선망과 질투’의 감정을 지니게 되었음을 고백한다."
+            },
+            {
+              "tag": "2-④ 변형",
+              "text": "‘나’는 딸을 데리고 미국으로 떠난 설희 엄마를 향해 선망과 질투의 감정을 느꼈음을 스스로 고백한다.",
+              "answer": "O",
+              "explain": "‘나는 설희 엄마가 부러워서 ~ 선망과 질투로 그렇게도 몹시 아팠던 것이다’라는 서술에서, ‘나’가 자신의 감정을 직접 고백하고 있음을 확인할 수 있다."
+            },
+            {
+              "tag": "2-⑤ 원본",
+              "text": "‘나’는 오빠의 친지를 찾아 단속하는 자로부터, 6·25 때 헤어져 이북에 있을 오빠의 소식을 듣는다.",
+              "answer": "O",
+              "explain": "‘나’는 외당숙 행세를 한 ‘그’로부터 오빠가 ‘이북에서 밀봉교육을 받고 곧 남파되리라는’ 소식을 듣고 단속을 받으며, 남편과 어머니, 외가, 대소가도 모두 같은 일을 겪는다."
+            },
+            {
+              "tag": "2-⑤ 변형",
+              "text": "‘나’는 외당숙이라는 인물로부터 오빠가 남파될 것이라는 정보와 함께 자수를 종용받는다.",
+              "answer": "O",
+              "explain": "‘그’는 ‘나’에게 오빠가 남파되리라는 정보를 전하며 오빠가 집에 들를 경우 신고나 자수를 시킬 것을 사실상 강요하고, ‘나’는 이에 위축되어 그렇게 하겠다고 답한다."
+            }
+          ]
+        },
+        {
+          "num": 3,
+          "desc": "㉠~㉤에 대한 이해로 적절하지 않은 것은? (정답 ⑤)",
+          "items": [
+            {
+              "tag": "3-① 원본",
+              "text": "㉠: 위세에 눌려 상대방이 원하는 바를 이행하겠다는 의사를 드러내고 있다.",
+              "answer": "O",
+              "explain": "오빠가 들를 경우 어떻게 할 것인지 묻는 ‘그’ 앞에서 무력함을 느낀 ‘나’는 ‘신고를 하거나 자수를 시’키겠다고 대답하는데, 이는 ‘그’의 위세에 눌려 그가 원하는 답을 내놓는 것이다."
+            },
+            {
+              "tag": "3-① 변형",
+              "text": "㉠은 ‘그’의 위세에 눌린 ‘나’가 ‘그’가 원하는 바를 이행하겠다는 의사를 드러낸 말이다.",
+              "answer": "O",
+              "explain": "‘나는 그 앞에 그렇게 무력했고 그는 그렇게 전능했다’는 서술에서 드러나듯, ㉠은 ‘그’의 권위에 눌린 ‘나’가 마지못해 협조 의사를 밝히는 말이다."
+            },
+            {
+              "tag": "3-② 원본",
+              "text": "㉡: 상대방이 말한 내용을 긍정적으로 평가하면서 말한 내용에 대한 책임을 환기하고 있다.",
+              "answer": "O",
+              "explain": "자수를 시키겠다는 ‘나’의 말에 ‘그’는 ‘잘 생각하셨습니다’라며 긍정적으로 평가하는 동시에 ‘아주머니만 믿겠습니다’라고 말함으로써 그 약속에 대한 책임을 환기한다."
+            },
+            {
+              "tag": "3-② 변형",
+              "text": "㉡은 ‘나’가 말한 내용을 긍정적으로 평가하면서도, 그 내용에 대한 책임을 환기하는 ‘그’의 말이다.",
+              "answer": "O",
+              "explain": "‘잘 생각하셨습니다’라는 긍정적 평가와 ‘아주머니만 믿겠습니다’라는 책임 환기가 함께 나타나, ㉡은 ‘나’를 압박하는 효과를 지닌다."
+            },
+            {
+              "tag": "3-③ 원본",
+              "text": "㉢: 앞으로 벌어질지도 모르는 상황에 대해 언급하면서 염려를 드러내고 있다.",
+              "answer": "O",
+              "explain": "㉢에서 ‘어머니’는 오빠가 자수를 권해도 ‘이 에미 말을’ 듣지 않을 것이라며, 앞으로 벌어질 수 있는 상황에 대한 염려를 드러내고 있다."
+            },
+            {
+              "tag": "3-③ 변형",
+              "text": "㉢은 ‘어머니’가 앞으로 벌어질 수도 있는 상황을 언급하며 염려를 드러내는 말이다.",
+              "answer": "O",
+              "explain": "‘말이 자수지, 그놈이 벌써 마흔인데 ~ 계집 자식 생각이 앞설 테지’라는 ㉢의 내용은, 오빠가 자수에 응하지 않을 가능성에 대한 어머니의 염려를 보여 준다."
+            },
+            {
+              "tag": "3-④ 원본",
+              "text": "㉣: 자신이 놓인 상황을 타인이 처한 상황과 비교하면서 현재의 심리 상태를 드러내고 있다.",
+              "answer": "O",
+              "explain": "㉣은 틀니를 뺀 직후 느끼는 ‘나’의 편안감을, ‘말도 많고 탈도 많은’ 어려움에서 벗어난 설희 엄마의 상황과 비교하며 자신의 편안함이 더 크다고 여기는 심리를 드러낸다."
+            },
+            {
+              "tag": "3-④ 변형",
+              "text": "㉣은 ‘나’가 자신이 처한 상황을 설희 엄마의 상황과 비교하며 현재의 심리 상태를 드러내는 말이다.",
+              "answer": "O",
+              "explain": "‘제아무리 공중에 떠 있기로서니 ~ 지금의 나만큼이야 가볍고 편할쏘냐’라는 ㉣의 진술은, 두 처지를 견주며 현재 자신의 편안감을 과시하는 심리를 드러낸다."
+            },
+            {
+              "tag": "3-⑤ 원본",
+              "text": "㉤: 상대방의 정체를 오해했음을 밝히면서 그 처지에 대한 안타까운 심정을 드러내고 있다.",
+              "answer": "X",
+              "explain": "㉤은 대문을 두들기던 사람이 월부 책을 사라고 졸랐다는 사실을 전하며 그 처지에 대한 생각을 짤막하게 덧붙이는 ‘어머니’의 말일 뿐이다. 정체를 오해했던 쪽은 ‘어머니’가 아니라 ‘나’(오빠일지 모른다고 추측한 인물)이므로, ㉤을 ‘어머니’ 자신의 오해를 정정하는 말로 보는 것은 적절하지 않다."
+            },
+            {
+              "tag": "3-⑤ 변형",
+              "text": "㉤은 대문을 두들기던 사내가 월부 책 장수였다는 사실을 전하며 그의 처지에 대한 생각을 짧게 덧붙이는 ‘어머니’의 말이다.",
+              "answer": "O",
+              "explain": "㉤은 ‘어머니’가 실제로 누구를 만났는지(월부 책 장수)와 그에 대한 인상(‘청산유수’, ‘신수도 희멀겋던데’)을 전하는 말로, 정체를 오해했던 ‘나’의 불안을 해소해 주는 역할을 한다."
+            }
+          ]
+        },
+        {
+          "num": 4,
+          "desc": "<보기>(1970년대 분단 현실과 연좌제)를 참고하여 윗글을 감상한 내용으로 적절하지 않은 것은? (정답 ④)",
+          "items": [
+            {
+              "tag": "4-① 원본",
+              "text": "‘그가 설사 내 딸 연이가 현이라고 했다면 아마 내 딸은 현이였음에 틀림없을 것’이라는 서술에서, 냉전적 사회 구조 속에서 이루어지는 권력 기관의 감시가 ‘나’의 의식을 위축시키고 있음을 확인할 수 있다.",
+              "answer": "O",
+              "explain": "오빠에 대한 첩보를 바탕으로 가족과 지인들을 단속하는 ‘그’는 권력 기관의 감시를 수행하는 인물이며, 이 서술은 그러한 감시가 딸의 이름에 대한 판단에까지 영향을 줄 만큼 ‘나’의 의식을 깊이 위축시키고 있음을 보여 준다."
+            },
+            {
+              "tag": "4-① 변형",
+              "text": "‘그가 설사 내 딸 연이가 현이라고 했다면 아마 내 딸은 현이였음에 틀림없을 것’이라는 서술은 권력 기관의 감시가 ‘나’의 일상적 판단에까지 영향을 미칠 만큼 그녀의 의식을 위축시키고 있음을 보여 준다.",
+              "answer": "O",
+              "explain": "이 서술은 ‘그’의 권위 앞에서 ‘나’가 사실 관계조차 스스로 판단하지 못할 만큼 위축되어 있는 상태를 단적으로 보여 준다."
+            },
+            {
+              "tag": "4-② 원본",
+              "text": "‘남편과 어머니’, ‘외가’와 ‘오빠가 알 만한 대소가가 다 한 번씩 그런 일을 당한’ 일에서, 월북한 식구를 두었다는 이유로 가족뿐 아니라 지인들까지 감시를 당하던 당대의 상황이 드러나는군.",
+              "answer": "O",
+              "explain": "월북한 식구를 둔 가족들에게 연좌제가 적용될 수 있었던 당대 현실에서, ‘남편과 어머니’, ‘외가’, ‘오빠가 알 만한 대소가’까지 모두 단속을 당했다는 서술은 그 감시의 범위가 넓었음을 보여 준다."
+            },
+            {
+              "tag": "4-② 변형",
+              "text": "‘오빠가 알 만한 대소가가 다 한 번씩 그런 일을 당한’ 것은 월북한 식구를 둔 사람의 가족뿐 아니라 지인들까지 감시 대상이 되었던 당대의 상황을 보여 준다.",
+              "answer": "O",
+              "explain": "직계 가족을 넘어 ‘오빠가 알 만한’ 먼 친지들까지 단속의 대상이 되었다는 점에서, 연좌제적 감시가 매우 광범위하게 작동했음을 알 수 있다."
+            },
+            {
+              "tag": "4-③ 원본",
+              "text": "‘십팔 평 블록 집 속의 안일’은, ‘나’가 전쟁 이후 어머니와 함께 살아가면서 지키려 하는 일상적인 행복을 나타내는군.",
+              "answer": "O",
+              "explain": "산업화가 진행되던 1970년대 사회에서 일상적 행복을 추구하며 살아가던 ‘나’에게 ‘십팔 평 블록 집 속의 안일’은 어머니와 함께 지키고자 하는 소박한 일상의 행복을 의미한다."
+            },
+            {
+              "tag": "4-③ 변형",
+              "text": "‘십팔 평 블록 집 속의 안일’은 ‘나’가 지키고자 했던 일상적 행복을 상징하는 표현이다.",
+              "answer": "O",
+              "explain": "이 표현은 ‘나’와 어머니가 오빠와의 상봉이 가져올 위험으로부터 지키고자 하는 소박하지만 소중한 일상적 행복을 함축한다."
+            },
+            {
+              "tag": "4-④ 원본",
+              "text": "‘가볍다 못해 공중으로 둥실 뜨는 듯’한 기분은, ‘나’가 분단으로 인한 사회적 제약에서 벗어난다면 느낄 해방감을 보여 주는군.",
+              "answer": "X",
+              "explain": "이 기분은 틀니를 잠시 빼낸 데서 오는 일시적인 편안함일 뿐이다. ‘나’의 불안(사회적 제약에서 비롯된 것)은 이내 다시 찾아오므로, 이 기분이 실제로 사회적 제약에서 ‘벗어난다면’ 느낄 해방감을 보여 준다고 단정할 수는 없다."
+            },
+            {
+              "tag": "4-④ 변형",
+              "text": "틀니를 뺀 직후 ‘나’가 느끼는 ‘가볍다 못해 공중으로 둥실 뜨는 듯’한 기분은 일시적인 것일 뿐, ‘나’가 처한 사회적 제약 자체가 해소되었음을 의미하지는 않는다.",
+              "answer": "O",
+              "explain": "이 편안함은 곧이어 대문 두드리는 소리에 다시 극심한 불안과 중압감으로 바뀌므로, 일시적인 신체적 해방감일 뿐 사회적 제약에서 실제로 벗어난 것은 아니다."
+            },
+            {
+              "tag": "4-⑤ 원본",
+              "text": "‘여태껏 얼마나 교묘하게 스스로를 이중 삼중으로 기만하고 있었나를’ 깨달았다는 서술에서, ‘나’가 아픔의 원인을 직시하면서, 애써 외면한 채 살아왔던 이념의 중압감을 깨닫게 되는 상황이 드러나는군.",
+              "answer": "O",
+              "explain": "이 서술은 ‘나’가 자신의 통증을 틀니 탓으로 돌려 온 것이 실은 분단 현실이 주는 이념적 중압감을 외면하기 위한 자기기만이었음을 깨닫는 순간을 보여 준다."
+            },
+            {
+              "tag": "4-⑤ 변형",
+              "text": "‘여태껏 얼마나 교묘하게 스스로를 이중 삼중으로 기만하고 있었나를’ 깨달았다는 서술은 ‘나’가 외면해 왔던 이념의 중압감을 직시하게 되는 과정을 보여 준다.",
+              "answer": "O",
+              "explain": "‘나’는 자신의 아픔의 진짜 원인이 분단 현실에서 오는 제약과 중압감임을 깨달으며, 그동안 이를 틀니 탓으로 돌려 외면해 왔던 자신을 직시하게 된다."
+            }
+          ]
+        }
+      ],
+      "passages": [
+        {
+          "label": "세상에서 제일 무거운 틀니 — 박완서",
+          "text": "  내 기억으론 내 외당숙이 조성구였지만 그가 조정구라니 조정구가 틀림없다 싶었다. 그가 설사 내 딸 연이가 현이라고 했다면 아마 내 딸은 현이였음에 틀림없을 것이다.\n  나는 그 앞에 그렇게 무력했고 그는 그렇게 전능했다. 그는 내가 완전히 허탈 상태에 빠진 것을 확인한 후 비로소 엄숙히 선언했다.\n  6·25 때 의용군으로 나간 오빠가 이북에서 밀봉교육을 받고 곧 남파되리라는 것이었다. 먼저 남파됐다가 체포된 간첩에 의해 확인된 정확한 정보란다.\n  오빠는 오면 반드시 집에 들를 테고 그러면 어떻게 하겠느냐고 그는 물었다.\n  \"㉠어떡하긴요. 그야 당연히 시, 신고를 하거나 자수를 시켜야죠.\"\n  나는 아주 밉고 서툴게 아양을 떨었다.\n  \"㉡잘 생각하셨습니다. 아주머니만 믿겠습니다.\"\n  그리고 그는 협조해 줘서 고맙다고 덧붙였다. 나도 고맙다고 서너 번 고개를 조아리고 또 한 번 아양을 떨었다. 그리고 놓여났다. 남편과 어머니가 같은 꼴을 당한 건 말할 것도 없고 충청도 진천에서 거의 한 마을을 이루고 살고 있는 외가와 그 밖에 오빠가 알 만한 대소가가 다 한 번씩 그런 일을 당한 것을 후에 알게 되었다.\n  그로부터 대문 소리에 가슴이 내려앉는 날이 시작되었다.\n  \"㉢말이 자수지, 그놈이 벌써 마흔인데 그곳에 계집자식이 없을 리 없을 테니 이 에미 말을 들을까? 계집 자식 생각이 앞설 테지. 차라리 넘어오다…….\"\n  어머니는 말끝을 흐리고 눈물을 닦는다. 그러나 나는 다음 말을 알고 있다. 나도 방금 그런 생각을 하고 있었으니까. 어머니보다 훨씬 진작부터 그런 생각을 하고 있었으니까. 넘어오다 차라리 사살되었으면 하고.\n  간첩이 된 혈연과는 상봉이 몰고 올 사건과의 당면이 두려운 나머지 십팔 평 블록 집 속의 안일이 소중한 나머지, 어머니와 나는 마녀(魔女)보다도 더 잔인해졌다.\n\n[중략 부분 줄거리] '나'의 이웃인 설희 엄마는 장애를 가진 딸을 키우며 살아간다. '나'는 그런 그녀에게 힘겹게 현실을 살아간다는 데 동병상련의 감정을 느끼면서 월북한 오빠와 관련된 집안 사정을 털어놓기도 한다. 그러던 어느 날 미국에 가 있던 설희 엄마의 남편이 취직을 하고, 설희 엄마는 딸과 함께 미국으로 떠난다.\n\n  그 틀니는 해 넣은 지가 삼 년은 되었고, 몸에 닿는 것에 좀 지나칠 정도의 결벽성을 가진 나는 실상 내 경제 사정으론 분수에 넘칠 만큼 고가로 한 것으로 일류 치과에서 해 넣은 것이어서 처음부터 크게 불편한 줄 몰랐으나 어찌 된 영문인지 가끔 마음이 울적하다든가 몸이 불편할 때에는 이 틀니가 쑤셨다. 아니 정확히 말해서 틀니가 얹힌 턱뼈가 쑤신달까.\n  의사는 뭐 인체의 거부 반응이라든가 하는 어려운 말로 내 동통을 진찰하고 시일이 지나면 자연히 나을 거라 했지만 삼 년이 지나도록 거부 반응은 불쑥불쑥 나를 괴롭혔다.\n  그 동통과 중압감은 경우에 따라 경중의 차이가 있는데 오늘은 아주 심한 편이었다.\n\n  틀니가 천근의 무게로 턱뼈를 눌러 꼭 턱이 떨어지고 말 것 같았다. 나는 손으로 턱을 받쳐도 보고, 슬슬 주물러도 보고, 더위 먹은 짐승처럼 턱을 축 늘어뜨려 입을 헤벌리고 침을 흘려도 보았으나, 턱뼈가 부서질 듯한 동통은 조금도 덜어지지 않았다.\n  몸의 온갖 신경이 턱뼈를 중심으로 방사선으로 전신에 퍼진 듯, 중압감에 수반한 동통은 턱뼈에서 목구멍으로, 귓속으로 골로 퍼져 내 두상은 완전히 틀니의 횡포가 지배했다.\n  누가 이런 고통을 감히 짐작이나 할 수 있으랴. 이 고통에서 벗어나는 길은 오직 틀니를 빼는 길밖에 없겠는데 나는 틀니를 빼고 있는 내 모습에 늘 몸서리를 쳐 왔으므로 차중에서나 길에서 사람들의 시선을 의식하며 차마 그 짓은 할 수 없었다.\n  어찌어찌해서 가까스로 내 집 문 앞까지 왔을 즈음 나는 거의 발광 직전이었다.\n[A]\n\n  방에 들어서자마자 입을 크게 벌리고 침을 질질 흘려 가며 틀니를 뽑아냈다.\n  양쪽 두 개씩 도합 네 개의 어금니가 심어진 반달 모양의 섬세한 백금 틀은 내 손바닥에서 거의 무게를 지니지 않은 채 차게 빛났다.\n  마침내 무서운 동통과 중압감으로부터 자유로워진 내 몸은 가볍다 못해 공중으로 둥실 뜨는 듯했다.\n  이럴 수가, 이렇게 가벼울 수가, 우화이등선(羽化而登仙)이란 이런 기분을 두고 이름인가.\n  나는 내 편안감을 충분히 만끽하기 위해 몸을 장판 위에 눕혔다.\n  그 여편네 설희 엄마는 지금쯤 어디를 날고 있을까? ㉣제아무리 공중에 떠 있기로서니, 말도 많고 탈도 많은 온갖 사는 어려움부터 벗어났기로서니 지금의 나만큼이야 가볍고 편할쏘냐. 나는 코웃음을 친다.\n  지금의 내 팔자는 그렇게 편타.\n\n  그런데 아까부터 누가 대문을 조심스럽게 두들기고 있지 않은가. 어머니가 누구냐고 몇 번 묻는 것 같다.\n  그래도 대답 없이 똑똑 두들기기만 한다. 어머니의 신소리가 들린다. 나는 별안간 가슴이 두방망이질을 한다.\n  대문 소리가 나고 아주 낮은 대화가 들린다. 분명 상대는 남자다. 그것도 사십 대의 남자.\n  남의 이목을 꺼리듯 대화는 여전히 수군수군 낮다.\n  드디어 올 것이 오고 만 것이다! 이제 끝장이다. 파멸이다. 오오 이렇게 파멸이 쉬 올 줄이야.\n  숨죽은 대화는 아직도 계속된다. 어머니는 자수 권고에 실패한 눈치다. 이렇게 오래 끄는 걸 보니.\n  가엾은 어머니! 어쩌면 그 남자는 어머니에게 도리어 월북을 권하고 아니 협박하고 있는지도 모른다. 혹시 강제로 납치하려는 거나 아닌지.\n  그렇게끔 내버려둘 수는 없지. 나는 벌떡 일어난다. 그 남자와 죽든 살든 결판을 내고 말 테다. 나에게 '그 남자'는 이미 조금도 오빠일 필요가 없다. 그냥 '그 남자'다.\n[B]\n\n  막 나가려는데 어머니가 문을 걸고 돌아 들어온다.\n  \"㉤아유 별 끈덕진 사내도 다 봤네. 월부 책을 사라고 어찌나 조르는지…… 말이 그렇게 청산유수고 신수도 희멀겋던데 고작 월부 장사밖에 해 먹을 게 없나, 쯧쯧.\"\n  나는 다시 장판방에 눕는다. 한숨을 휴우 내쉰다. 그런데 이미 좀 전의 편안감은 없다.\n  옴짝달싹할 수 없으면서도 펄펄 뛰지 않고는 또 못 배길 것 같은 중압감과 동통이 여전하지 않은가? 이미 입속엔 빼 버릴 틀니도 없는데.\n  빼 버릴 틀니가 없기에 그 고통은 절망적이다.\n  나는 비로소 깨닫는다. 여태껏 얼마나 교묘하게 스스로를 이중 삼중으로 기만하고 있었나를.\n  내 아픔은 결코 틀니에서 기인한 아픔이 아니었던 것이다.\n  나는 설희 엄마가 부러워서, 이 나라와 이 나라의 풍토가 주는 온갖 제약으로부터 자유로워진 그녀가 부러워서, 그녀에의 선망과 질투로 그렇게도 몹시 아팠던 것이다.\n  나는 그런 아픔이 부끄러운 나머지 틀니의 아픔으로 삼으려 들었고, 나를 내리누르는 온갖 한국적인 제약의 중압감, 마침내 이 나라를 뜨는 설희 엄마와 견주어 한층 못 견디게 느껴지는 중압감조차 틀니의 중압감으로 착각하려 들었던 것이다.\n- 박완서, 「세상에서 제일 무거운 틀니」"
+        }
+      ]
+    },
+    {
+      "id": "set6",
+      "title": "왕수재취득용녀설",
+      "source": "작자 미상, 「왕수재취득용녀설」",
+      "questions": [
+        {
+          "num": 1,
+          "desc": "윗글의 인물에 대한 이해로 가장 적절한 것은? (정답 ①)",
+          "items": [
+            {
+              "tag": "1-① 원본",
+              "text": "상사는 배가 움직이지 않는 것이 해신의 장난 때문이라고 믿었다.",
+              "answer": "O",
+              "explain": "상사는 ‘이는 필히 해신이 우리를 가로막고 장난하는 것입니다’라는 뱃사람의 말을 옳게 여기고 목욕재계하여 제사를 지내는 등, 배가 움직이지 않는 것을 해신의 장난으로 믿고 행동한다."
+            },
+            {
+              "tag": "1-① 변형",
+              "text": "상사는 ‘일행 중에 부정한 자가 있어 함께 갈 수 없으므로 해신이 가로막고 장난하는 것’이라는 왕수재의 말을 옳게 여겨 그가 제안한 방법을 실행에 옮긴다.",
+              "answer": "O",
+              "explain": "상사는 ‘그 말에 묘리가 있구나’라고 말하며 왕수재가 제안한, 옷깃에 이름을 써서 바다에 던지는 방법을 실제로 시행한다."
+            },
+            {
+              "tag": "1-② 원본",
+              "text": "뱃사람들은 일행 중에 해신을 도울 수 있는 사람이 있다고 생각하였다.",
+              "answer": "X",
+              "explain": "뱃사람들은 왕수재의 말을 듣고 일행 중에 ‘부정한 자’를 찾아내려 했을 뿐, 일행 중에 해신을 도울 수 있는 사람이 있다고 생각한 것은 아니다."
+            },
+            {
+              "tag": "1-② 변형",
+              "text": "왕수재가 제안하기 전부터 뱃사람들은 스스로 일행 중에 해신을 도울 수 있는 사람이 있다고 의심하여 그를 찾으려 하였다.",
+              "answer": "X",
+              "explain": "부정한 자를 찾아내자는 발상 자체가 왕수재의 제안에서 비롯된 것이며, 그 목적도 ‘해신을 돕는 사람’을 찾는 것이 아니라 ‘부정하여 함께 갈 수 없는 자’를 가려내려는 것이다."
+            },
+            {
+              "tag": "1-③ 원본",
+              "text": "왕수재는 상사의 말을 듣고 부정한 사람을 찾아내는 방법을 알아내었다.",
+              "answer": "X",
+              "explain": "왕수재는 일행 중에 부정한 자가 있다고 먼저 말하며 옷깃에 이름을 써서 바다에 던지는 방법을 스스로 제안한 것이지, 상사의 말을 듣고 그 방법을 알아낸 것이 아니다."
+            },
+            {
+              "tag": "1-③ 변형",
+              "text": "왕수재는 옷깃에 이름을 써서 바다에 던지는 방법을 스스로 고안하여 상사에게 제안하였다.",
+              "answer": "O",
+              "explain": "왕수재는 ‘알아낼 방법이 있습니다’라고 말하며 옷깃에 이름을 써서 바다에 던지는 구체적인 방법을 스스로 제시하고, 상사는 이를 옳게 여겨 받아들인다."
+            },
+            {
+              "tag": "1-④ 원본",
+              "text": "노인은 왕수재에게 자신을 도와줄 사람을 구해 줄 수 있는가를 물어보았다.",
+              "answer": "X",
+              "explain": "노인은 왕수재에게 귀신같은 활 솜씨로 직접 자신을 도와 달라고 부탁할 뿐, 왕수재에게 다른 조력자를 구해 줄 수 있는지 물어보지는 않았다."
+            },
+            {
+              "tag": "1-④ 변형",
+              "text": "노인은 왕수재에게 자신의 활 솜씨를 빌려 달라고 직접 부탁할 뿐, 다른 조력자를 구해 줄 수 있는지 묻지는 않았다.",
+              "answer": "O",
+              "explain": "노인은 ‘수재의 귀신같은 활 솜씨를 좀 빌렸으면 하오’라며 왕수재 본인의 능력에 직접 도움을 요청할 뿐, 다른 조력자의 존재 여부를 묻지는 않는다."
+            },
+            {
+              "tag": "1-⑤ 원본",
+              "text": "부인은 노인의 말을 듣지 않은 왕수재로 인해 노인과의 대결을 회피할 수 있었다.",
+              "answer": "X",
+              "explain": "왕수재가 부인의 아름다운 얼굴을 보고 차마 활을 쏘지 못한 것은 사실이지만, 그 결과 노인과 부인은 ‘한바탕 큰 싸움을 끝낸 뒤 각자 자기 진영으로 돌아’간다. 즉 대결 자체는 이루어졌으므로, 부인이 대결을 ‘회피’했다고 보기는 어렵다."
+            },
+            {
+              "tag": "1-⑤ 변형",
+              "text": "왕수재가 노인의 말을 따르지 않고 활을 쏘지 않은 결과, 노인과 부인의 대결은 승부가 가려지지 않은 채 마무리되었다.",
+              "answer": "O",
+              "explain": "왕수재가 부인의 아름다운 얼굴을 보고 활시위를 풀어 버림에 따라, 노인과 부인의 싸움은 결판이 나지 않은 채 양측이 각자의 진영으로 돌아가는 것으로 마무리된다."
+            }
+          ]
+        },
+        {
+          "num": 2,
+          "desc": "[A]와 [B]에 대한 이해로 가장 적절한 것은? (정답 ④)",
+          "items": [
+            {
+              "tag": "2-① 원본",
+              "text": "[A]와 [B]에서는 모두 자신의 과거 업적을 언급하며 상대방에게 협조를 요청하고 있다.",
+              "answer": "X",
+              "explain": "[A]에서 왕수재는 배에 탄 이유만 밝힐 뿐 자신의 과거 업적을 말하거나 상대에게 협조를 요청하지 않는다. [B]에서 노인도 섬에서 산 기간과 구미호와의 다툼을 언급할 뿐, 이는 도움을 요청하기 위한 배경 설명이지 자신의 과거 업적을 내세우는 것은 아니다."
+            },
+            {
+              "tag": "2-① 변형",
+              "text": "[B]에서 노인은 자신이 섬에 천 년 넘게 살았다는 점과 구미호와 일전을 벌인 과거의 일을 언급하지만, 이는 자신의 과거 업적을 자랑하기 위한 것이 아니라 도움을 요청하기 위한 배경 설명이다.",
+              "answer": "O",
+              "explain": "노인의 이러한 언급은 자신의 처지(구미호에게 집을 빼앗길 위기)와 도움이 필요한 이유를 설명하는 맥락에서 제시될 뿐, 과거의 업적을 과시하려는 의도는 아니다."
+            },
+            {
+              "tag": "2-② 원본",
+              "text": "[A]와 [B]에서는 모두 상대방에게 일어날 일을 언급하며 자신의 행동에 대한 정당성을 부각하고 있다.",
+              "answer": "X",
+              "explain": "[A]에서 왕수재는 사신 일행이 무사히 다녀오기를 바라는 마음을 전할 뿐, 자신의 행동(바다에 뛰어드는 것)의 정당성을 부각하고 있지는 않다. [B]에서도 노인은 자신을 도와 달라는 부탁만 할 뿐, 자신의 행동에 대한 정당성을 부각하고 있지 않다."
+            },
+            {
+              "tag": "2-② 변형",
+              "text": "[A]에서 왕수재는 사신 일행이 무사히 다녀오기를 바라고 있을 뿐, 자신의 행동에 대한 정당성을 부각하고 있는 것은 아니다.",
+              "answer": "O",
+              "explain": "왕수재는 ‘사신 일행은 만리 길을 무사히 다녀오셔서 임금의 명을 욕되이 하지 않으시기만을 바랄 뿐입니다’라고 말할 뿐, 자신이 바다에 뛰어드는 행동의 정당성을 따로 부각하지 않는다."
+            },
+            {
+              "tag": "2-③ 원본",
+              "text": "[A]에서는 [B]에서와 달리 자신의 운명을 이유로 상대방이 겪는 문제 해결의 어려움을 토로하고 있다.",
+              "answer": "X",
+              "explain": "[A]에서 왕수재는 자신의 운명을 언급하며 ‘배를 떠나야 하는’ 자신의 이유를 말할 뿐, 상대방(상사 일행)이 겪는 문제 해결의 어려움을 토로하는 것은 아니다."
+            },
+            {
+              "tag": "2-③ 변형",
+              "text": "[A]에서 왕수재는 자신의 운명을 이유로 배를 떠나야 하는 이유를 말하고 있을 뿐, 상대방이 겪는 문제 해결의 어려움을 토로하고 있지는 않다.",
+              "answer": "O",
+              "explain": "‘이는 신이 초래한 일입니다. 제 운명이 그렇다는데’라는 진술은 자신이 처한 운명을 이유로 배를 떠나야 함을 밝히는 것일 뿐, 상대방의 어려움을 토로하는 내용은 아니다."
+            },
+            {
+              "tag": "2-④ 원본",
+              "text": "[B]에서는 [A]에서와 달리 상대방이 지닌 능력을 근거로 자신의 요구 사항을 상대방에게 전달하고 있다.",
+              "answer": "O",
+              "explain": "[B]에서 노인은 왕수재의 ‘귀신같은 활 솜씨’라는 능력을 근거로 구미호를 물리쳐 달라는 요구 사항을 전달하지만, [A]에서 왕수재는 상대방(상사)의 능력을 근거로 자신의 요구를 전달하고 있지 않다."
+            },
+            {
+              "tag": "2-④ 변형",
+              "text": "[B]에서 노인은 ‘수재가 신궁이라는 건 오래전부터 알고 있거늘’이라며 왕수재의 활 솜씨라는 능력을 근거로 자신의 부탁을 전달하고 있다.",
+              "answer": "O",
+              "explain": "노인은 왕수재가 신궁임을 이미 알고 있다는 점을 근거로 들며, 구미호와 싸우는 자신을 도와 달라는 요구를 전달하고 있다."
+            },
+            {
+              "tag": "2-⑤ 원본",
+              "text": "[A]에서는 물음의 방식으로, [B]에서는 청유의 방식으로 자신의 선택에 대한 불가피함을 상대방에게 전하고 있다.",
+              "answer": "X",
+              "explain": "[A]에서 왕수재가 ‘더 무슨 말을 하겠습니까?’, ‘제가 어찌 감히 억지로 떠날 수가 있겠습니까?’와 같은 물음의 방식으로 불가피함을 전하는 것은 맞지만, [B]에서 노인은 도움을 요청하는 불가피한 상황을 언급할 뿐 이를 청유의 방식으로 전하고 있지는 않다."
+            },
+            {
+              "tag": "2-⑤ 변형",
+              "text": "[A]에서 왕수재는 물음의 방식을 활용하여 바다로 뛰어드는 선택의 불가피함을 전하고 있다.",
+              "answer": "O",
+              "explain": "‘더 무슨 말을 하겠습니까?’, ‘제가 어찌 감히 억지로 떠날 수가 있겠습니까?’와 같은 물음의 형식은, 자신이 바다에 뛰어들 수밖에 없는 처지임을 강조하는 효과를 낳는다."
+            }
+          ]
+        },
+        {
+          "num": 3,
+          "desc": "㉠~㉤에 대한 설명으로 적절하지 않은 것은? (정답 ⑤)",
+          "items": [
+            {
+              "tag": "3-① 원본",
+              "text": "㉠: 배를 움직이고 싶어 하는 상사의 절박함이 연쇄적으로 이어지는 행위를 통해 드러나고 있다.",
+              "answer": "O",
+              "explain": "‘목욕재계하고’, ‘제문을 지어 고한 뒤’, ‘제물을 갖추어 제사를 지내’와 같이 연쇄적으로 이어지는 상사의 행위를 통해 배를 움직이려는 절박함이 드러난다."
+            },
+            {
+              "tag": "3-① 변형",
+              "text": "㉠에서는 ‘목욕재계하고’, ‘제문을 지어 고한 뒤’, ‘제물을 갖추어 제사를 지내’와 같이 연쇄적으로 이어지는 행위를 통해 상사의 절박함을 드러내고 있다.",
+              "answer": "O",
+              "explain": "여러 단계의 정성스러운 행위가 차례로 나열됨으로써, 어떻게든 배를 움직이려는 상사의 절박한 심정이 효과적으로 드러난다."
+            },
+            {
+              "tag": "3-② 원본",
+              "text": "㉡: 왕수재의 옷이 지닌 특별함을 대조적 상황 제시와 부사어 사용을 통해 부각하고 있다.",
+              "answer": "O",
+              "explain": "다른 사람들의 옷과 달리 왕수재의 옷만 가라앉지 않는 상황을 ‘곧바로’, ‘유독’과 같은 부사어로 제시하여, 왕수재 옷의 특별함을 부각하고 있다."
+            },
+            {
+              "tag": "3-② 변형",
+              "text": "㉡에서는 ‘곧바로’, ‘유독’과 같은 부사어와 대조적 상황 제시를 통해 왕수재의 옷이 지닌 특별함을 부각하고 있다.",
+              "answer": "O",
+              "explain": "다른 모든 옷은 ‘곧바로’ 가라앉은 데 비해 왕수재의 옷만 ‘유독’ 가라앉지 않는 대조적 상황을 통해, 그의 특별한 처지가 부각된다."
+            },
+            {
+              "tag": "3-③ 원본",
+              "text": "㉢: 노인과의 대결을 위해 여우가 출현할 조짐이 있다는 점을 다양한 소리를 나열하여 제시하고 있다.",
+              "answer": "O",
+              "explain": "‘종소리’, ‘북소리’, ‘피리 소리’와 같은 다양한 소리를 나열하여 노인과의 대결을 위해 구미호가 출현할 조짐을 제시하고 있다."
+            },
+            {
+              "tag": "3-③ 변형",
+              "text": "㉢에서는 종소리, 북소리, 피리 소리와 같은 다양한 소리를 나열하여 여우가 출현할 조짐을 제시하고 있다.",
+              "answer": "O",
+              "explain": "인간 세계의 음악과는 다른 청아한 소리가 점점 가까워지는 묘사를 통해, 구미호가 화려한 행렬과 함께 등장할 것임을 예고하고 있다."
+            },
+            {
+              "tag": "3-④ 원본",
+              "text": "㉣: 여우를 목격한 왕수재의 놀라움을 여우의 모습과 다른 대상을 비교하는 방식을 통해 나타내고 있다.",
+              "answer": "O",
+              "explain": "여우(부인)가 등장하는 모습을 ‘임금이 출입하는 것’과 비교하고, ‘보는 사람의 눈을 황홀하게 하고 마음을 격동시켰다’는 서술을 통해 왕수재가 그 모습에 놀라워했음을 알 수 있다."
+            },
+            {
+              "tag": "3-④ 변형",
+              "text": "㉣에서는 여우의 등장 모습을 임금의 출입과 비교하는 방식으로 왕수재의 놀라움을 나타내고 있다.",
+              "answer": "O",
+              "explain": "위엄 있는 의장과 화려한 행렬이 임금의 출입에 견줄 만하다는 비교를 통해, 그 광경을 본 왕수재의 놀라움이 효과적으로 형상화된다."
+            },
+            {
+              "tag": "3-⑤ 원본",
+              "text": "㉤: 여우와 싸우고 있는 노인의 비범한 모습을 초현실적인 대상에 비유하며 보여 주고 있다.",
+              "answer": "X",
+              "explain": "‘바다 위를 마치 평지 밟듯이 다녔다’는 것은 노인의 비범한 능력을 비유적으로 나타낸 것일 뿐, 초현실적인 대상에 빗댄 것은 아니다. 또한 ㉤은 노인이 싸우러 나서는 모습을 나타낸 것이지, 노인이 실제로 여우와 싸우고 있는 장면 자체를 묘사한 것은 아니다."
+            },
+            {
+              "tag": "3-⑤ 변형",
+              "text": "㉤은 노인이 여우와의 대결을 위해 나서는 모습을 나타낸 것일 뿐, 노인이 실제로 싸우고 있는 장면 자체를 묘사한 것은 아니다.",
+              "answer": "O",
+              "explain": "㉤은 ‘노인은 수재에게 거듭 부탁을 하고는 싸움을 하러 바다로 나섰는데, 바다 위를 마치 평지 밟듯이 다녔다’는 부분으로, 대결 장소로 나아가는 노인의 비범한 모습을 보여 줄 뿐 본격적인 전투 장면을 묘사한 것은 아니다."
+            }
+          ]
+        },
+        {
+          "num": 4,
+          "desc": "<보기>(거타지 설화㉮와 윗글㉯ 비교)를 참고할 때 적절하지 않은 것은? (정답 ③)",
+          "items": [
+            {
+              "tag": "4-① 원본",
+              "text": "㉮와 ㉯ 모두 섬에 도착한 주인공의 영웅적 능력이 드러나는데, ㉮에 제시된 주인공의 영웅적 능력은 ㉯에서도 유지되었군.",
+              "answer": "O",
+              "explain": "㉮에서 거타지는 활 솜씨로 늙은 여우(중)를 처치하고, ㉯에서도 노인이 왕수재에게 ‘귀신같은 활 솜씨’로 구미호를 처치해 줄 것을 부탁한다는 점에서, 주인공의 영웅적 능력(활 솜씨)은 두 작품에서 동일하게 유지된다."
+            },
+            {
+              "tag": "4-① 변형",
+              "text": "㉮와 ㉯ 모두 주인공의 영웅적 능력은 활 솜씨이며, 이 능력은 두 작품에서 동일하게 유지되고 있다.",
+              "answer": "O",
+              "explain": "거타지와 왕수재 모두 활을 쏘는 능력이 핵심적인 영웅적 자질로 제시되며, 이는 원천 설화에서 후대 작품으로 변형되는 과정에서도 변하지 않고 유지된다."
+            },
+            {
+              "tag": "4-② 원본",
+              "text": "㉮와 ㉯ 모두 주인공에게 도움을 청하는 존재는 다른 대상에게 괴롭힘을 당하고 있는데, ㉮에서 도움을 청하는 존재를 괴롭히는 대상이 여우라는 점은 ㉯에서도 유지되었군.",
+              "answer": "O",
+              "explain": "㉮에서는 서쪽 바다의 신의 자손들을 괴롭히는 존재가 늙은 여우로 변하는 중이고, ㉯에서는 노인을 괴롭히는 존재가 삼천 년 묵은 구미호이므로, 괴롭히는 대상이 ‘여우’라는 점은 두 작품에서 동일하게 유지된다."
+            },
+            {
+              "tag": "4-② 변형",
+              "text": "㉮와 ㉯ 모두 주인공에게 도움을 청하는 존재를 괴롭히는 대상의 정체는 여우로 동일하다.",
+              "answer": "O",
+              "explain": "㉮의 ‘중’으로 위장한 존재와 ㉯의 ‘구미호’는 모두 본질적으로 여우라는 점에서, 괴롭히는 대상의 정체는 두 작품에서 일관되게 유지된다."
+            },
+            {
+              "tag": "4-③ 원본",
+              "text": "㉮와 ㉯ 모두 노인의 말을 통해 주인공이 섬에 남겨진 이유가 밝혀지는데, ㉮에서 초월적 인물과 직접 소통하는 방식이 ㉯에서는 지상에 있는 대리인과 소통하는 방식으로 교체되었군.",
+              "answer": "X",
+              "explain": "㉮에서 거타지에게 사정을 말해 주는 노인은 서쪽 바다의 신 자신이고, ㉯에서 왕수재에게 사정을 말해 주는 노인 역시 서해 용왕의 아들로서 초월적 존재이다. 두 경우 모두 주인공이 초월적 인물과 직접 소통하고 있으므로, 지상의 대리인과 소통하는 방식으로 교체되었다는 설명은 적절하지 않다."
+            },
+            {
+              "tag": "4-③ 변형",
+              "text": "㉮와 ㉯ 모두 주인공이 섬에 남겨진 이유를 밝혀 주는 노인은 초월적 존재이며, 주인공과 직접 소통하는 방식이 유지되고 있다.",
+              "answer": "O",
+              "explain": "㉮의 노인(서쪽 바다의 신)과 ㉯의 노인(서해 용왕의 아들)은 모두 인간계를 초월한 존재로서, 주인공과 직접 대화하며 도움을 요청하는 방식이 두 작품에서 동일하게 유지된다."
+            },
+            {
+              "tag": "4-④ 원본",
+              "text": "㉮와 ㉯ 모두 주인공이 탄 배가 항해를 계속할 수 없는 상황이 제시되어 있는데, ㉮에서 주인공이 항해하는 목적지는 ㉯에서 유지되고 있지만 항해를 할 수 없는 원인은 교체되었군.",
+              "answer": "O",
+              "explain": "㉮의 거타지와 ㉯의 왕수재 모두 중국(당나라)으로 향하던 중 항해가 중단되는데, ㉮에서는 풍랑이, ㉯에서는 ‘하늘엔 바람 한 점 없고 바다엔 작은 파도 하나 없는’ 무풍 상태가 원인이라는 점에서 원인이 서로 다르게 설정되어 있다."
+            },
+            {
+              "tag": "4-④ 변형",
+              "text": "㉮와 ㉯ 모두 주인공이 향하는 목적지는 중국으로 동일하지만, 항해를 할 수 없게 된 원인은 풍랑에서 무풍 상태로 바뀌었다.",
+              "answer": "O",
+              "explain": "㉮에서는 풍랑으로 인해, ㉯에서는 바람 한 점 없는 이상 현상으로 인해 배가 나아가지 못한다는 점에서, 목적지는 유지되지만 항해 불능의 원인은 서로 다르게 변형되었다."
+            },
+            {
+              "tag": "4-⑤ 원본",
+              "text": "㉮와 ㉯ 모두 배를 떠날 사람을 결정하는 방식이 제시되어 있는데, ㉮에서 이름을 적은 사물을 물에 던지는 행위는 ㉯에서 유지되고 있지만 주인공이 배를 떠나야 하는 이유는 ㉮와 달라졌군.",
+              "answer": "O",
+              "explain": "㉮에서는 나뭇조각이 가라앉은 사람이, ㉯에서는 옷이 가라앉지 않은 사람이 배에서 내리게 되므로, 이름을 적은 사물을 던지는 행위 자체는 유지되지만 가라앉음/가라앉지 않음이라는 판단 기준과 그 의미는 ㉮와 ㉯에서 상반되게 설정되어 있다."
+            },
+            {
+              "tag": "4-⑤ 변형",
+              "text": "㉮에서는 나뭇조각이 가라앉은 사람이, ㉯에서는 옷이 가라앉지 않은 사람이 배에 남겨지게 된다는 점에서, 배에 남게 되는 조건이 반대로 설정되어 있다.",
+              "answer": "O",
+              "explain": "㉮에서는 가라앉은 나뭇조각의 주인이 섬에 남고, ㉯에서는 반대로 가라앉지 않은 옷의 주인이 배를 떠나게 되므로, 두 작품에서 ‘남겨짐’을 결정하는 물리적 조건이 정반대로 설정되어 있다."
+            }
+          ]
+        }
+      ],
+      "passages": [
+        {
+          "label": "왕수재취득용녀설 — 작자 미상",
+          "text": "  상사가 일행에게 말했다.\n  \"하늘엔 바람 한 점 없고 바다엔 작은 파도 하나 없는데 이런 뜻밖의 변고를 당해 사흘 동안이나 앞으로 나아가지 못하니, 이 일을 어찌하면 좋단 말인가?\"\n  배 안에 있던 한 사람이 말했다.\n  \"이는 필히 해신(海神)이 우리를 가로막고 장난하는 것입니다. 정성을 다해 기도를 올리면 당장 길을 갈 수 있을 것입니다.\"\n  상사는 그 말을 옳게 여겼다. ㉠이에 목욕재계하고 제문을 지어 고한 뒤 제물을 갖추어 제사를 지내 보았지만 별다른 변화가 없었다. 다시 두 번 세 번 제사를 지내 보았지만 역시 배는 움직이지 않았다. 사정이 이러하니 일행 중에 두려움에 떨지 않는 사람이 없었다. 상사가 물었다.\n  \"정성을 다해 기도했거늘 이처럼 효력이 없으니, 이 일을 어쩌면 좋단 말인가?\"\n  일행 모두가 입을 다물고 한마디도 하지 못했다. 이때 왕수재가 말했다.\n  \"이는 분명 일행 중에 부정한 자가 있어 함께 갈 수 없으므로 해신이 우리를 가로막고 장난하는 것입니다. 부정한 이를 찾아낸 다음 버려두고 데려가지 않는다면 우리를 가로막고 희롱하는 일이 바로 없어질 것입니다.\"\n  상사가 말했다. / \"그 사람을 어떻게 알아내서 버리고 간단 말이냐?\"\n  수재가 말했다.\n  \"알아낼 방법이 있습니다. 모든 사람이 각자 자기 윗옷의 옷깃을 잡고 해신에게 이렇게 고하면 됩니다. '영험하신 신의 밝은 계시를 알고자 저희 옷깃에 이름을 써서 바다에 던지려고 합니다. 가도 되는 사람의 옷은 물속에 가라앉혀 보이지 않게 하시고, 갈 수 없는 사람의 옷은 물 위에 띄워 가라앉지 않게 해 주십시오. 영험하신 뜻을 보여 주시면 마땅히 가르침대로 거행할 것입니다.' 이렇게 해 보시는 게 좋겠습니다.\"\n  상사가 말했다. / \"그 말에 묘리가 있구나.\"\n  이에 모든 사람이 수재의 말대로 윗옷을 벗어 손수 그 옷깃을 잡고 기도한 뒤 옷을 물에 던졌다. ㉡모든 옷이 곧바로 가라앉아 그림자도 보이지 않았지만, 유독 수재의 옷 하나만이 물 위에 떠 가라앉지 않았다. 부사 이하 모두가 의아하게 여겨 수재의 옷을 향해 돌을 던졌다. 돌이 수재의 옷 위에 있었건만 옷은 끝내 가라앉지 않았다. 일행 모두가 고개를 돌려 왕수재를 계속 쳐다보았다. 상사가 수재에게 말했다.\n  \"네 말대로 옷을 던져 보았는데, 유독 네 옷만이 물 위에 떠서 끝내 가라앉질 않는구나. 이 일을 어쩌면 좋겠느냐?\"\n  수재가 대답했다.\n\n\"이는 신이 초래한 일입니다. 제 운명이 그렇다는데, 더 무슨 말을 하겠습니까? 제가 이번 사행에 따라오기를 자청했던 건 중국 수도의 장려한 모습을 보고 대장부의 울울한 심사를 풀고 싶어서였습니다. 하지만 지금 해신이 이처럼 길을 막고 장난을 하니 제가 어찌 감히 억지로 떠날 수가 있겠습니까? 이제 저는 바다에 빠져 죽겠지만, 사신 일행은 만리 길을 무사히 다녀오셔서 임금의 명을 욕되이 하지 않으시기만을 바랄 뿐입니다.\"\n[A]\n\n  그렇게 말하더니 몸을 날려 바다로 뛰어들려 했다.\n\n[중략 부분 줄거리] 상사와 일행은 바다로 뛰어들려는 왕수재를 만류한 후 가까운 섬에 내려 주고 떠난다. 섬에 도착한 왕수재는 대숲 사이로 난 길을 따라가다 초가집을 발견하고, 그곳에서 자신을 기다리던 노인으로부터 음식을 대접받는다.\n\n  이윽고 날이 어두워지자 노인은 불을 붙여 등을 켜고 앉더니 한숨을 내쉬며 이렇게 말했다.\n\n\"수재는 잠깐 이 늙은이의 말을 좀 들어 보오. 나는 본래 속세 사람이 아니라 서해 용왕의 아들이라오. 이 섬에 산 지도 벌써 천 년이 넘었소. 구름을 타고 하늘에 오를 날이 이제 겨우 몇 년 남았는데, 불행히도 이 섬에 사는 삼천 년 묵은 구미호가 내 집을 빼앗으려 하고 있소. 닷새 동안 일전을 벌였지만, 늙은 내가 구미호에게 대항하는 게 너무 힘들어 수재의 귀신같은 활 솜씨를 좀 빌렸으면 하오. 나를 좀 도와달라고 수재를 이런 궁벽한 땅에 모셔 오게 했으니, 참으로 미안하고 죄송스럽기 그지없소이다.\"\n[B]\n\n  수재가 물러나 앉더니 이렇게 말했다.\n  \"저는 속세의 천한 사람이고 선생께선 용궁의 귀한 아드님이신데, 어찌 감히 한자리에 나란히 앉을 수 있겠습니까? 게다가 저는 원래 아무 재주가 없는 사람이니 어찌 감히 선생의 청을 감당할 수 있겠습니까?\"\n  노인이 말했다.\n  \"수재가 신궁이라는 건 오래전부터 알고 있거늘, 겸손이 지나치시군요. 모레가 구미호와 싸우기로 한 날이오. 수재께서는 한번 수고로움을 아끼지 말고 이 늙은이를 위험한 처지에서 구해 주시기 바라오.\"\n  \"선생의 말씀이 이러하니 어찌 감히 온 힘을 다하지 않을 수 있겠습니까? 하지만 지금 활도 없고 화살도 없으니 어쩌면 좋겠습니까?\"\n  \"튼튼한 활과 독화살을 준비해 놓은 지 이미 오래니, 그 일은 염려 마시오.\"\n  밤이 깊어 피곤해지자 각자 잠자리에 들었다. 수재는 잠에 곯아떨어져 날이 새는지도 몰랐다.\n  ㉢오후가 되자 종소리, 북소리, 피리 소리가 멀리서부터 점점 가까이 들려왔다. 소리가 청아한 것이 인간 세계의 음악과는 달랐다. 수재가 노인에게 물었다.\n  \"하늘에서 울려 퍼지는 저 음악 소리는 뭡니까?\"\n  노인은 이마를 찌푸리며 대답했다.\n  \"요사스런 구미호의 짓이라오.\"\n  \"일개 요물일 뿐인 여우가 어떻게 이런 신선의 음악 소리를 낼 수 있습니까?\"\n  \"저 구미호는 변화무쌍한 놈이오. 귀신이 되었다가는 인간이 되고, 바람을 부르고 비를 내리게 하며, 앞에 있는가 싶으면 어느새 뒤에 가 있으니, 실로 천하의 요물이라 할 수 있소. 지금 이리로 오는 게 분하니 수재도 곧 보게 될 거요.\"\n  조금 있으니 \"물렀거라!\" 하는 소리가 점점 가까이 들려왔다. 수재가 몸을 숨기고 바라보니 부인 한 사람이 임금이 타는 가마 위에 앉아 있었다. 휘장을 활짝 열어젖히고 있어 그 얼굴을 볼 수 있었는데, 꽃처럼 아름다운 얼굴과 달처럼 고운 자태에서 온갖 교태가 피어나 보는 사람의 눈을 황홀하게 하고 마음을 격동시켰다. ㉣위엄 있는 의장(儀仗)이며 온갖 물건과 의식이 임금이 출입할 때와 똑같았다. 어여쁘게 단장한 시비들이 앞뒤를 에워쌌고 기치와 창검이 좌우로 빽빽이 늘어서 있었는데, 피리 불고 북 치는 이들 모두가 곱게 분을 바른 미녀들이었다. 수재가 노인에게 말했다.\n  \"저게 모두 요망한 여우들입니까?\"\n  \"그렇소.\"\n  \"그렇다면 빨리 활과 화살을 갖다주세요! 가마 위의 부인을 쏴 죽여야겠으니.\"\n  \"안 돼요, 안 돼! 지금 활을 쐈다가는 한 번에 백 발의 화살을 쏜다 한들 한 손으로 막아 낼 테니, 소용없는 일이오.\"\n  \"그렇다면 내일 싸움에서 저와 같은 사람 열 명이 있다 한들 화살을 모조리 다 막아 낼 텐데 어쩔 작정이십니까?\"\n  \"내일 나하고 한창 싸울 때에는 저 요물도 다른 생각을 할 겨를이 없을 테니, 화살이나 돌이 날아드는 걸 알아차리지 못할 거요. 그 틈을 타서 명치를 쏜다면 성공할 수 있소이다. 내일까지 기다립시다.\"\n  이튿날 과연 요망한 여우가 많은 군졸을 거느리고 와서 싸움을 걸었다. ㉤노인은 수재에게 거듭 부탁을 하고는 싸움을 하러 바다로 나섰는데, 바다 위를 마치 평지 밟듯이 다녔다. 수재는 화살을 메기고 시위를 잔뜩 당겨 부인을 쏘려 했지만, 부인의 얼굴이 너무도 아름다운 것을 보고는 차마 활을 쏠 수가 없었다. 수재는 이렇게 생각했다.\n  '저건 사람이다. 여우가 둔갑을 한다고 어찌 저리될 수 있겠나? 사람이 사람을 쏴 죽여서야 되겠는가?'\n  결국 활을 쏘지 못한 채 시위를 당기고 있던 손을 풀었다. 곧이어 노인과 부인은 한바탕 큰 싸움을 끝낸 뒤 각자 자기 진영으로 돌아갔다.\n- 작자 미상, 「왕수재취득용녀설」\n*의장: 천자(天子)나 왕공(王公) 등 지위가 높은 사람이 행차할 때에 위엄을 보이기 위하여 격식을 갖추어 세우는 병장기(兵仗器)나 물건."
+        }
+      ]
+    },
+    {
+      "id": "set7",
+      "title": "금방울전",
+      "source": "작자 미상, 「금방울전」",
+      "questions": [
+        {
+          "num": 1,
+          "desc": "윗글의 내용에 대한 이해로 적절하지 않은 것은? (정답 ②)",
+          "items": [
+            {
+              "tag": "1-① 원본",
+              "text": "천자와 황후는 요괴에게 잡혀갔던 공주와 다시 만나게 되었다.",
+              "answer": "O",
+              "explain": "공주는 요괴에게 잡혀가서 고생하다가 해룡과 금령의 도움으로 구조되어 황성으로 돌아오고, 천자와 황후는 공주와 다시 만나 기뻐한다."
+            },
+            {
+              "tag": "1-① 변형",
+              "text": "공주는 요괴에게 잡혀가서 고생하다가 해룡과 금령의 도움으로 구조되어 천자와 황후를 다시 만나게 된다.",
+              "answer": "O",
+              "explain": "본문에서 황후는 공주를 안고 통곡하며 기뻐하고, 공주는 요괴에게 잡혀가서 고행을 겪던 사연과 해룡·금령의 도움을 받아 구조된 과정을 황후에게 이야기한다."
+            },
+            {
+              "tag": "1-② 원본",
+              "text": "해룡은 공주와 혼인하여 부마가 된 후 어림군을 관리하며 국사를 돌보기 시작하였다.",
+              "answer": "X",
+              "explain": "‘해룡이 천은을 입사와~어림군을 관리하며 다스릴새, ~국사를 극진히 살피더니, 어느덧 혼인날이 다다랐는지라’라는 문장에서 알 수 있듯, 해룡이 어림군을 관리하며 국사를 돌보기 시작한 것은 공주와 혼인하여 부마가 되기 이전의 일이다."
+            },
+            {
+              "tag": "1-② 변형",
+              "text": "해룡이 어림군을 관리하며 국사를 살피기 시작한 것은 공주와의 혼인날이 다다르기 이전부터의 일이다.",
+              "answer": "O",
+              "explain": "본문에서는 해룡이 천자의 은혜에 사례한 뒤 어림군을 관리하며 국사를 살피던 중 ‘어느덧 혼인날이 다다’랐다고 서술하므로, 어림군 관리는 혼인 이전부터 이미 시작된 일이다."
+            },
+            {
+              "tag": "1-③ 원본",
+              "text": "천자는 공주가 해룡의 배필이 될 만한 사람이라고 생각하였다.",
+              "answer": "O",
+              "explain": "천자는 해룡에게 ‘(공주가) 임사의 덕은 갖추지 못했으나 족히 경의 건즐을 받들 것이니’라고 말하는데, 이는 공주가 부녀자의 이상형인 ‘임사’에는 못 미치지만 해룡의 배필이 되기에 부족함이 없다는 뜻이다."
+            },
+            {
+              "tag": "1-③ 변형",
+              "text": "천자는 공주가 ‘임사의 덕’에는 못 미치지만 해룡의 배필이 되기에는 부족함이 없다고 판단하였다.",
+              "answer": "O",
+              "explain": "‘경과 공주는 천정배필이라’, ‘족히 경의 건즐을 받들 것이니’라는 천자의 말은, 공주를 해룡의 합당한 배필로 여기는 천자의 판단을 분명하게 보여 준다."
+            },
+            {
+              "tag": "1-④ 원본",
+              "text": "해룡은 십팔 년 전, 전란의 와중에 부모와 헤어지게 되었다.",
+              "answer": "O",
+              "explain": "사또는 ‘노부가 늦게 아들 하나를 낳았더니 전란 중에 잃은 지 십팔 년이라’라고 말하고, 이후 대화를 통해 그 아들이 바로 어사(해룡)임이 밝혀진다."
+            },
+            {
+              "tag": "1-④ 변형",
+              "text": "사또가 ‘노부가 늦게 아들 하나를 낳았더니 전란 중에 잃은 지 십팔 년이라’라고 말한 것을 통해, 해룡이 십팔 년 전 전란 중에 부모와 헤어졌음을 알 수 있다.",
+              "answer": "O",
+              "explain": "사또의 이 말과 이어지는 대화를 통해, 해룡(어사)이 전란 중에 부모와 헤어진 지 십팔 년이 되었다는 사실이 확인된다."
+            },
+            {
+              "tag": "1-⑤ 원본",
+              "text": "사또는 어사의 신체적 특징을 근거로 어사가 자신의 아들임을 알았다.",
+              "answer": "O",
+              "explain": "사또는 잃어버린 아들의 신체적 특징으로 등에 북두칠성 모양의 ‘일곱 개의 사마귀’가 있음을 언급하고, 이를 들은 어사가 ‘실성통곡’하며 자신이 아들임을 암시한다."
+            },
+            {
+              "tag": "1-⑤ 변형",
+              "text": "사또는 등에 북두칠성 모양의 사마귀가 있다는 신체적 특징을 언급함으로써 어사가 자신의 아들임을 확인하였다.",
+              "answer": "O",
+              "explain": "사또가 ‘내 아이는 등에 일곱 개의 사마귀가 북두칠성처럼 나 있으니 이것으로 내 아들임을 아노라’라고 말하는 대목에서, 신체적 특징이 부자 확인의 결정적 근거로 작용함을 알 수 있다."
+            }
+          ]
+        },
+        {
+          "num": 2,
+          "desc": "㉠, ㉡에 대한 설명으로 가장 적절한 것은? (정답 ②)",
+          "items": [
+            {
+              "tag": "2-① 원본",
+              "text": "㉠의 이전에 발생한 공주와 인물 간의 갈등이 ㉠을 통해 해소된다.",
+              "answer": "X",
+              "explain": "공주가 꾼 ‘꿈’(㉠)을 통해 해소되는, 그 이전에 발생한 공주와 어떤 인물 사이의 갈등은 본문에 제시되어 있지 않다."
+            },
+            {
+              "tag": "2-① 변형",
+              "text": "㉠(공주의 꿈)을 통해 해소되는, ㉠ 이전에 발생한 공주와 인물 간의 갈등은 본문에 제시되어 있지 않다.",
+              "answer": "O",
+              "explain": "㉠은 선인이 공주에게 해룡과의 인연과 구조에 관해 알려 주는 내용일 뿐, 공주와 다른 인물 사이의 갈등이 이를 통해 해소되는 구조는 나타나지 않는다."
+            },
+            {
+              "tag": "2-② 원본",
+              "text": "㉡으로 촉발된 어사의 행위가 계기가 되어 인물 간의 관계가 밝혀진다.",
+              "answer": "O",
+              "explain": "‘남가일몽’(㉡)에서 깨어난 후 어사는 이상한 느낌이 들어 다시 잠들지 못하고 관가로 가 사또를 만나며, 그 과정에서 사또가 자신의 친부임이 밝혀진다."
+            },
+            {
+              "tag": "2-② 변형",
+              "text": "㉡(남가일몽)에서 깨어난 어사가 이상한 느낌에 다시 잠들지 못하고 관가로 가 사또를 만나면서, 어사와 사또가 부자지간임이 밝혀지게 된다.",
+              "answer": "O",
+              "explain": "꿈에서 깨어난 어사가 매우 이상하게 여겨 다시 자지 못하고 관가로 들어가는 행동이 계기가 되어, 사또와의 대화를 통해 두 사람이 부자 관계임이 드러난다."
+            },
+            {
+              "tag": "2-③ 원본",
+              "text": "㉡에서 백발노인이 어사 앞에 나타난 것은 금령이 하늘의 지시를 받아 벌인 일이다.",
+              "answer": "X",
+              "explain": "어사가 말한 ‘하늘이 우리를 보살피시어 금령에게 지시하여 이 일이 있게 되었습니다’의 ‘이 일’은 금령이 준 족자 덕분에 부모와 자식이 재회한 일을 뜻하며, 어사가 꿈에서 백발노인을 만난 일과는 직접적인 관계가 없다."
+            },
+            {
+              "tag": "2-③ 변형",
+              "text": "어사가 ‘하늘이 우리를 보살피시어 금령에게 지시하여 이 일이 있게 되었습니다’라고 한 말에서 ‘이 일’은, 어사가 꿈에서 백발노인을 만난 일이 아니라 금령이 준 족자 덕분에 부모와 자식이 재회한 일을 가리킨다.",
+              "answer": "O",
+              "explain": "이 발언은 사또와 어사가 족자를 매개로 부자 관계를 확인하게 된 사건 전체를 가리키는 것으로, 꿈에 백발노인이 나타난 일 자체를 지시하는 것은 아니다."
+            },
+            {
+              "tag": "2-④ 원본",
+              "text": "㉠에 예언된 공주와 어사의 미래가 ㉡을 통해 실현된다.",
+              "answer": "X",
+              "explain": "㉠에 예언된 공주와 어사의 미래(속세의 연분을 이루고 부황·모후를 만나는 것)는 ㉡ 이전에 이미 실현된 사건이며, ㉡을 통해 실현되는 일은 사또와 어사가 부자지간임을 알게 되는 것으로 서로 다른 내용이다."
+            },
+            {
+              "tag": "2-④ 변형",
+              "text": "㉠에 예언된 공주와 어사의 미래(속세의 연분을 이루고 부황·모후를 만나는 일)는 ㉡이 아니라 그 이전 사건들을 통해 이미 실현되었다.",
+              "answer": "O",
+              "explain": "㉠의 예언은 작품 초반에 해룡이 요괴를 잡고 공주를 구해 부황·모후를 만나게 하는 사건으로 이미 실현되었으며, ㉡은 이와 별개로 어사와 사또의 부자 관계가 밝혀지는 계기로 기능한다."
+            },
+            {
+              "tag": "2-⑤ 원본",
+              "text": "㉠과 ㉡을 통해 미래에 만나게 될 인물의 비범한 능력이 암시된다.",
+              "answer": "X",
+              "explain": "㉠에 나타난 선인은 ‘동해 용왕의 아들이 인간 세상에 내려갔으니’라고 말하며 공주가 만나게 될 인물(해룡)이 비범한 존재임을 암시하지만, ㉡에 나타난 백발노인은 어사가 만나게 될 인물(사또)의 비범한 능력에 대해서는 언급하지 않는다."
+            },
+            {
+              "tag": "2-⑤ 변형",
+              "text": "㉠에는 미래에 만나게 될 인물(해룡)의 비범한 능력이 암시되어 있지만, ㉡의 백발노인은 어사가 만나게 될 인물(사또)의 비범한 능력에 대해서는 언급하지 않는다.",
+              "answer": "O",
+              "explain": "㉠에서는 ‘동해 용왕의 아들’이라는 표현으로 해룡의 비범함이 암시되지만, ㉡에서 백발노인은 어사가 부모를 찾지 않는 것을 질책할 뿐 사또의 비범한 능력은 언급하지 않는다."
+            }
+          ]
+        },
+        {
+          "num": 3,
+          "desc": "ⓐ~ⓔ를 이해한 내용으로 적절하지 않은 것은? (정답 ④)",
+          "items": [
+            {
+              "tag": "3-① 원본",
+              "text": "ⓐ: 공주에게 전해 들은 이야기를 바탕으로 금령의 능력과 업적을 평가한 말이다.",
+              "answer": "O",
+              "explain": "황후는 공주에게서 들은 ‘천지조화로 된 금령이 신통함이 기이하여 재주와 수단을 부리’었다는 이야기를 바탕으로, ⓐ에서 금령의 능력과 업적을 높이 평가한다."
+            },
+            {
+              "tag": "3-① 변형",
+              "text": "ⓐ는 공주에게 전해 들은 이야기를 바탕으로 금령의 신통한 능력과 업적을 높이 평가하는 황후의 말이다.",
+              "answer": "O",
+              "explain": "황후는 공주의 이야기를 근거로, 금령이 요괴를 잡고 공주와 자신을 구한 공로를 거듭 치하하며 그 능력을 칭송한다."
+            },
+            {
+              "tag": "3-② 원본",
+              "text": "ⓑ: 해룡이 세운 공로를 치하하기 위해 그의 공로를 자연물과 비교하여 한 말이다.",
+              "answer": "O",
+              "explain": "천자는 ⓑ에서 해룡의 공로를 ‘태산이 낮고 하해가 얕은지라’라고 표현하여, 자연물인 태산과 하해보다도 그 공로가 크다고 비유적으로 치하한다."
+            },
+            {
+              "tag": "3-② 변형",
+              "text": "ⓑ는 해룡의 공로를 ‘태산’, ‘하해’와 같은 자연물에 비유하여 그 크기를 강조하는 천자의 말이다.",
+              "answer": "O",
+              "explain": "태산보다 낮고 하해보다 얕다는 비유는, 해룡의 공로가 그만큼 크고 깊어 그 무엇으로도 견줄 수 없다는 천자의 평가를 효과적으로 전달한다."
+            },
+            {
+              "tag": "3-③ 원본",
+              "text": "ⓒ: 공주가 요괴에게 붙잡혀 있을 때 꾸었던 꿈의 내용을 근거로 해룡과 공주의 관계를 판단하여 한 말이다.",
+              "answer": "O",
+              "explain": "천자는 공주가 요괴에게 잡혀 있을 때 꾼 꿈(동해 용왕의 아들과 속세의 연분을 이루라는 내용)을 근거로, ⓒ에서 해룡과 공주가 ‘천정배필’이라고 판단한다."
+            },
+            {
+              "tag": "3-③ 변형",
+              "text": "ⓒ는 공주가 요괴에게 잡혀 있을 때 꾸었던 꿈의 내용을 근거로, 해룡과 공주가 천정배필임을 판단하여 한 말이다.",
+              "answer": "O",
+              "explain": "천자가 ‘공주의 꿈 이야기를 의논할진대’라고 운을 띄운 뒤 ‘경과 공주는 천정배필이라’고 단언하는 데서, ⓒ가 꿈의 내용을 근거로 한 판단임을 알 수 있다."
+            },
+            {
+              "tag": "3-④ 원본",
+              "text": "ⓓ: 자신은 알고 있으나 해룡은 모르는 사실을 바탕으로 해룡을 돕지 못한 것에 대한 미안함을 나타낸 말이다.",
+              "answer": "X",
+              "explain": "ⓓ는 가까이 있는 사또가 자신의 아버지임을 알아보지 못해 자식의 도리를 차리지 못하는 어사를 질책하고, 어서 부모를 찾을 수 있도록 일깨우기 위해 백발노인이 한 말이다. 해룡을 돕지 못한 것에 대한 미안함을 나타낸 말이라는 설명은 적절하지 않다."
+            },
+            {
+              "tag": "3-④ 변형",
+              "text": "ⓓ는 가까이 있는 부모(사또)를 알아보지 못한 어사를 질책하며 어서 부모를 찾도록 일깨우기 위한 백발노인의 말이다.",
+              "answer": "O",
+              "explain": "‘자기를 낳아 준 부모를 곁에 두고도 찾지 아니하여 ~ 내가 그대를 위해 부끄러워하노라’라는 ⓓ의 내용은, 어사의 정성 부족을 질책하며 부모를 찾도록 깨우치려는 의도를 담고 있다."
+            },
+            {
+              "tag": "3-⑤ 원본",
+              "text": "ⓔ: 어사가 지닌 족자의 출처를 모르는 상황에서 서로 똑같은 족자를 가지고 있는 것을 이상하게 여겨 한 말이다.",
+              "answer": "O",
+              "explain": "ⓔ는 자신의 족자와 똑같이 생긴 족자를 어사가 지닌 것을 보고, 그 출처를 알지 못한 채 이상하게 여긴 사또가 한 말이다."
+            },
+            {
+              "tag": "3-⑤ 변형",
+              "text": "ⓔ는 어사가 지닌 족자의 출처를 알지 못하는 상황에서, 자신의 것과 똑같은 족자를 보고 이상하게 여겨 묻는 사또의 말이다.",
+              "answer": "O",
+              "explain": "‘그 족자는 어디서 났소? 몹시 괴이한 일이 있으니 속이지 말고 자세히 말해 주시오’라는 ⓔ는, 족자의 출처를 모르는 상태에서 사또가 의아함을 드러내며 묻는 말이다."
+            }
+          ]
+        },
+        {
+          "num": 4,
+          "desc": "<보기>(전생 인연과 여성 영웅 소설로서의 면모)를 참고하여 윗글을 감상한 내용으로 적절하지 않은 것은? (정답 ①)",
+          "items": [
+            {
+              "tag": "4-① 원본",
+              "text": "‘동해 용왕의 아들이 인간 세상에 내려갔으니 속세의 연분을 이루어라.’라고 선인이 말한 것에서, 해룡이 전생에 용의 아들이었음을 알 수 있고, 금령과 맺은 전생의 인연을 되찾을 것으로 예상할 수 있겠군.",
+              "answer": "X",
+              "explain": "선인이 말한 ‘동해 용왕의 아들’이 해룡임을 알 수 있는 것은 맞지만, ‘속세의 연분을 이루어라’라는 말은 해룡과 금령의 인연이 아니라 해룡이 공주와 혼인하여 부마가 될 것임을 암시한 말이다. 따라서 이 구절에서 금령과의 전생 인연 회복을 예상할 수 있다는 설명은 적절하지 않다."
+            },
+            {
+              "tag": "4-① 변형",
+              "text": "선인이 말한 ‘속세의 연분을 이루어라’는 해룡과 공주가 혼인하여 부마가 될 것임을 암시한 말이며, 해룡과 금령이 전생에 맺은 인연을 가리키는 것은 아니다.",
+              "answer": "O",
+              "explain": "이어지는 서사에서 해룡은 실제로 공주와 혼인하여 부마가 되므로, ‘속세의 연분’은 해룡과 공주의 인연을 가리키는 것으로 해석하는 것이 적절하다."
+            },
+            {
+              "tag": "4-② 원본",
+              "text": "‘천지조화로 된 금령이 신통함이 기이하여 재주와 수단을 부리’어 요괴를 잡고 해룡이 ‘금령의 조화로 입신양명하’게 된 것에서, 이 작품이 영웅적 능력을 발휘하는 여성이 문제 해결의 주체로 등장하는 여성 영웅 소설에 가까움을 알 수 있겠군.",
+              "answer": "O",
+              "explain": "여성(금령)이 신통한 능력으로 요괴를 퇴치하고 해룡의 입신양명을 돕는 등 문제 해결의 적극적 주체로 등장한다는 점에서, 이 작품은 여성 영웅 소설에 가까운 면모를 보인다."
+            },
+            {
+              "tag": "4-② 변형",
+              "text": "금령이 신통한 재주를 부려 요괴를 잡고 해룡을 입신양명하게 만든 것에서, 이 작품이 여성이 문제 해결의 주체로 등장하는 여성 영웅 소설에 가까움을 알 수 있다.",
+              "answer": "O",
+              "explain": "요괴 퇴치와 해룡의 출세라는 핵심 사건들이 모두 금령의 능력에서 비롯된다는 점에서, 여성 주인공이 서사의 문제 해결을 주도하는 여성 영웅 소설적 성격이 뚜렷하게 드러난다."
+            },
+            {
+              "tag": "4-③ 원본",
+              "text": "‘공주와 시녀를 구해 인간 세상의 몹쓸 짐승을 없이’한 것이 ‘다 네 덕’이라고 황후의 치하를 받은 것에서, 금령의 활약을 사회적 제약에서 벗어나 자신의 역량을 발휘하고 싶었던 과거 여성 독자들의 욕망이 투영된 결과로 이해할 수 있겠군.",
+              "answer": "O",
+              "explain": "여성인 금령이 큰 업적을 이루고 황실로부터 공적으로 인정받는 장면은, 사회적 제약으로 역량을 발휘하기 어려웠던 조선 후기 여성 독자들에게 대리 만족을 주는 기능을 했을 것으로 볼 수 있다."
+            },
+            {
+              "tag": "4-③ 변형",
+              "text": "황후가 금령의 공로를 ‘다 네 덕’이라고 치하하는 장면은, 사회적 성취를 이루고 싶었던 당대 여성 독자층의 욕망이 투영된 결과로 볼 수 있다.",
+              "answer": "O",
+              "explain": "여성이 공적인 업적으로 황실의 치하를 받는 장면은, 사회 활동에 제약이 있었던 당대 여성들의 성취 욕망을 상상의 차원에서 충족시켜 주는 역할을 했다고 볼 수 있다."
+            },
+            {
+              "tag": "4-④ 원본",
+              "text": "‘금령이 물어 온’ 사또의 족자와 ‘금령이 갈 때’ 어사에게 주고 간 족자가 계기가 되어 사또와 어사가 서로의 정체를 알게 되는 것에서, 금령이 타인을 돕는 조력자로서 자신의 능력을 발휘했음을 알 수 있겠군.",
+              "answer": "O",
+              "explain": "전란 중에 헤어졌던 부모와 자식이 금령이 준 똑같은 족자를 매개로 재회하게 되는 장면에서, 금령이 타인(사또와 어사)을 돕는 조력자로서의 역할을 수행했음을 알 수 있다."
+            },
+            {
+              "tag": "4-④ 변형",
+              "text": "사또와 어사가 금령이 준 족자를 매개로 부자지간임을 알게 되는 것에서, 금령이 조력자로서 자신의 능력을 발휘했음을 확인할 수 있다.",
+              "answer": "O",
+              "explain": "금령이 전란 중에 헤어진 부모와 자식에게 각각 같은 모양의 족자를 전해 준 것은, 둘의 재회를 돕기 위한 의도적인 조력 행위로 해석할 수 있다."
+            },
+            {
+              "tag": "4-⑤ 원본",
+              "text": "‘허물을 벗고’ 여성으로 변하기 전까지 금령이 ‘신령스런 물건’의 모습을 하고 있는 동안에만 뛰어난 활약을 보인 것에서, 남들에게 여성으로 인식되지 않는 조건에서 능력을 발휘하는 금령의 모습을 여성의 사회 활동이 제한되었던 과거의 현실이 반영된 결과로 이해할 수 있겠군.",
+              "answer": "O",
+              "explain": "금령은 여성의 모습을 하지 않은 ‘신령스런 물건’의 상태에서만 영웅적 능력을 발휘하는데, 이는 사회 활동이 제한되었던 당대 여성의 현실이 반영된 설정으로 이해할 수 있다."
+            },
+            {
+              "tag": "4-⑤ 변형",
+              "text": "금령이 ‘신령스런 물건’의 모습을 하고 있을 때에만 영웅적 능력을 발휘하는 것은, 여성의 사회 활동이 제한되었던 당대 현실이 반영된 결과로 볼 수 있다.",
+              "answer": "O",
+              "explain": "여성으로서의 정체를 드러내지 않은 상태에서만 활약할 수 있다는 설정은, 여성이 공개적으로 능력을 발휘하기 어려웠던 당대 사회 현실을 우회적으로 반영한 것으로 해석된다."
+            }
+          ]
+        }
+      ],
+      "passages": [
+        {
+          "label": "금방울전 — 작자 미상",
+          "text": "  해룡이 밤낮을 가리지 않고 달려 황성에 이르니, 이때 천자가 만조(滿朝)를 거느리시고 성 밖으로 나오셔서 맞으사 환궁하실새 성 안팎의 백성들이 길에 가득하여 만세를 부르며 상하 인민이 기뻐 뛰면서 환성(歡聲)이 원근에 진동하더라.\n  바로 대전(大殿)에 들어가시니, 이때 황후는 공주를 찾아옴을 들으시고 슬픔을 억제치 못하시다가 크게 기뻐하시며 한편 공주를 안으시고 낯을 맞대며 통곡하시며 천자 또한 눈물을 흘리오시매, 공주가 울기를 그치고 요괴에게 잡혀가서 고행(苦行)을 무수히 겪던 사연이며 ㉠꿈속에 선인(仙人)이 내려와 '동해 용왕의 아들이 인간 세상에 내려갔으니 속세의 연분을 이루어라.'라고 하고, '금일 오시(午時)에 이 고을 속에 들어와 그 요괴를 잡고 같이 나아가 부황(父皇)과 모후(母后)를 만나리라.' 하던 말이 귀에 쟁쟁하오며, 또한 천지조화로 된 금령이 신통함이 기이하여 재주와 수단을 부리고, 해룡이 요괴 잡던 일의 전말을 낱낱이 고하니 황후가 금령을 어루만지시며 가로시되,\n  \"하늘이 이로써 너 같은 신령스런 물건을 내어 ⓐ신통이 거룩하고 재주가 비상하고 기이하여 그런 득도한 요괴를 잡고 공주와 시녀를 구해 인간 세상의 몹쓸 짐승을 없이하고 짐으로 하여금 잃었던 공주를 다시 만나 천륜이 온전하게 하니 이는 다 네 덕이요 장해룡의 공이라. 이런 큰 은혜를 무엇으로 갚으리오.\"\n하시고, 이에 황극전으로 나아가 전좌(殿坐)하사 문무 신하, 종신과 외척, 근시하는 모든 궁녀를 다 모으시고 한편 해룡을 불러들이시니 해룡이 들어와 머리를 조아리며 백배사은하온대, 천자가 보시니 용모가 당당하고 태도가 늠름하여 만고의 영웅 준걸이요 일세의 호걸 장부라. 천자가 한 번 보고 크게 기뻐하여 해룡의 손을 잡으시고 가로시되,\n  \"이제 경의 공을 의논할진대 ⓑ태산이 낮고 하해(河海)가 얕은지라, 그 갚을 바를 알지 못하노라.\"\n하시고, 또한 공주의 꿈 이야기를 거론하시며 왈,\n  \"이제 공주의 꿈 이야기를 의논할진대, ⓒ경과 공주는 천정배필이라. 경은 모름지기 공주를 더럽다 말고 임사의 덕은 갖추지 못했으나 족히 경의 건즐을 받들 것이니 경은 짐의 뜻을 따르도록 하라.\"\n하시고, 부마를 삼고자 하실새 바삐 예부에 명하사,\n  \"택일(擇日)하라.\" / 하시고, 호부에 조서를 내려 하교하사 한편,\n  \"청화문 밖에 별궁을 지으사 화원을 벌여 대전과 통하게 하여 출입하게 하라.\"\n하시고, 한편 예부로 하여금, / \"혼구(婚具)를 갖추어 차리라.\" / 하시니라.\n  해룡이 천은(天恩)을 입사와 그 은혜에 사례하고 물러 나와 어림군을 관리하며 다스릴새, 군기와 군법을 가르치고 연습하며 밤낮으로 나태한 마음을 먹지 않고 분주히 국사를 극진히 살피더니, 어느덧 혼인날이 다다랐는지라.\n\n[중략 부분 줄거리] 부마가 된 해룡은 북흉노가 침범하자 군사를 이끌고 맞서 싸우다가 큰 위기에 처하지만 금령의 도움으로 전쟁에서 승리하고 위왕에 봉해진다. 이후 해룡은 어사가 되어 여러 고을을 순찰한다.\n\n  이때 어사의 행로(行路)가 서울로 향할새 길이 뇌양현을 지나는지라. 뇌양현에 이르러 객사에 숙소를 정할새, 어사가 관가에 들어가 본관 사또와 함께 이야기를 나눌새 자연히 마음과 뜻이 서로 맞아 밤이 깊도록 담화하다가 사또에게 하직하고 돌아가는지라.\n  어사는 자연히 번뇌하여 잠을 이루지 못하고 잠깐 졸더니, 비몽사몽간에 백발노인이 눈앞에 이르러 길게 읍하고 말하되,\n  \"그대 비록 어린 나이에 과거에 급제하여 영웅호걸로 명성이 온 세상에 가득하고 위엄을 천하에 떨쳤으되 자기를 낳아 준 부모를 곁에 두고도 찾지 아니하여 평생 죄인이 되고자 하니, 이는 정성이 부족하여 자식의 도리를 차리지 못하는 것이니 ⓓ내가 그대를 위해 부끄러워하노라.\"\n하니, 어사가 이 말을 들으매 슬픈 마음을 이기지 못하고 노인을 붙잡고 다시 묻고자 하다가 깨어나니 ㉡남가일몽(南柯一夢)이라. 매우 이상하여 다시 자지 못하고 관가로 들어가니, 사또가 대청에서 내려와 영접하여 이야기를 나눌새, 어사가 문득 본즉 벽 위에 걸린 족자가 자기 주머니 속의 족자와 같거늘 자세히 보고 크게 의아하여 물어 왈,\n  \"족자의 그림이 무슨 내용이옵니까?\" / 하니 사또가 슬퍼하며 왈,\n  \"노부가 늦게 아들 하나를 낳았더니 전란 중에 잃은 지 십팔 년이라. 아들의 생사를 알지 못하여 밤낮으로 괴로워하더니 마침 어떤 이인(異人)이 제 마음을 알고 저 그림을 그려 주기로 걸어 두고 보나이다.\"\n하거늘, 어사가 이 말을 듣고 즉시 비단 주머니를 열어 족자 하나를 내어 걸거늘, 사또가 보니 두 족자가 작은 차이도 없어 조금도 다름이 없거늘, 사또와 어사가 서로 괴이하게 여기고 이상하게 여겨 의아해하나 뚜렷한 증거가 없어 서로 발설(發說)치 못하고 주저하다가 사또가 어사에게 문 왈,\n  \"그 족자는 어디서 났소? ⓔ몹시 괴이한 일이 있으니 속이지 말고 자세히 말해 주시오.\"\n하거늘, 어사 또한 신기하게 여겨 자세히 자초지종을 일일이 다 고한 후에 금령의 조화로 입신양명하여 귀하게 된 말이며 나중에 금령이 갈 때에 족자를 주고 가던 사연을 낱낱이 고하니, 사또가 이 말을 듣고 어린 듯 취한 듯 어찌할 줄 모르고, 또한 목이 메어 가로되,\n  \"나도 금령에 대해 할 말이 있노라.\" / 하고, 또 가로되,\n  \"이 족자도 금령이 물어 온 것이오, 금령을 여러 해 보지 못하다가 이제 와서 허물을 벗고 나니 온갖 아름다운 자태를 갖춘, 만고에 드문 절색(絶色)이라.\" / 하고, 또 가로되,\n  \"내 아이는 등에 일곱 개의 사마귀가 북두칠성처럼 나 있으니 이것으로 내 아들임을 아노라.\"\n하니, 어사가 이 말을 듣고 문득 실성통곡하거늘 사또가 또한 통곡함을 마지아니하니 이때 부인이 내달아 어사를 안고 세 사람이 일시에 어우러져 통곡하니 어찌 슬프고 기이하지 아니하리오? 해와 달이 빛을 잃고, 산천의 초목이 슬퍼하는 듯하더라. 차시에 온 고을 사람들이 이 소식을 듣고 뉘 아니 신기하게 여기며 뉘 아니 이상히 여기리오?\n  어사가 울음을 그치고 꿇어 고(告)하여 왈,\n  \"소자, 정성이 부족하여 이제야 부모를 만나 뵈오니 그 죄 만사무석(萬死無惜)이오나, 또한 하늘이 우리를 보살피시어 금령에게 지시하여 이 일이 있게 되었습니다.\"\n- 작자 미상, 「금방울전」\n*임사: 중국 주나라 문왕의 어머니인 태임, 무왕의 어머니인 태사를 함께 이르는 말로 그 둘은 부녀가 지켜야 할 올바른 도리를 잘 지킨 인물들로 유명함.\n*건즐: 수건과 빗을 뜻하며, 부인이 남편에게 자신을 겸손하게 이르는 말로 쓰임. *만사무석: 만 번 죽어도 아깝지 아니함."
+        }
+      ]
+    },
+    {
+      "id": "set8",
+      "title": "꼭두각시놀음",
+      "source": "작자 미상, 「꼭두각시놀음」",
+      "questions": [
+        {
+          "num": 1,
+          "desc": "윗글의 인물에 대한 이해로 가장 적절한 것은? (정답 ③)",
+          "items": [
+            {
+              "tag": "1-① 원본",
+              "text": "표 생원은 자신보다 꼭두각시의 나이가 더 많은 탓에 두 사람 사이에 자식을 얻기가 어려워졌다고 생각한다.",
+              "answer": "X",
+              "explain": "표생원이 돌모리집을 들인 이유를 합리화하기 위해 ‘부인이 어느덧 환갑이 넘고, 내가 연만 팔십에’ 자식이 없다고 말한 것에서 표 생원이 꼭두각시보다 나이가 더 많음을 알 수 있다. 즉 나이가 더 많은 쪽은 꼭두각시가 아니라 표 생원이며, 두 사람의 나이 차이 때문에 자식을 얻기 어려워졌다는 인과 관계 자체도 본문에서 확인되지 않는다."
+            },
+            {
+              "tag": "1-① 변형",
+              "text": "표 생원이 ‘부인이 어느덧 환갑이 넘고, 내가 연만 팔십에’라고 말한 것을 통해 표 생원이 꼭두각시보다 나이가 많음을 알 수 있다.",
+              "answer": "O",
+              "explain": "이 대사를 통해 표 생원이 팔십, 꼭두각시가 환갑을 넘긴 나이임을 알 수 있어, 표 생원이 꼭두각시보다 연상임이 확인된다."
+            },
+            {
+              "tag": "1-② 원본",
+              "text": "꼭두각시는 돌모리집이 작은집이라는 사실을 알고 내심 반기면서도 본부인으로서 권위와 체면을 지키기 위해 애를 쓴다.",
+              "answer": "X",
+              "explain": "꼭두각시는 돌모리집이 소실(작은집)이라는 사실을 알고 반가워하는 것이 아니라 ‘험한 꼴을 보’게 되었다며 실망한다. 다만 곧바로 현실을 직시하고 본부인으로서의 권위와 체면을 지키려 애쓰는 모습을 보인다."
+            },
+            {
+              "tag": "1-② 변형",
+              "text": "꼭두각시는 돌모리집이 작은집(소실)이라는 사실을 알고 실망하기보다, 본부인으로서 곧바로 현실을 받아들이고 권위와 체면을 지키려 한다.",
+              "answer": "X",
+              "explain": "꼭두각시는 ‘이날껏 찾아다니면서 나중에 이런 험한 꼴을 보자고 영감을 찾았구려’라며 분명히 실망과 서운함을 드러낸 뒤에야 권위와 체면을 지키려는 태도로 전환하므로, ‘실망하기보다’라는 표현은 적절하지 않다."
+            },
+            {
+              "tag": "1-③ 원본",
+              "text": "돌모리집은 기대한 바와 다른 상황이 펼쳐지자, 자존심이 상해서 꼭두각시에게 인사하라는 표 생원의 요청에 처음에는 거절의 의사를 밝힌다.",
+              "answer": "O",
+              "explain": "돌모리집은 ‘유명한 표 생원’ 가문의 일원이 될 수 있다고 기대했으나, 표 생원이 큰 부인에게 인사하라고 요구하자 ‘작은집이라 업신여’김을 받는다고 여겨 ‘인사도 싫고 나는 갈 터이니’라며 자존심이 상해 거절의 뜻을 밝힌다."
+            },
+            {
+              "tag": "1-③ 변형",
+              "text": "돌모리집은 꼭두각시에게 인사하라는 표 생원의 요청에 처음에는 자존심이 상해 거절의 뜻을 밝힌다.",
+              "answer": "O",
+              "explain": "돌모리집은 ‘날더러 작은집이라 업신여겨 큰부인에게 인사를 하여라, 절을 하여라 하니 ~ 절은 웬 절이여?’라며 처음에는 인사를 거부하고 돌아서는 모습을 보인다."
+            },
+            {
+              "tag": "1-④ 원본",
+              "text": "박 첨지는 재산 분배를 위한 판결에는 당사자의 요구가 있어 개입하지만, 평안 감사의 상여꾼 구하는 일에는 상주의 요구 없이 자발적으로 참여한다.",
+              "answer": "X",
+              "explain": "박 첨지는 재산 분배 판결에 표 생원의 ‘판결 좀 하여’ 달라는 요구가 있어서 개입하고, 상여꾼 구하는 일에도 상주인 평안 감사의 ‘상여가 나가다가 ~ 사 대라’라는 요구가 있어서 참여한다. 두 경우 모두 당사자의 요구에 따라 개입한 것이다."
+            },
+            {
+              "tag": "1-④ 변형",
+              "text": "박 첨지는 재산 분배 판결과 상여꾼을 구하는 일 모두에 당사자의 요구가 있었기 때문에 개입하게 된다.",
+              "answer": "O",
+              "explain": "표 생원의 ‘판결 좀 하여 주시오’라는 요청과 평안 감사의 ‘인부를 사 대라’라는 명령이 각각 박 첨지가 두 사건에 개입하는 계기가 된다."
+            },
+            {
+              "tag": "1-⑤ 원본",
+              "text": "평안 감사는 자신에게 모욕적인 행동을 한 홍동지의 잘못을 꾸짖지 않는 대신 홍동지를 데려온 박 첨지에게 벌을 내림으로써 홍동지로 인해 생긴 화를 풀려고 한다.",
+              "answer": "X",
+              "explain": "평안 감사는 ‘네가 상여를 모시러 왔다니 ~ 빨가벗고 무슨 상여를 멘단 말이냐? 괘씸한 놈 잡아내라’와 같이 홍동지를 직접 꾸짖은 뒤, 그를 데려온 박 첨지까지 잡아들여 태장을 가한다. 홍동지의 잘못을 꾸짖지 않았다는 설명은 적절하지 않다."
+            },
+            {
+              "tag": "1-⑤ 변형",
+              "text": "평안 감사는 자신에게 모욕적인 언사를 한 홍동지를 직접 꾸짖고, 그를 데려온 박 첨지에게도 벌을 내린다.",
+              "answer": "O",
+              "explain": "평안 감사는 ‘괘씸한 놈 잡아내라’라며 화를 내고 박 첨지를 잡아들여 태장을 한다는 점에서, 홍동지의 무례함에 대한 분노가 박 첨지에 대한 처벌로 이어졌음을 알 수 있다."
+            }
+          ]
+        },
+        {
+          "num": 2,
+          "desc": "㉠~㉤에 대한 설명으로 가장 적절한 것은? (정답 ③)",
+          "items": [
+            {
+              "tag": "2-① 원본",
+              "text": "㉠: 상대방의 말에 대한 반박으로서 자기 얼굴은 꼭두각시의 얼굴보다 단단함을 강조하며 한 말이다.",
+              "answer": "X",
+              "explain": "㉠은 꼭두각시가 자신의 얼굴이 ‘깊은 산중에 도토리묵을 먹어서 그렇게 되었’다고 말하자, 표 생원이 그 말을 믿지 못하고 반박하며 한 말이다. 이는 자기 얼굴이 더 단단하다는 것이 아니라, 꼭두각시가 말한 것과 같은 이유로는 얼굴이 ‘우툴두툴’하게 되지 않는다는 점을 강조한 말이다."
+            },
+            {
+              "tag": "2-① 변형",
+              "text": "㉠은 표 생원이 꼭두각시의 말을 반박하며, 자신이 말한 것과 같은 이유로는 얼굴이 ‘우툴두툴’해지지 않는다는 점을 강조한 말이다.",
+              "answer": "O",
+              "explain": "표 생원은 자신도 강냉이와 상수리를 통째로 삶아 먹었지만 ‘우툴두툴커녕’이라며, 꼭두각시가 댄 이유로는 얼굴이 그렇게 될 수 없다는 점을 들어 꼭두각시의 변명을 반박하고 있다."
+            },
+            {
+              "tag": "2-② 원본",
+              "text": "㉡: 가족 간의 관계를 정립하는 선언으로서 신체적 크기에 기반하여 위아래를 결정하며 한 말이다.",
+              "answer": "X",
+              "explain": "㉡(‘그러나저러나 적어도 큰마누라요, 커도 작은마누라니’)은 신체적 크기가 아니라 처와 첩이라는 표 생원과의 관계에 기반하여 꼭두각시와 돌모리집의 상하 관계가 정해짐을 선언한 말이다."
+            },
+            {
+              "tag": "2-② 변형",
+              "text": "㉡은 꼭두각시와 돌모리집의 상하 관계가 신체적 크기가 아니라 처와 첩이라는 관계에 기반하여 정해짐을 선언한 말이다.",
+              "answer": "O",
+              "explain": "‘적어도 큰마누라요, 커도 작은마누라니’라는 표현은 신체의 크고 작음과 무관하게, 본처와 소실이라는 신분상의 위계에 따라 두 사람의 관계가 결정됨을 보여 준다."
+            },
+            {
+              "tag": "2-③ 원본",
+              "text": "㉢: 의리를 내세운 감정적인 호소로서 돌모리집이 시도하려는 행동을 만류하기 위해서 한 말이다.",
+              "answer": "O",
+              "explain": "돌모리집이 ‘인사도 싫고 나는 가네, 큰마누라하고 잘 사소’라며 떠나려 하자, 표 생원은 함께 살아온 정리(情理)를 내세워 ‘오뉴월 불도 쬐다 물러나면 서운하다네’라며 그녀를 감정적으로 만류한다."
+            },
+            {
+              "tag": "2-③ 변형",
+              "text": "㉢은 표 생원이 돌모리집과 함께 살아온 정리를 내세워, 그녀가 떠나려는 행동을 만류하기 위해 한 말이다.",
+              "answer": "O",
+              "explain": "㉢은 돌모리집이 꼭두각시에게 인사하기를 거부하며 떠나려 하자, 표 생원이 그동안 쌓아 온 정을 근거로 그녀의 행동을 만류하려는 말이다."
+            },
+            {
+              "tag": "2-④ 원본",
+              "text": "㉣: 자기만족을 드러낸 언사로서 기대한 만큼의 재산을 분할받게 되어 홀가분함을 느끼면서 한 말이다.",
+              "answer": "X",
+              "explain": "㉣은 ‘개똥밭 하루갈이와 매운 짓독 깨진’ 것 등 가치가 떨어지는 재산을 받게 된 꼭두각시가, 자신이 원하던 만큼의 재산을 얻지 못한 채 허탈감을 느끼며 떠나면서 한 말이다. 기대한 만큼 재산을 받아 홀가분해하는 자기만족의 언사로 보는 것은 적절하지 않다."
+            },
+            {
+              "tag": "2-④ 변형",
+              "text": "㉣은 재산을 적게 분배받은 데서 오는 꼭두각시의 허탈감을 드러낸 말이다.",
+              "answer": "O",
+              "explain": "박 첨지의 편파적인 재산 분배에서 꼭두각시는 거의 가치 없는 재산만을 받게 되며, ‘허허, 나는 가네, 나 돌아가네’라는 ㉣의 말에는 자기만족이 아닌 허탈감이 담겨 있다."
+            },
+            {
+              "tag": "2-⑤ 원본",
+              "text": "㉤: 모친상의 슬픔을 견디기 위한 독백이거나 초상의 긍정적인 부분을 억지로 찾으면서 한 말이다.",
+              "answer": "X",
+              "explain": "㉤(‘아이고 좋아. 콩나물 안방 차지 내 차지.’)은 뒤이어 노래를 부르는 행위로 미루어 볼 때, 모친상의 슬픔을 견디기 위한 말이 아니라 어머니가 돌아가셔서 안방을 차지하게 되었다고 기뻐하며 한 말이다."
+            },
+            {
+              "tag": "2-⑤ 변형",
+              "text": "㉤은 모친이 돌아가셔서 안방을 차지하게 된 것을 기뻐하는 평안 감사의 말이다.",
+              "answer": "O",
+              "explain": "‘콩나물 안방 차지 내 차지’라는 표현과 이어지는 양산도 등의 흥겨운 노래로 볼 때, ㉤은 모친상의 슬픔이 아니라 안방을 차지하게 된 것에 대한 기쁨을 드러낸 말이다."
+            }
+          ]
+        },
+        {
+          "num": 3,
+          "desc": "<보기>(풍자의 두 가지 기법)를 바탕으로 윗글을 감상한 내용으로 적절하지 않은 것은? (정답 ②)",
+          "items": [
+            {
+              "tag": "3-① 원본",
+              "text": "꼭두각시가 ‘큰 집 작은 집을 어찌 가리겠소’라고 말한 것은 동음이의어를 사용한 재담으로 청중의 웃음을 유발하면서 안정적으로 정착하려는 인물의 의지가 좌절되어 가는 과정을 보여 준다고 할 수 있군.",
+              "answer": "O",
+              "explain": "거처를 뜻하는 ‘작은 집’과 소실을 뜻하는 ‘작은집’이라는 동음이의어를 사용하여 청중의 웃음을 유발하는 재담이 확인되며, 동시에 집을 마련하여 표 생원과 정착하려고 했던 꼭두각시의 의지가 좌절되는 과정도 함께 나타난다."
+            },
+            {
+              "tag": "3-① 변형",
+              "text": "꼭두각시의 ‘큰 집 작은 집을 어찌 가리겠소’라는 말은 동음이의어를 활용한 재담으로, 안정적으로 정착하려는 꼭두각시의 의지가 좌절되는 과정을 함께 보여 준다.",
+              "answer": "O",
+              "explain": "이 대사는 표면적으로는 거처(큰 집/작은 집)를 가리지 않겠다는 말이지만, 실제로는 소실(작은집)의 존재를 가리키는 것으로 밝혀지면서 꼭두각시의 정착 의지가 좌절되는 계기가 된다."
+            },
+            {
+              "tag": "3-② 원본",
+              "text": "박 첨지가 ‘한 마을의 구장으로 잘 처리하겠’다면서 내린 매우 편파적인 결정은 표 생원을 공격하여 상류 기득권층을 비천한 존재로 만드는 양상을 보여 준다고 할 수 있군.",
+              "answer": "X",
+              "explain": "박 첨지의 편파적인 결정은 어처구니없는 행위로 볼 수 있지만, 이는 표 생원이라는 특정 상류 기득권층을 공격하기 위한 것이 아니라 박 첨지로 대변되는 관리의 위선과 무능을 풍자한 것으로 보는 것이 적절하다."
+            },
+            {
+              "tag": "3-② 변형",
+              "text": "박 첨지가 ‘한 마을의 구장으로 잘 처리하겠다’며 내린 편파적인 판결은 박 첨지 자신의 위선과 무능을 풍자하기 위한 것이지, 표 생원을 공격하여 상류 기득권층을 비천하게 만들기 위한 장치는 아니다.",
+              "answer": "O",
+              "explain": "공정한 판결을 약속해 놓고 실제로는 매우 불공정하게 재산을 나누는 박 첨지의 모습은, 관리 계층의 위선과 무능을 풍자하는 것이지 표 생원이라는 특정 기득권 인물을 깎아내리기 위한 것은 아니다."
+            },
+            {
+              "tag": "3-③ 원본",
+              "text": "박 첨지가 홍동지를 ‘이상야릇한 놈’인 줄 알았으면서도 상여꾼으로 굳이 천거한 것은 지배층인 평안 감사를 비웃으면서 공격하여 품위가 낮은 존재로 전락시키기 위한 기법으로 볼 수 있군.",
+              "answer": "O",
+              "explain": "박 첨지가 정상적이지 않은 인물임을 알면서도 홍동지를 평안 감사의 상여꾼으로 천거한 것은, 지배층인 평안 감사를 풍자적으로 공격하여 품위를 낮추기 위한 기법에 해당한다."
+            },
+            {
+              "tag": "3-③ 변형",
+              "text": "박 첨지가 ‘이상야릇한 놈’임을 알면서도 홍동지를 상여꾼으로 천거한 것은 지배층인 평안 감사를 풍자하기 위한 기법이다.",
+              "answer": "O",
+              "explain": "박 첨지의 천거로 인해 결국 평안 감사의 상여 행렬에서 망신스러운 소동이 벌어지므로, 이는 지배층을 우스꽝스럽게 만드는 풍자적 장치로 기능한다."
+            },
+            {
+              "tag": "3-④ 원본",
+              "text": "박 첨지가 ‘지체하면 주릿대학춤, 고드래뼈 튕겨지’는 것을 우려하는 데에는 조선 후기 지배층의 부당한 횡포를 피지배층의 입장에서 폭로하고 비판하려는 의도가 담겨 있다고 볼 수 있군.",
+              "answer": "O",
+              "explain": "상여 메는 일을 지체했다는 이유만으로 가혹한 형벌을 받을까 두려워하는 모습은, 조선 후기 지배층의 부당한 횡포가 심했음을 피지배층의 시각에서 폭로하고 비판하는 것으로 볼 수 있다."
+            },
+            {
+              "tag": "3-④ 변형",
+              "text": "박 첨지가 ‘주릿대학춤, 고드래뼈 튕겨지’는 형벌을 두려워하는 것은 조선 후기 지배층의 부당한 횡포를 피지배층의 입장에서 폭로하려는 의도를 담고 있다.",
+              "answer": "O",
+              "explain": "사소한 지체에도 가혹한 형벌이 따를 수 있다는 두려움은, 지배층의 권력 남용이 일상적이었던 당대 현실에 대한 비판적 시선을 드러낸다."
+            },
+            {
+              "tag": "3-⑤ 원본",
+              "text": "평안 감사가 ‘대부인 상여인데~빨가벗고 덤벙거리느냐?’며 체통과 격식을 따지자, 홍동지는 ‘빨가벗었더라도 상여만 잘 메면됐지. 무삼 잔말.’이라고 반응한다. 이는 피지배층인 홍동지가 지배층인 평안 감사의 허위의식을 비판하는 것이면서 그에 반항하는 모습에 해당한다.",
+              "answer": "O",
+              "explain": "체통과 격식을 따지는 평안 감사에게 홍동지가 ‘빨가벗었더라도 상여만 잘 메면 됐지’라고 응수하는 것은, 형식에 집착하는 지배층의 허위의식을 비판하며 거기에 정면으로 반항하는 피지배층의 모습을 보여 준다."
+            },
+            {
+              "tag": "3-⑤ 변형",
+              "text": "홍동지가 평안 감사에게 ‘빨가벗었더라도 상여만 잘 메면 됐지’라고 말한 것은 지배층의 허위의식에 대한 피지배층의 반항을 보여 준다.",
+              "answer": "O",
+              "explain": "격식과 체통을 중시하는 평안 감사의 질책에 아랑곳하지 않고 실질을 내세우는 홍동지의 태도는, 지배층의 허례허식에 맞서는 피지배층의 비판적·반항적 태도를 형상화한 것이다."
+            }
+          ]
+        },
+        {
+          "num": 4,
+          "desc": "<보기>(꼭두각시놀음의 무대와 구성 방식)를 참고하여 윗글을 이해한 내용으로 적절하지 않은 것은? (정답 ④)",
+          "items": [
+            {
+              "tag": "4-① 원본",
+              "text": "[제5막]과 [제7막] 모두 대잡이가 인형을 조종하면서 대사를 하는 것은 물론 노래까지 부르는 연희의 상황이 펼쳐지고 있다.",
+              "answer": "O",
+              "explain": "[제5막]에서는 인물의 대사와 함께 <창>을, [제7막]에서는 인물의 대사와 함께 ‘양산도’ 등의 노래를 불러야 하는 상황이 연출되어, 두 거리 모두 대잡이가 대사와 노래를 함께 수행하는 연희 상황이 나타난다."
+            },
+            {
+              "tag": "4-① 변형",
+              "text": "[제5막]과 [제7막] 모두 대잡이가 인형을 조종하며 대사뿐 아니라 노래까지 함께 수행하는 연희 상황이 펼쳐진다.",
+              "answer": "O",
+              "explain": "두 거리 모두 인형의 대사 진행과 더불어 <창>이나 ‘양산도’ 같은 노래가 함께 요구되므로, 대잡이는 인형 조종, 대사, 노래를 모두 수행해야 한다."
+            },
+            {
+              "tag": "4-② 원본",
+              "text": "[제5막]에서는 꼭두각시와 돌모리집의 처첩 갈등에 따른 대결 양상이, [제7막]에서는 평안감사와 홍동지의 신분과 계층 차이에 따른 대결 양상이 나타나고 있다.",
+              "answer": "O",
+              "explain": "[제5막]은 표 생원의 처인 꼭두각시와 첩인 돌모리집 사이의 갈등에 따른 대결 양상을, [제7막]은 지배층인 평안 감사와 피지배층인 박 첨지·홍동지의 신분·계층 차이에서 비롯된 대결 양상을 보여 준다."
+            },
+            {
+              "tag": "4-② 변형",
+              "text": "[제5막]에는 처첩 갈등에 따른 대결 양상이, [제7막]에는 신분과 계층 차이에서 비롯된 대결 양상이 나타난다.",
+              "answer": "O",
+              "explain": "[제5막]의 꼭두각시-돌모리집 갈등은 한 남편을 둔 처첩 간의 갈등이고, [제7막]의 평안 감사-홍동지 갈등은 지배층과 피지배층 사이의 신분적 갈등이라는 점에서 성격이 다르다."
+            },
+            {
+              "tag": "4-③ 원본",
+              "text": "[제5막]과 [제7막]의 사건은 내용상으로 연결되지 않아 각 거리의 개별성이 강하지만, 박 첨지가 [제5막]과 [제7막]에 모두 등장함으로써 거리 간의 상관성이 유지되고 있다.",
+              "answer": "O",
+              "explain": "각 거리의 사건은 줄거리상 서로 연결되지 않으며 개별성이 강하지만, 박 첨지가 두 거리에 모두 등장함으로써 전체 작품 안에서 거리 간의 상관성이 유지된다."
+            },
+            {
+              "tag": "4-③ 변형",
+              "text": "[제5막]과 [제7막]은 내용상 서로 연결되지 않는 개별적인 거리이지만, 박 첨지가 두 거리 모두에 등장함으로써 작품 전체의 상관성이 유지된다.",
+              "answer": "O",
+              "explain": "두 거리는 각각 독립된 화소를 중심으로 전개되지만, 동일 인물인 박 첨지의 등장이 거리와 거리 사이를 느슨하게 이어 주는 역할을 한다."
+            },
+            {
+              "tag": "4-④ 원본",
+              "text": "[제5막]을 공연할 때는 표 생원이 소유한 세간이 소도구로 사용될 것이고, [제7막]을 공연할 때는 홍동지가 메게 될 평안 감사의 모친 상여와 함께 극 중 실내와 실외를 구분 짓는 경계로서 문이 소도구로 사용될 것임을 짐작할 수 있다.",
+              "answer": "X",
+              "explain": "[제5막]에서 가구를 비롯한 세간은 인물의 대화에서 언급될 뿐이므로 실제 소도구로 사용되지 않을 가능성이 크다. [제7막]에서 상여는 실제로 등장하여 소도구로 사용되겠지만, 문은 평안 감사의 대사 ‘문안이고 문밖이고’에서 언어유희로 언급된 것일 뿐 실내·실외를 구분하는 실제 소도구로 사용되지는 않을 것이다."
+            },
+            {
+              "tag": "4-④ 변형",
+              "text": "[제7막]에서 문은 ‘문안이고 문밖이고’라는 언어유희로 언급될 뿐, 실내와 실외를 구분하는 소도구로 실제 사용되지는 않을 것이다.",
+              "answer": "O",
+              "explain": "‘문안이고 문밖이고’라는 표현은 ‘문안(問安) 인사’와 ‘문(門) 안/밖’의 발음 유사성을 이용한 언어유희에 해당하며, 실제 무대 위에 문이라는 소도구가 설치되어 사용되는 것을 의미하지는 않는다."
+            },
+            {
+              "tag": "4-⑤ 원본",
+              "text": "[제5막]의 끝부분에서 대잡이는 꼭두각시 인형을 춤추게 하면서 무대 아래로 내림으로써 관객의 시야에서 사라지게 할 것이고, [제7막]의 앞부분에서 대잡이는 평안 감사가 박 첨지를 부를 때 무대 위로 박 첨지 인형을 올림으로써 관객에게 보이게 할 것임을 예측할 수 있다.",
+              "answer": "O",
+              "explain": "[제5막]의 끝부분에서 꼭두각시는 ‘춤추며 나간다’고 지시되어 있으므로 대잡이가 인형을 춤추게 하며 무대 아래로 퇴장시킬 것이고, [제7막] 앞부분에서 평안 감사가 박 첨지를 부르자 박 첨지가 등장하므로 대잡이가 인형을 무대 위로 올려 등장시킬 것임을 예측할 수 있다."
+            },
+            {
+              "tag": "4-⑤ 변형",
+              "text": "[제5막]에서 꼭두각시 인형은 춤추며 무대 아래로 내려가 사라지고, [제7막]에서 박 첨지 인형은 무대 위로 올라와 관객에게 보이는 방식으로 연출될 것이다.",
+              "answer": "O",
+              "explain": "공중무대라는 폐쇄적 구조 특성상, 인형의 등장과 퇴장은 무대 아래위로 인형을 들어 올리거나 내리는 방식으로 이루어지므로, 꼭두각시의 퇴장과 박 첨지의 등장 모두 이러한 방식으로 연출될 것이다."
+            }
+          ]
+        }
+      ],
+      "passages": [
+        {
+          "label": "꼭두각시놀음 — 작자 미상",
+          "text": "[제5막] 표 생원 거리\n꼭두각시: 내 얼굴은 뉘 탓이오? 강원도 가서 영감 찾느라고 깊은 산중에 도토리묵을 먹어서 그렇게 되었소.\n표 생원: 뭐 어쩌고 어째여? 산골에서 묵을 먹고 얼굴이 저 모양새가 되었으면, 나는 함경도 백두산에 다녀서 삼수갑산(三水甲山)으로 나올 제 강냉이와 상수리를 통째로 삶아 먹었는데 우툴두툴커녕 ㉠내 얼굴엔 네가 나막신을 신고 다녀 봐라. 해괴망측스런 년. 요사스런 계집도 많다. (사이) 그러나 생각하니 개천에 나도 용은 용이요, 짚으로 만들어도 신주(神主)는 신주라니 돌모리집한테 훈계하여 큰마누라에게 상우례나 시켜 보자. 여보게 돌모리집네! (돌모리집을 불러 앞에 세우고 꼭두각시에 대하여) 여보 부인, 그러나저러나 객담(客談)은 그만두고 살아갈 이야기나 합시다. 부인이 어느덧 환갑이 넘고, 내가 연만(年滿) 팔십에 늙어 가난하고, 따라서 일점혈육(一點血肉)이 슬하에 없으니 이런 낭패가 어디 있나? 그러므로 부인도 근심이 되지요?\n꼭두각시: 여러 해포 만에 만나긴 만났으나 그도 또한 나 역시 근심이오.\n표 생원: 부인의 말이 그러하니 말이오. 내가 그전에 작은집을 하나 얻었소.\n꼭두각시: 아이고 듣던 중 상쾌한 말이오. 이 형편에 큰 집 작은 집을 어찌 가리겠소. 집을 얻었으니 재목(材木)이나 성하며 양지바르고 또 장인들 담가 놨겠소?\n표 생원: 어으? 아 이게 무슨 소리여? 장은 무슨 장이며, 재목은 무슨 재목? 떡 줄 놈은 생각도 안 하는데 김칫국 먼저 마시네. 소실(小室)을 얻었단 말이여.\n꼭두각시: 아이고 영감, 이게 무슨 소리요? 이날껏 찾아다니면서 나중에 이런 험한 꼴을 보자고 영감을 찾았구려.\n표 생원: 잔말 말고 주는 거나 먹고 지내지.\n꼭두각시: ㉡그러나저러나 적어도 큰마누라요, 커도 작은마누라니 인사나 시키오.\n표 생원: 여보게, 돌모리집네! 법은 법대로 하세.\n돌모리집: 무얼 말이오?\n표 생원: 큰부인한테 인사나 하게.\n돌모리집: 머지 않은 좌석에서 들어도 알겠소. 내가 적어도 용산 삼개 돌모리집이라면 장안 안이 다 아는 터인데, 유명한 표 생원이기로 가문을 보고 살기어든 날더러 작은집이라 업신여겨 큰부인에게 인사를 하여라, 절을 하여라 하니 잣골 내시댁 문 앞인가 절은 웬 절이여? 인사도 싫고 나는 갈 터이니 큰마누라하고 잘 사소. (돌아선다.)\n표 생원: ㉢돌모리집네! 여직 살던 정리(情理)로 그럴 수가 있나? 오뉴월 불도 쬐다 물러나면 서운하다네. 마음을 돌려 인사하게.\n돌모리집: 그러면 인사해 볼까요? (아무 말 없이 화가 나서 꼭두각시한테 머리를 딱 들이받으며) 인사 받으우.\n꼭두각시: (놀래며) 이게 웬일이요? 여보 영감! 이게 웬일이요. 요사이 인사 예절은 이러하오? 인사 두 번만 받으면 내 머리는 간다 봐라 하겠구나. 인사도 싫으니 세간을 나눠 주오.\n표 생원: 괘씸스런 계집들은 불같은 욕심은 있구나. 나의 집은 해남 관머리요 몸 지체는 한양 성중인데 무슨 세간 무슨 재물을 나눠 주니? 짚은 몽둥이로 한번 치면 다 죽으리라. (표 생원이 화를 내고 있는데 박 첨지가 나온다.)\n박 첨지: 실례 말씀이요만은 잠시 지내다 보니 남의 집안 문제나 내 몸은 일개 구장(區長)으로 모르는 체할 수 없어 물어보니 허물치 마오.\n표 생원: 네, 구장이십니까? 판결 좀 하여 주시오. 제가 해남 사는 표 생원으로 부부 이별하고 그간 소실을 얻어 이곳에 왔다가 저기 선 저 화상(꼭두각시를 가리키며)은 나의 큰마누라인데 작은집으로 감정을 내어 세간을 나눠 달라 하오니 백계무책(百計無策)이오. 어찌할는지요?\n박 첨지: 그러면 세 분이 다 객지(客地)이오?\n표 생원: 여기는 객지나 다름없습니다.\n박 첨지: 재산이 있으면 나눠 줄 마음이오?\n표 생원: 다시 이를 말씀이오?\n  (박 첨지가 한참 생각한다.)\n박 첨지: 내가 한 마을의 구장으로 잘 처리하겠으니 염려 마우. <창> 돌모리집은 왕십리에 구실 은(銀) 두 되하는 논 네 마지기를 주고, 꼭두각시는 남산 봉우제 재실 재답 구실 닷 마지기 고추밭 하루갈이 주고, 용산 삼개 들어오는 뗏목은 모두 다 묶어다가 돌모리집 가져가고, 꼭두각시 널랑은 명년(明年) 장마에 떠밀리는 나무뿌리는 너 다 갖고, 은장 봉장 자개 함롱 반닫이는 글낭 모두 돌모리집 주고, 뒤꼍에 돌아가 개똥밭 하루갈이와 매운 짓독 깨진 걸랑 꼭두각시 너 다 가져라.\n꼭두각시: <창> ㉣허허, 나는 가네. 나 돌아가네. 덜덜거리고 그 돌아가네. (춤추며 나간다.)\n(중략)\n\n[제7막] 평안 감사 재상(在喪) 거리\n  (평안 감사의 모친 상여가 나온다.)\n평안 감사: 꼴곡 꼴곡 꼴곡 꼴곡. ㉤아이고 좋아. 콩나물 안방 차지 내 차지.\n  (양산도 등 노래를 부른다.)\n작은 박 첨지: (구경하다가) 이게 뉘 놈의 상여냐? 초상 상주 놈의 소리가 앓는 곳이냐?\n  (그때 상두꾼이 발병이 나서 못 가고 상여를 내려놓았다.)\n평안 감사: 여봐라, 박가야. (박 첨지가 나온다.) 말 들어라. 상여가 나가다가 상두꾼이 발병이 났으니, 인부를 사 대라.\n박 첨지: 인부가 졸지에 없사오니 소인의 조카 놈이 궂은일 잘 보고, 괴덜머리쩍고, 기운이 역사요, 이상야릇한 놈이오니 그놈으로 천거하옵니다.\n평안 감사: 이놈 더디다. 빨리 대령하여라.\n박 첨지: 네─ (홍동지를 부른다.) 여봐라, 듼둥아! 이번에 감사 사또 연번시 상두꾼이 발탈이 났으니 하룻밤 삼시야 사시야 먹고, 돈 칠 푼 줄 것이니 상여꾼 품 팔러 안 가려느냐?\n홍동지: 왜 그래쌌소?\n박 첨지: 지금 한 말 못 들었느냐? 만일 지체하면 주릿대학춤, 고드래뼈 튕겨지면 호소할 곳 바이없으니 지체 말고 빨리 나오너라.\n홍동지: 아자씨 말씀이 정말이요? / 박 첨지: 그짓말하겠느냐?\n홍동지: 빨가벗어도 좋소? / 박 첨지: 관계없다.\n홍동지: 어디 가서 보기나 합시다. (홍동지가 가만히 가서 상제도 보고 또 상여를 냄새 맡더니) 카 ─ 이게 뭐요?\n박 첨지: 왜 그러느냐?\n홍동지: 아─ 오뉴월 강생이 썩는 냄새가 나는구려.\n박 첨지: 이놈아! 그게 무슨 말이냐? 감사또 아시면 서운치 않으시겠느냐?\n홍동지: 사또가 섭섭하시면 큰 개 썩는 냄새가 난다 합시다.\n평안 감사: 꼴곡 꼴곡 꼴곡. (왔다 갔다 한다.)\n홍동지: 상제님 문안드리오.\n평안 감사: 이놈! 상여도 대부인 상여인데, 문안이고 문밖이고 웬 놈이 빨가벗고 덤벙거리느냐?\n홍동지: 빨가벗었더라도 상여만 잘 메면 됐지. 무삼 잔말.\n평안 감사: 네가 상여를 모시러 왔다니 듣기는 반갑다마는 빨가벗고 무슨 상여를 멘단 말이냐? 괘씸한 놈 잡아내라. (평안 감사가 화를 내어 박 첨지를 잡아들여서 태장을 한다.)\n- 작자 미상, 「꼭두각시놀음」\n*신주: 죽은 사람의 영을 모신 위패. *상우례: 신랑이 처가의 친척과, 또는 신부가 시가의 친척과 처음 만나는 예식.\n*소실: 정식 아내 외에 데리고 사는 여자. *백계무책: 있는 꾀를 다 써도 소용이 없음.\n*재상: 어버이의 상중(喪中)에 있음. *꼴곡: 앓는 소리. *양산도: 경기 민요 선소리의 하나로 삼박자의 흥겨운 노래.\n*괴덜머리쩍고: 수선스럽고 실없는 짓을 하고. *연번시: 장사(葬事) 지내러 가는 길에 등을 들고 가는 것.\n*주릿대학춤, 고드래뼈 튕겨지면: 형벌을 받게 되면. *강생이: '강아지'의 방언. *대부인: 남의 어머니를 높여 이르는 말."
+        }
+      ]
+    },
+    {
+      "id": "set1",
+      "title": "산민 · 합강정가 · 응계설",
+      "source": "김창협, 「산민」 / 작자 미상, 「합강정가」 / 이첨, 「응계설」",
+      "questions": [
+        {
+          "num": 1,
+          "desc": "(가)~(다)의 공통점으로 가장 적절한 것은? (정답 ③)",
+          "items": [
+            {
+              "tag": "1-① 원본",
+              "text": "(가)~(다)는 모두 범접할 수 없는 대상에 대해 인간이 느끼는 경외감을 드러내고 있다.",
+              "answer": "X",
+              "explain": "세 작품 모두 경외감이 아니라 비판적 시각을 중심으로 한다. (가)는 두메산골에서 힘겹게 사는 부부에 대한 연민과 관리에 대한 비판, (나)는 관찰사의 가을 순행으로 고통받는 백성에 대한 비판, (다)는 응방의 폐단과 임금·신하에 대한 비판을 드러낼 뿐, 범접할 수 없는 대상에 대한 경외감은 어디에도 나타나지 않는다."
+            },
+            {
+              "tag": "1-① 변형",
+              "text": "(가)~(다)는 모두 초월적 존재를 향한 동경을 통해 현실에서 벗어나고자 하는 태도를 드러내고 있다.",
+              "answer": "X",
+              "explain": "세 작품 모두 초월적 존재에 대한 동경이나 현실 도피의 태도가 아니라, 지배층의 횡포와 백성의 고통이라는 현실 문제를 직시하고 비판하는 데 초점이 있다."
+            },
+            {
+              "tag": "1-② 원본",
+              "text": "(가)~(다)는 모두 자연물과 인간의 속성을 대비하여 현실 극복의 가능성을 드러내고 있다.",
+              "answer": "X",
+              "explain": "(가)의 ‘개와 닭’, ‘무서운 호랑이’, (나)의 ‘큰 물고기’, ‘닭과 개’, (다)의 ‘닭’과 ‘매’ 등 자연물이 등장하지만, 어느 것도 인간의 속성과 대비되지 않으며 현실 극복의 가능성 역시 드러나지 않는다."
+            },
+            {
+              "tag": "1-② 변형",
+              "text": "(가)와 (나)에는 자연물이 등장하지만, 이를 통해 현실 극복의 가능성을 드러내고 있지는 않다.",
+              "answer": "O",
+              "explain": "(가)의 개·닭·호랑이, (나)의 큰 물고기·닭·개는 모두 백성들의 고통스러운 처지를 부각하는 데 쓰일 뿐, 인간의 속성과 대비되거나 현실을 극복할 가능성을 보여 주는 기능을 하지 않는다."
+            },
+            {
+              "tag": "1-③ 원본",
+              "text": "(가)~(다)는 모두 인간에게 친숙한 자연물을 활용하여 세태에 대한 주관적 시선을 드러내고 있다.",
+              "answer": "O",
+              "explain": "(가)는 ‘개와 닭’이 산골짝 비탈에서 서성대는 모습으로 백성들이 관리의 횡포를 피해 산속에서 힘겹게 사는 현실을, (나)는 ‘닭과 개’가 십 리 안에서 멸종했다는 표현으로 가혹한 수탈의 현실을, (다)는 매의 폐단에 대한 사람들의 호소를 ‘닭’의 울음소리와 비교하여 지배층에 대한 비판적 시각을 드러내고 있다. 모두 친숙한 동물을 통해 세태를 바라보는 작가(서술자)의 주관적 시선을 보여 준다는 점에서 공통적이다."
+            },
+            {
+              "tag": "1-③ 변형",
+              "text": "(가)와 (나)에서는 ‘개와 닭’이라는 동일한 소재로 백성의 고통스러운 현실을 보여 주지만, (다)에는 친숙한 동물 소재가 활용되지 않는다.",
+              "answer": "X",
+              "explain": "(다)에서도 ‘닭’이라는 인간에게 친숙한 동물이 매의 폐단을 고발하는 매개로 활용되고 있으므로, (다)에 친숙한 동물 소재가 없다는 진술은 사실과 다르다."
+            },
+            {
+              "tag": "1-④ 원본",
+              "text": "(가)~(다)는 모두 시대적 배경을 언급한 후 그 시대에 살아가는 인간들의 다양한 면모를 드러내고 있다.",
+              "answer": "X",
+              "explain": "(나)는 ‘때는 구월 이십삼일’, ‘성절일’ 등에서, (다)는 ‘충혜왕 때’라는 구절에서 시대적 배경이 뚜렷이 드러나고 그 시대를 살아가는 인간 군상의 모습도 나타난다. 그러나 (가)에는 구체적인 시대적 배경이 제시되어 있지 않으므로, 세 작품 모두에 해당하는 공통점이라고 볼 수 없다."
+            },
+            {
+              "tag": "1-④ 변형",
+              "text": "(나)와 (다)에는 시대적 배경이 언급된 후 그 시대를 살아가는 인간들의 다양한 면모가 드러나지만, (가)에는 그러한 시대적 배경이 나타나 있지 않다.",
+              "answer": "O",
+              "explain": "(나)는 ‘구월 이십삼일’, ‘성절일’이라는 시간적 단서를, (다)는 ‘충혜왕 때’라는 표지를 통해 시대적 배경을 분명히 제시한 뒤 백성·신하·임금 등 다양한 인간 군상을 보여 준다. 반면 (가)에는 이러한 시대적 배경이 제시되어 있지 않으므로 이 진술은 정확한 설명이다."
+            },
+            {
+              "tag": "1-⑤ 원본",
+              "text": "(가)~(다)는 모두 대상의 과거 모습과 현재 모습을 비교하여 시대에 적응하는 인간의 모습을 드러내고 있다.",
+              "answer": "X",
+              "explain": "(나)는 순행 전후 백성들의 모습을, (다)는 충혜왕이 죽기 전과 후 응방의 존폐 상황을 대비적으로 제시하고 있어 과거와 현재를 비교하는 면이 있으나, 이는 ‘시대에 적응하는 인간의 모습’을 보여 주기 위한 것이 아니다. (가)에는 애초에 이러한 비교 자체가 나타나지 않는다."
+            },
+            {
+              "tag": "1-⑤ 변형",
+              "text": "(나)와 (다)에는 특정 대상의 과거와 현재 상황을 비교하는 서술이 나타나지만, 이를 통해 인물이 시대에 적응해 가는 모습을 보여 주는 것은 아니다.",
+              "answer": "O",
+              "explain": "(나)는 순행 전 홍수·가뭄 피해와 순행 후 가중된 고통을, (다)는 충혜왕 생전과 사후 응방의 존폐를 대비하여 보여 주지만, 이는 비판적 현실 인식을 드러내기 위한 장치일 뿐 인물이 시대 변화에 적응해 가는 모습을 그린 것은 아니다."
+            }
+          ]
+        },
+        {
+          "num": 2,
+          "desc": "[A]~[D]에 대한 이해로 적절하지 않은 것은? (정답 ②)",
+          "items": [
+            {
+              "tag": "2-① 원본",
+              "text": "[A]에서 ‘바깥어른’이 아닌 ‘부인’이 화자를 맞이한 이유는 [B]에서 ‘부인’의 대답을 통해 확인된다.",
+              "answer": "O",
+              "explain": "[B]의 ‘아침에 쟁기 들고 산에 갔다’, ‘해가 저물도록 못 오신다오’라는 부인의 대답을 통해, [A]에서 ‘바깥어른’ 대신 ‘부인’이 화자를 맞이한 이유(남편이 농사일로 부재중임)가 뒤이어 밝혀진다."
+            },
+            {
+              "tag": "2-① 변형",
+              "text": "[A]에서 화자를 맞이한 이가 ‘바깥어른’이 아닌 ‘부인’인 이유는 [A] 자체에서 곧바로 설명된다.",
+              "answer": "X",
+              "explain": "[A]에는 부인이 문을 열고 나와 밥상을 차려 주는 장면만 제시될 뿐, 그 이유는 제시되지 않는다. 이유는 한 칸 뒤인 [B]에서 부인의 대답을 통해 비로소 드러난다."
+            },
+            {
+              "tag": "2-② 원본",
+              "text": "[A]에서는 화자가 부부를 찾아온 이유가, [D]에서는 부부가 ‘두메산골’에서 사는 이유가 제시된다.",
+              "answer": "X",
+              "explain": "[D]의 ‘가고파도 고을 관리 너무 무서워’를 통해 부부가 두메산골에 사는 이유는 드러나지만, [A]에는 화자가 부부를 찾아온 이유에 대한 언급이 전혀 없다. 화자는 단지 말에서 내려 사람을 부르고 밥상을 대접받는 모습만 나타날 뿐이다."
+            },
+            {
+              "tag": "2-② 변형",
+              "text": "[A]에는 화자가 부부를 찾아온 이유가 제시되어 있지 않으며, [D]에는 부부가 두메산골에서 사는 이유가 제시되어 있다.",
+              "answer": "O",
+              "explain": "[A]에는 화자의 방문 이유가 나타나지 않는 반면, [D]의 ‘가고파도 고을 관리 너무 무서워’는 부부가 척박한 두메산골에서 떠나지 못하고 사는 이유를 명확히 보여 준다."
+            },
+            {
+              "tag": "2-③ 원본",
+              "text": "[B]에서 제시된 부부가 생계를 유지하는 수단은 [C]에서 특정 작물의 이름을 통해 구체화된다.",
+              "answer": "O",
+              "explain": "[B]의 ‘아침에 쟁기 들고’, ‘산밭은 너무나 갈기 어려워’를 통해 부부가 농사로 생계를 유지함을 알 수 있고, [C]의 ‘뜯은 콩잎 광주리에 반도 안 된다’를 통해 그 작물이 ‘콩’임이 구체적으로 드러난다."
+            },
+            {
+              "tag": "2-③ 변형",
+              "text": "[B]에서 제시된 부부의 생계 수단은 [D]에서 구체적인 작물명을 통해 드러난다.",
+              "answer": "X",
+              "explain": "생계 수단인 농사가 ‘콩’이라는 구체적 작물로 드러나는 부분은 [D]가 아니라 [C]의 ‘뜯은 콩잎 광주리에 반도 안 된다’이다."
+            },
+            {
+              "tag": "2-④ 원본",
+              "text": "[B]에서는 척박한 토양이, [C]에서는 생명을 위협하는 대상이 부부가 힘겨운 삶을 사는 원인으로 제시된다.",
+              "answer": "O",
+              "explain": "[B]의 ‘산밭은 너무나 갈기 어려워’는 척박한 토양이라는 원인을, [C]의 ‘숲속에는 무서운 호랑이 많아’는 생명을 위협하는 호랑이라는 원인을 각각 제시하여 부부의 힘겨운 삶을 구체화하고 있다."
+            },
+            {
+              "tag": "2-④ 변형",
+              "text": "[C]에서는 척박한 토양이, [B]에서는 생명을 위협하는 호랑이가 부부가 힘겨운 삶을 사는 원인으로 제시된다.",
+              "answer": "X",
+              "explain": "원인과 출처가 뒤바뀐 진술이다. 척박한 토양은 [B](‘산밭은 너무나 갈기 어려워’)에서, 생명을 위협하는 호랑이는 [C](‘숲속에는 무서운 호랑이 많아’)에서 제시된다."
+            },
+            {
+              "tag": "2-⑤ 원본",
+              "text": "[B]에서는 ‘바깥어른’의 행방에 대한 화자의 궁금함이, [D]에서는 부부의 거처에 대한 화자의 의아함이 나타난다.",
+              "answer": "O",
+              "explain": "[B]에서 화자는 ‘바깥어른은 어디 계시오’라고 물으며 남편의 부재를 궁금해하고, [D]에서는 ‘이곳이 뭐가 좋다고 / 척박한 두메산골’이냐고 물으며 부부가 그곳에 사는 것을 의아해한다."
+            },
+            {
+              "tag": "2-⑤ 변형",
+              "text": "[B]에서는 부부의 거처에 대한 화자의 의아함이, [D]에서는 ‘바깥어른’의 행방에 대한 화자의 궁금함이 나타난다.",
+              "answer": "X",
+              "explain": "내용이 뒤바뀐 진술이다. ‘바깥어른’의 행방을 묻는 궁금함은 [B]에, 두메산골 거처에 대한 의아함은 [D]에 나타난다."
+            }
+          ]
+        },
+        {
+          "num": 3,
+          "desc": "㉠~㉤에 대한 설명으로 적절하지 않은 것은? (정답 ④)",
+          "items": [
+            {
+              "tag": "3-① 원본",
+              "text": "㉠에서는 동일한 구절을 반복하여 ‘감사’를 맞이하는 행사가 열리는 공간적 배경을 제시하고 있다.",
+              "answer": "O",
+              "explain": "‘구경 가세 구경 가세 합강정에 구경 가세’라는 구절을 반복함으로써 감사를 맞이하는 행사의 공간적 배경이 ‘합강정’임을 제시하고 있다."
+            },
+            {
+              "tag": "3-① 변형",
+              "text": "㉠에서는 동일한 구절의 반복을 통해 행사 자체에 대한 화자의 비판적 태도를 직접적으로 드러내고 있다.",
+              "answer": "X",
+              "explain": "㉠은 ‘구경 가세’라는 구절의 반복으로 행사가 열리는 공간(합강정)을 제시하는 데 초점이 있을 뿐, 이 구절 자체에서 행사에 대한 비판적 태도가 직접적으로 드러나는 것은 아니다."
+            },
+            {
+              "tag": "3-② 원본",
+              "text": "㉡에서는 ‘무논’과 ‘목화밭’과 같이 농사와 관련된 공간을 언급하며 백성들의 어려움에 관심이 없는 ‘감사’의 모습을 보여 주고 있다.",
+              "answer": "O",
+              "explain": "‘무논 재해도 감췄는데 목화밭이야 거론할까’라는 구절은 홍수·가뭄으로 피해를 입은 농지에 대해 감사가 제대로 살피지 않는 모습을 통해 백성에 대한 무관심을 드러낸다."
+            },
+            {
+              "tag": "3-② 변형",
+              "text": "㉡에서는 ‘무논’과 ‘목화밭’이라는 공간을 통해 백성들의 처지를 헤아리는 ‘감사’의 모습을 보여 주고 있다.",
+              "answer": "X",
+              "explain": "㉡은 오히려 재해를 입은 무논조차 제대로 감추어 넘어가고 목화밭의 피해는 거론조차 하지 않는 모습을 통해, 백성의 처지에 무관심한 감사를 비판하는 구절이다."
+            },
+            {
+              "tag": "3-③ 원본",
+              "text": "㉢에서는 ‘많이 주면’과 ‘적게 주면’, ‘무사하고’와 ‘트집 잡네’와 같이 상반된 의미를 지닌 어휘를 사용하여 물질적 가치를 중시하는 ‘순령수’의 속성을 부각하고 있다.",
+              "answer": "O",
+              "explain": "‘많이 주면 무사하고 적게 주면 트집 잡네’는 상반된 어휘의 대비를 통해 뇌물의 많고 적음에 따라 태도를 바꾸는 순령수의 물질 중심적 속성을 부각한다."
+            },
+            {
+              "tag": "3-③ 변형",
+              "text": "㉢에서는 유사한 의미를 지닌 어휘를 반복하여 청렴한 인물인 ‘순령수’의 면모를 강조하고 있다.",
+              "answer": "X",
+              "explain": "㉢은 유사 어휘의 반복이 아니라 ‘많이 주면/적게 주면’, ‘무사하고/트집 잡네’와 같은 상반된 어휘의 대비를 통해, 청렴함과는 반대로 뇌물에 좌우되는 순령수의 속성을 비판하고 있다."
+            },
+            {
+              "tag": "3-④ 원본",
+              "text": "㉣에서는 대구적 표현을 활용하여 순시를 나온 ‘감사’가 높은 지위에 오른 것의 부당함을 드러내고 있다.",
+              "answer": "X",
+              "explain": "‘먹을 복 좋은 우리 감사’와 ‘출세 운 좋은 우리 감사’라는 대구적 표현은, 백성을 돌봐야 할 임무는 등한시한 채 대접받는 데만 관심을 두는 감사의 모습을 비판하는 데 쓰일 뿐, 그가 높은 지위에 오른 것 자체의 부당함을 드러내는 것은 아니다."
+            },
+            {
+              "tag": "3-④ 변형",
+              "text": "㉣에서는 대구적 표현을 활용하여 백성을 돌보아야 할 본연의 임무는 소홀히 한 채 대접받는 데만 관심 있는 ‘감사’의 모습을 비판하고 있다.",
+              "answer": "O",
+              "explain": "‘먹을 복 좋은 우리 감사’, ‘출세 운 좋은 우리 감사’라는 대구는 관찰사로서의 본분을 잊고 사사로운 호사와 출세만을 누리는 감사의 행태를 풍자적으로 비판하는 표현이다."
+            },
+            {
+              "tag": "3-⑤ 원본",
+              "text": "㉤에서는 ‘~게 되면 ~리라’와 같은 가정적 진술을 통해 ‘감사’가 신하로서 임금님의 은혜에 보답하는 유교적 가치의 당위성을 강조하고 있다.",
+              "answer": "O",
+              "explain": "‘배은망덕하게 되면 자손에게 화가 미치리라’라는 가정적 진술은, 신하 된 자로서 임금의 은혜에 보답해야 한다는 유교적 당위성을 역설적으로 강조하는 표현이다."
+            },
+            {
+              "tag": "3-⑤ 변형",
+              "text": "㉤에서는 단정적인 진술을 통해 ‘감사’가 이미 신하로서의 도리를 다하고 있음을 칭송하고 있다.",
+              "answer": "X",
+              "explain": "㉤은 단정적 진술이 아니라 ‘~게 되면 ~리라’라는 가정적 진술이며, 감사를 칭송하는 것이 아니라 은혜를 저버릴 경우 화가 미칠 것이라는 경고를 통해 마땅히 따라야 할 도리를 강조하는 구절이다."
+            }
+          ]
+        },
+        {
+          "num": 4,
+          "desc": "ⓐ와 ⓑ에 대한 이해로 가장 적절한 것은? (정답 ③)",
+          "items": [
+            {
+              "tag": "4-① 원본",
+              "text": "ⓐ는 백성들이 오랫동안 준비하여 진행한 행사이고, ⓑ는 백성들이 오랫동안 호소하여 혁파된 관청이다.",
+              "answer": "X",
+              "explain": "ⓐ(관찰사의 가을 순행 행사)는 ‘돌을 깨서 강 막는 데 한 달’, ‘밤낮으로 준비’ 등에서 오랫동안 준비된 행사임이 맞다. 그러나 ⓑ(응방)는 백성들이 오랫동안 호소해서가 아니라, 거의 죽어 가던 닭이 우연히 운 일에 충혜왕이 측은히 여겨 곧바로 혁파된 것이므로 뒷부분이 사실과 다르다."
+            },
+            {
+              "tag": "4-① 변형",
+              "text": "ⓐ는 백성들이 오랫동안 준비하여 진행한 행사이고, ⓑ는 닭의 울음소리라는 우연한 계기로 혁파된 관청이다.",
+              "answer": "O",
+              "explain": "ⓐ는 강을 막고 길을 내는 등 오랜 준비 끝에 치러진 행사이며, ⓑ는 백성들의 거듭된 호소가 아니라 거의 죽어 가던 닭이 다음 날 아침 우연히 운 사건을 계기로 임금이 측은히 여겨 곧바로 혁파되었다."
+            },
+            {
+              "tag": "4-② 원본",
+              "text": "ⓐ는 백성들을 배제한 채 관리들만 참여한 행사이고, ⓑ는 백성들의 의사를 무시한 채 관리들이 요청하여 유지된 관청이다.",
+              "answer": "X",
+              "explain": "‘구경 가세 구경 가세 합강정에 구경 가세’, ‘홍수 가뭄에 피해 입은 백성이 관찰사 가을 순행 기다림’ 등을 통해 ⓐ는 백성도 함께하는(또는 영향을 받는) 행사임을 알 수 있다. 또한 ⓑ가 관리들의 요청으로 유지되었다는 근거는 (다)에서 확인되지 않는다."
+            },
+            {
+              "tag": "4-② 변형",
+              "text": "ⓐ는 관리들뿐 아니라 백성들도 그 영향에서 벗어날 수 없는 행사이고, ⓑ가 관리들의 요청으로 유지되었다는 근거는 (다)에서 확인되지 않는다.",
+              "answer": "O",
+              "explain": "ⓐ는 백성들이 가을걷이를 미루면서까지 관련될 수밖에 없는 행사이며, (다)에는 응방이 관리들의 요청으로 유지되었다는 내용이 제시되어 있지 않다."
+            },
+            {
+              "tag": "4-③ 원본",
+              "text": "ⓐ는 생활고의 해결을 기대했던 백성들의 고통을 가중하는 행사이고, ⓑ는 생활을 어렵게 하여 백성들에게 고통을 주었던 관청이다.",
+              "answer": "O",
+              "explain": "‘홍수 가뭄에 피해 입은 백성이 관찰사 가을 순행 기다림은 가을걷이 부족함을 채워 줄까 해서인데 지나는 곳마다 죄를 묻는 폐단 있네’를 통해 ⓐ는 기대와 달리 백성의 고통을 가중하는 행사임을, ‘집에서 기르며 먹이고 밭의 곡식이 짓밟혔다’를 통해 ⓑ는 백성의 생활을 어렵게 한 관청임을 알 수 있다."
+            },
+            {
+              "tag": "4-③ 변형",
+              "text": "ⓐ는 생활고를 해결해 줄 것이라 기대했던 백성들에게 오히려 고통을 가중한 행사이고, ⓑ는 백성들의 생활을 풍요롭게 했던 관청이다.",
+              "answer": "X",
+              "explain": "ⓑ(응방)는 매를 잡느라 절름발이가 되거나 빠져 죽는 사람이 생기고 밭의 곡식이 짓밟히는 등 백성의 생활을 도리어 어렵게 만든 관청이므로, 생활을 풍요롭게 했다는 진술은 사실과 다르다."
+            },
+            {
+              "tag": "4-④ 원본",
+              "text": "ⓐ는 임금의 뜻을 실현하기 위해 백성들이 요구했던 행사이고, ⓑ는 사람의 본성을 실현하기 위해 백성들이 폐단의 시정을 요구했던 관청이다.",
+              "answer": "X",
+              "explain": "‘관찰사 부임 뜻밖이나’를 통해 ⓐ는 백성들이 예상하지도, 요구하지도 않았던 행사임을 알 수 있다. ⓑ에 대해서는 백성들이 폐단의 시정을 요구했다는 점은 확인되지만, 이것이 ‘사람의 본성 실현’을 위한 것이라는 근거는 없다."
+            },
+            {
+              "tag": "4-④ 변형",
+              "text": "ⓐ는 임금의 뜻과는 무관하게 관찰사 개인의 사사로운 즐거움을 위해 진행된 행사이다.",
+              "answer": "O",
+              "explain": "‘뱃놀이 좋을시고 가을걷이 급함을 생각하랴’, ‘감사에겐 풍류요 백성에겐 원수로다’ 등의 구절을 통해 이 행사가 관찰사 개인의 풍류와 향락을 위한 성격이 강함을 알 수 있다."
+            },
+            {
+              "tag": "4-⑤ 원본",
+              "text": "ⓐ는 관리들에 대해 백성들이 억울함을 표출하는 계기가 되는 행사이고, ⓑ는 관리에 대해 백성들이 울분을 표출하는 계기가 되는 관청이다.",
+              "answer": "X",
+              "explain": "ⓐ는 백성들의 억울함을 표출하는 계기라기보다 분노를 더욱 키우는 행사로 그려진다. 또한 ⓑ의 존폐를 결정하는 주체는 관리가 아니라 임금이므로, ⓑ를 ‘관리에 대해’ 울분을 표출하는 계기로 보는 것은 적절하지 않다."
+            },
+            {
+              "tag": "4-⑤ 변형",
+              "text": "ⓑ의 유지와 폐지를 결정하는 주체는 관리가 아니라 임금이다.",
+              "answer": "O",
+              "explain": "‘이 일을 아뢰자 성상께서 측은하게 여겼다. 그 뒤 조정에서 논의해 응방을 혁파했다’라는 구절을 통해 응방의 존폐를 결정한 주체가 임금임을 알 수 있다."
+            }
+          ]
+        },
+        {
+          "num": 5,
+          "desc": "(다)와 <보기>(충담사, 「안민가」)를 비교하여 감상한 내용으로 가장 적절한 것은? (정답 ④)",
+          "items": [
+            {
+              "tag": "5-① 원본",
+              "text": "(다)는 자신의 생각만을 고집하는 태도를 비판하는 의도를, <보기>는 다른 사람과 협력하는 태도를 당부하는 의도를 전달하고 있다.",
+              "answer": "X",
+              "explain": "<보기>의 화자는 임금답게 신하답게 백성답게 각자의 신분에 맞게 처신할 것을 강조할 뿐, 다른 사람과 협력하는 태도를 당부하고 있지는 않다."
+            },
+            {
+              "tag": "5-① 변형",
+              "text": "(다)의 글쓴이는 ‘사람의 마음은 남이 하는 말에는 어둡지만 자기가 믿는 데는 밝은 법이다’라는 구절을 통해 자신의 생각만을 고집하는 태도를 비판하고 있다.",
+              "answer": "O",
+              "explain": "이 구절은 제선왕이 한 마리 소의 죽음은 측은히 여기면서도 맹자의 어진 정치에 대한 말은 살피지 못한 사례를 통해, 남의 말보다 자신의 직접 경험만을 믿는 편협한 태도를 비판하는 것이다."
+            },
+            {
+              "tag": "5-② 원본",
+              "text": "(다)는 사람이 자신의 마음에 따라 행동하는 것이 중요함을, <보기>는 자신의 신분에 맞게 처신하는 것이 중요함을 강조하고 있다.",
+              "answer": "X",
+              "explain": "(다)의 글쓴이는 제선왕의 고사를 통해 자기 마음만 믿고 남의 말을 듣지 않는 태도를 비판하고 있을 뿐, 마음에 따라 행동하는 것의 중요성을 강조하고 있지는 않다."
+            },
+            {
+              "tag": "5-② 변형",
+              "text": "<보기>의 화자는 ‘임금답게 신하답게 백성답게’ 처신해야 나라가 태평할 것이라고 말하며 신분에 맞는 처신의 중요성을 강조하고 있다.",
+              "answer": "O",
+              "explain": "<보기>의 마지막 구절 ‘임금답게 신하답게 백성답게 한다면 / 나라 안이 태평할 것이리라’는 각자가 자신의 본분에 맞게 처신하는 것의 중요성을 직접적으로 드러낸다."
+            },
+            {
+              "tag": "5-③ 원본",
+              "text": "(다)는 개인적인 감정보다는 대의적인 명분을 따라야 한다는 점을, <보기>는 나라를 돌보는 것처럼 가족을 돌보아야 한다는 점을 강조하고 있다.",
+              "answer": "X",
+              "explain": "(다)는 임금이 백성을 자식처럼 돌보는 정치를 펼쳐야 함을 강조할 뿐 대의명분과 개인 감정의 우선순위를 논하지 않으며, <보기> 역시 부모가 자식을 대하듯 임금이 백성을 대해야 한다는 것이지, 나라를 가족처럼 돌보라는 취지는 아니다."
+            },
+            {
+              "tag": "5-③ 변형",
+              "text": "(다)의 글쓴이는 맹자의 말과 『서경』의 구절을 인용하여 임금이 백성을 돌보는 정치를 펼쳐야 함을 강조하고 있다.",
+              "answer": "O",
+              "explain": "글쓴이는 ‘어진 정사를 펼치라’는 맹자의 말과 ‘어린아이를 돌보듯 하라’는 『서경』 「강고」의 구절을 인용하여, 임금이 평소 백성을 자식처럼 여기는 마음으로 정치를 펼쳐야 함을 강조한다."
+            },
+            {
+              "tag": "5-④ 원본",
+              "text": "(다)는 옛사람들이 당부한 정치의 실현을 염원하는 마음을, <보기>는 나라의 존속을 위해 필요한 태도를 임금이 지니기를 염원하는 마음을 드러내고 있다.",
+              "answer": "O",
+              "explain": "(다)의 글쓴이는 맹자와 『서경』 「강고」의 구절을 인용하여 옛사람들이 당부한 어진 정치가 실현되기를 염원하며, <보기>의 화자는 임금이 백성을 자식처럼 여기며 잘 먹여 다스려야 나라가 유지된다고 말하며 임금다운 태도를 지니기를 염원하고 있다."
+            },
+            {
+              "tag": "5-④ 변형",
+              "text": "<보기>의 화자는 나라가 존속하기 위해서는 임금이 백성을 자식처럼 여기며 돌보아야 한다는 태도를 임금이 지니기를 염원하고 있다.",
+              "answer": "O",
+              "explain": "‘이 땅을 버리고 어디로 가리 한다면 / 나라 안이 유지될 줄 알리라’라는 구절은 임금이 백성을 자식처럼 여기고 먹여 다스려야 나라가 유지될 수 있다는 염원을 담고 있다."
+            },
+            {
+              "tag": "5-⑤ 원본",
+              "text": "(다)는 자식을 대하는 부모의 마음처럼 임금이 백성을 아껴야 한다는 점을, <보기>는 백성을 대하는 임금의 마음을 백성들에게 알리는 일의 중요성을 부각하고 있다.",
+              "answer": "X",
+              "explain": "(다)는 부모가 자식을 아끼듯 임금이 백성을 돌보아야 함을 강조하는 것이 맞지만, <보기>는 임금이 백성을 자식처럼 대해야 한다는 점을 강조할 뿐, 그 마음을 백성에게 알리는 일의 중요성을 부각하고 있지는 않다."
+            },
+            {
+              "tag": "5-⑤ 변형",
+              "text": "<보기>의 화자는 백성을 대하는 임금의 마음을 백성들에게 널리 알리는 일의 중요성을 강조하고 있다.",
+              "answer": "X",
+              "explain": "<보기>에는 임금의 마음을 백성에게 알리는 일에 대한 언급이 없으며, 임금이 백성을 자식처럼 여기고 돌보아야 나라가 유지된다는 점을 강조할 뿐이다."
+            }
+          ]
+        },
+        {
+          "num": 6,
+          "desc": "<보기>(지배 계층 비판 관련 설명)를 참고하여 (가)~(다)를 감상한 내용으로 적절하지 않은 것은? (정답 ④)",
+          "items": [
+            {
+              "tag": "6-① 원본",
+              "text": "(가)의 ‘부인’이 ‘저 너머 평지’가 좋다는 것을 알면서도 가지 못하는 것과 (나)의 ‘낙토에서 태어’나 ‘편안히 지’낸 사람이 ‘하릴없이 떠도’는 신세가 된 것은 작가가 지배 계층을 비판하는 이유로 볼 수 있다.",
+              "answer": "O",
+              "explain": "(가)에서 부인이 평지로 가지 못하는 것은 무서운 ‘고을 관리’ 때문이고, (나)에서 백성이 떠돌게 된 것은 관찰사의 순행을 준비하는 ‘각 읍 관리’의 수탈 때문이다. 이는 모두 작가가 지배 계층을 비판하는 근거가 된다."
+            },
+            {
+              "tag": "6-① 변형",
+              "text": "(가)의 ‘부인’과 (나)의 백성들이 고통받는 근본 원인은 모두 임금의 무능함 때문으로 제시되어 있다.",
+              "answer": "X",
+              "explain": "(가)에서 부부의 고통은 ‘고을 관리’ 때문이고, (나)에서 백성의 고통은 관찰사와 ‘각 읍 관리’ 때문으로 제시될 뿐, 임금의 무능함이 원인으로 제시되어 있지는 않다. 오히려 (나)의 임금은 ‘인자한’ 인물로 그려진다."
+            },
+            {
+              "tag": "6-② 원본",
+              "text": "(가)는 ‘고을 관리’에 대한 화자와 ‘부인’의 대화를 통해, (다)는 ‘충혜왕’이 죽은 뒤에 응방이 혁파된 것이 ‘늦은 일이었다’는 글쓴이의 논평을 통해 지배 계층에 대한 비판 의식을 드러내고 있다.",
+              "answer": "O",
+              "explain": "(가)는 화자와 부인의 대화 형식으로, (다)는 글쓴이가 직접 ‘이 또한 늦은 일이었다’라고 평가하는 논평 형식으로 각각 지배 계층(고을 관리, 충혜왕과 신하들)에 대한 비판 의식을 드러낸다."
+            },
+            {
+              "tag": "6-② 변형",
+              "text": "(가)는 글쓴이의 논평을 통해, (다)는 인물 간의 대화를 통해 지배 계층에 대한 비판 의식을 드러내고 있다.",
+              "answer": "X",
+              "explain": "비판 의식을 드러내는 방식이 뒤바뀐 진술이다. (가)는 화자와 부인의 대화를 통해, (다)는 글쓴이의 직접적인 논평을 통해 지배 계층을 비판하고 있다."
+            },
+            {
+              "tag": "6-③ 원본",
+              "text": "‘곡식 한 묶음도 모래 덮일까 염려하는’ ‘인자한’ 성품을 지닌 (나)의 임금과 달리, (다)의 임금은 ‘충신이 조정에서 간쟁’하면 ‘필시 성을 내며’ 처단하는 성품을 지녔다는 점에서 비판의 대상이라 볼 수 있다.",
+              "answer": "O",
+              "explain": "(나)의 임금은 백성의 곡식까지 염려하는 인자한 인물로 그려져 비판 대상이 아니지만, (다)의 충혜왕은 간언하는 충신마저 성을 내며 죽일 만큼 백성과 신하를 돌보지 않는 인물로 그려져 비판의 대상이 된다."
+            },
+            {
+              "tag": "6-③ 변형",
+              "text": "(나)와 (다)의 임금은 모두 백성을 위하는 마음을 지녔다는 점에서 비판의 대상으로 볼 수 없다.",
+              "answer": "X",
+              "explain": "(나)의 임금은 인자한 인물로 그려지지만, (다)의 충혜왕은 매를 좋아하며 간언하는 신하조차 성을 내며 처단할 인물로 묘사되어 명백한 비판의 대상이 된다."
+            },
+            {
+              "tag": "6-④ 원본",
+              "text": "(나)에서 ‘물나라’에 ‘인간 세상에 남은 액운’이 미치는 것과 ‘우리 임금님 어진 마음 밝은 촛불 되게’ 해 달라며 ‘하느님’께 기원하는 것은 모두 작중 인물의 발화를 통해 작가가 추구하는 사회상을 제시한 것으로 볼 수 있다.",
+              "answer": "X",
+              "explain": "‘하느님’께 기원하는 부분은 임금과 관리가 백성의 삶을 보살피기를 바라는 작가의 소망을 작중 인물의 발화로 간접 제시한 것으로 볼 수 있다. 그러나 ‘물나라’에 액운이 미친다는 구절은 관찰사의 뱃놀이 준비 과정에서 인간뿐 아니라 물속 생물까지 고통받는 현실을 나타낸 것일 뿐, 작가가 추구하는 바람직한 사회상의 제시와는 관련이 없다."
+            },
+            {
+              "tag": "6-④ 변형",
+              "text": "(나)에서 ‘우리 임금님 어진 마음 밝은 촛불 되게’ 해 달라는 기원은 작중 인물의 발화를 통해 임금과 관리가 백성을 보살피기를 바라는 작가의 소망을 간접적으로 드러낸 것으로 볼 수 있다.",
+              "answer": "O",
+              "explain": "이 구절은 화자(작중 인물)의 기원이라는 형식을 빌려, 임금의 어진 마음이 두루 백성을 비추기를 바라는 작가의 소망을 간접적으로 드러낸 것으로 볼 수 있다."
+            },
+            {
+              "tag": "6-⑤ 원본",
+              "text": "(나)에서 ‘과거장서 재주 겨루는 유생들’을 향해 ‘의로운 선비 하나 없’다는 화자의 말과, (다)에서 목숨을 잃을 것이라 생각하여 신하들이 왕에게 ‘응방을 혁파하라고 말하지 못’했을 것이라는 글쓴이의 말은 제 역할을 제대로 하지 않는 지배 계층의 모습을 비판한 것에 해당한다.",
+              "answer": "O",
+              "explain": "(나)의 화자는 백성이 고통받는데도 과거 시험에만 몰두하는 유생들을 비판하고, (다)의 글쓴이는 죽음이 두려워 간언하지 못한 신하들의 모습을 지적하는데, 이는 모두 자신의 역할(선비·신하로서의 책무)을 다하지 않는 지배 계층에 대한 비판으로 볼 수 있다."
+            },
+            {
+              "tag": "6-⑤ 변형",
+              "text": "(나)의 화자는 ‘유생들’을, (다)의 글쓴이는 ‘충혜왕’을 향해 직접적으로 ‘의로운 선비 하나 없다’고 비판하고 있다.",
+              "answer": "X",
+              "explain": "‘의로운 선비 하나 없단 말인가’라는 표현은 (나)에서 과거를 보는 유생들을 향한 것이며, (다)에서는 이러한 표현이 쓰이지 않는다. (다)의 글쓴이는 충혜왕과 신하들의 행태를 다른 논평으로 비판할 뿐이다."
+            }
+          ]
+        }
+      ],
+      "passages": [
+        {
+          "label": "(가) 산민 — 김창협",
+          "text": "말에서 내려와 사람 부르니\n부인이 문을 열고 나와 보고는\n초가집 안으로 맞아들이고\n나그네 위하여 밥상 내온다\n[A]\n\n바깥어른은 어디 계시오\n아침에 쟁기 들고 산에 갔다오\n산밭은 너무나 갈기 어려워\n해가 저물도록 못 오신다오\n[B]\n\n사방을 둘러봐도 이웃은 없고\n개와 닭들 비탈에서 서성대누나\n숲속에는 무서운 호랑이 많아\n뜯은 콩잎 광주리에 반도 안 된다\n[C]\n\n가련할손 이곳이 뭐가 좋다고\n척박한 두메산골 산단 말인가\n편안할사 저 너머 평지의 생활\n가고파도 고을 관리 너무 무서워\n[D]\n- 김창협, 「산민」"
+        },
+        {
+          "label": "(나) 합강정가 — 작자 미상",
+          "text": "㉠구경 가세 구경 가세 합강정에 구경 가세\n때는 구월 이십삼일 길일인가 명절인가\n순시(巡視) 나온 우리 감사 이날에 뱃놀이하니\n천추절 성절일 즐거우나 창오산 저녁 구름 슬프도다\n관찰사 부임 뜻밖이나 남쪽 백성 괴로움 내 알쏜가\n뱃놀이 좋을시고 가을걷이 급함을 생각하랴\n돌을 깨서 강 막는 데 한 달이나 걸렸구나\n산을 뚫어 길 낼 때에 민가 무덤 옮겼구나\n울부짖는 저 귀신아 풍경 좋은 탓이로다\n범 같은 우리 감사 조금도 원망 마라\n음식 거마(車馬) 장막 온갖 채비 밤낮으로 준비하고\n큰 물고기 낚아내어 배 안에서 요리하네\n응향각을 숙소 삼고 세여울서 배를 탄다\n물 가운데 떠내려가니 강산도 좋을시고\n감사에겐 풍류요 백성에겐 원수로다\n인간 세상에 남은 액운(厄運) 물나라에 미쳤도다\n오 리 밖 기회정에 술과 고기 낭자하네\n여러 고을 관리가 대접한 것이라 백성의 피와 기름 아닌가\n(중략)\n홍수 가뭄에 피해 입은 백성이 ⓐ관찰사 가을 순행 기다림은\n가을걷이 부족함을 채워 줄까 해서인데 지나는 곳마다 죄를 묻는 폐단 있네\n㉡무논 재해도 감췄는데 목화밭이야 거론할까\n백 묘(畝)나 되는 벌건 땅에 백지징세(白地徵稅) 하는구나\n인자한 우리 임금 곡식 한 묶음도 모래 덮일까 염려하는데\n불쌍한 백성 논밭에다 좁은 길 넓히란다\n각 읍 관리 독촉하니 채찍 몽둥이 낭자하다\n허다한 관인들이 대호(大戶) 소호(小戶)에 분담시켜\n사방 부근 십 리 안에 닭과 개가 멸종하네\n부자는 괜찮지만 가련한 이 가난한 자로다\n해는 기울고 이정은 저녁밥 재촉할 때\n텅 빈 부엌에서 우는 아낙 발 구르며 하는 말이\n방아품에 얻은 양식 한두 되 있건마는\n채소도 있건마는 그릇은 누구에게 빌릴꼬\n앞뒷집 돌아보니 섣달그믐에 시루 빌리는 격이로다\n한 마을 닭과 개 다 먹어 치우고 집집마다 또 거둔단 말인가\n대호에는 한 냥 넘고 소호에도 육칠 전이라\n이 놀이 다시 하면 이 백성 못 살겠네\n낙토에서 태어난 사람 태평성대 좋다 하여\n편안히 지내더니 하릴없이 떠도네\n한 사람의 호사(豪奢)가 몇 사람의 난리 되고\n집과 논밭 다 팔고서 어디로 가잔 말인고\n비나이다 비나이다 하느님께 비나이다\n우리 임금님 어진 마음 밝은 촛불 되게 하시어 비추소서 비추소서\n소문에 들리기를 아전 향원(鄕員) 벌한다기에\n간악한 이 벌하는가 여겼더니 음식과 도로 탓하는구나\n노예 차출 무슨 일인고 순령수의 권세로다\n음식은 넘쳐 나고 뇌물은 공공연히 오고 가니\n좋을시고 좋을시고 상평통보 좋을시고\n㉢많이 주면 무사하고 적게 주면 트집 잡네\n춘당대에 치는 장막 오목대에 무슨 일인고\n참람한 과거장서 재주 겨루는 유생들아\n오십삼 주 시향 예향에 의로운 선비 하나 없단 말인가\n㉣먹을 복 좋은 우리 감사 출세 운 좋은 우리 감사\n들어오시면 육조 판서 나가시면 팔도 감사\n공명도 거룩하고 부귀도 그지없다\n망극하도다 나라 은혜여 감격스럽다 임금님 은혜여\n한 토막 절개라도 있다면 온 힘을 다해 은혜에 보답하리라\n㉤배은망덕하게 되면 자손에게 화가 미치리라\n- 작자 미상, 「합강정가」"
+        },
+        {
+          "label": "(다) 응계설 — 이첨",
+          "text": "  충혜왕 때 ⓑ응방(鷹坊) 소속 관리가 닭을 매의 먹이로 주었다. 매가 날개 하나를 다 먹자 거의 죽어 가는 닭을 자루에 넣어 두었는데, 아침이 되자 그 닭이 울었다. 이 일을 아뢰자 성상께서 측은하게 여겼다. 그 뒤 조정에서 논의해 응방을 혁파했다. 닭이 우는 것은 본성이므로 듣는 사람은 아무렇지 않게 여긴다. 그러다가 다친 닭이 한 번 울자 임금이 감동하고 나라에서 관청을 폐지했다. 여기에서 인(仁)이 원래부터 사람 마음에 있다는 사실을 알 수 있다.\n  당시 백성들은 매를 잡느라 고생했다. 높은 곳에 사는 매를 잡으려다가 절름발이가 된 사람도 있었고, 바다에 사는 매를 잡으려다가 배가 가라앉으면서 빠져 죽은 사람도 있었다. 그물을 쳐서 매를 잡으면 이어서 매가 앉을 토시를 만들고, 집에서 기르며 먹이고 밭의 곡식이 짓밟혔다. 매의 폐단을 말하는 사람들의 호소가 어찌 닭 한 마리의 울음소리 정도에 그쳤겠는가.\n  닭은 원래 사람처럼 영험하지 않다. 그런데 여러 사람이 하는 말은 믿지 않고 닭이 한 번 울자 감동했다. 사람 이하로 노루, 토끼, 여우, 살쾡이처럼 털 있는 동물과 기러기, 고니, 오리, 비둘기처럼 날개 달린 동물이 모두 그 혜택을 입었다. 사람의 말은 의도가 있어서 나온 것이지만 닭의 울음은 의도 없이 나왔기 때문이다.\n  사람의 마음은 남이 하는 말에는 어둡지만 자기가 믿는 데는 밝은 법이다. 그러므로 제선왕(齊宣王)은 한 마리 소가 죽는 것을 차마 보지 못했으니, 이는 어진 마음의 발로라 하겠지만 어진 정사를 펼치라는 맹자의 말은 살피지 못했다. 『서경(書經)』「강고(康誥)」에 \"어린아이를 돌보듯 하라.\" 하였다. 임금에게 평소 백성을 자식처럼 여기는 마음이 있었다면, 어찌 닭이 울기를 기다린 뒤에야 측은하게 여기겠는가. 임금이 한창 매를 좋아할 때는 용방이나 비간과 같은 충신이 조정에서 간쟁했다 하더라도 필시 성을 내며 죽여 버렸을 것이니, 신하들도 모두 그렇게 될 줄 알고 있었다. 임금이 측은하게 여기는 마음이 들었을 때야말로 쉽게 간언할 기회였다. 그런데 응방을 혁파하라고 말하지 못하고 충혜왕이 유배를 가는 도중에 악양(岳陽)에서 죽은 뒤에야 응방이 혁파되었다. 아, 이 또한 늦은 일이었다.\n- 이첨, 「응계설」"
+        }
+      ]
+    }
+  ]
+};
+const SETS = DATA.sets;
+
+// ─── state ───────────────────────────────────────────
+let cur = 0;
+let filt = 'all';
+let workIdx = {};    // {setId: number}
+let editingW = null; // {setId, workIdx}
+
+const picks = {};    // {setId: {tag: 'O'|'X'}}
+const shown = {};    // {setId: {tag: bool}}
+const uPsg  = {};    // {setId: {idx: string}} — user-pasted passages
+
+SETS.forEach(s => {
+  picks[s.id] = {};
+  shown[s.id] = {};
+  uPsg[s.id]  = {};
+  workIdx[s.id] = 0;
+});
+
+// ─── score ───────────────────────────────────────────
+function updateScore(){
+  let total=0, correct=0;
+  SETS.forEach(s=>{
+    s.questions.forEach(q=>q.items.forEach(it=>{
+      total++;
+      const p=picks[s.id][it.tag];
+      if(p && p===it.answer) correct++;
+    }));
+  });
+  document.getElementById('scoreEl').textContent = correct+'/'+total;
+}
+
+// ─── passage helpers ─────────────────────────────────
+function psgText(setId, wi){
+  const s=SETS.find(x=>x.id===setId);
+  if(uPsg[setId][wi]!==undefined) return uPsg[setId][wi];
+  return (s.passages&&s.passages[wi]&&s.passages[wi].text)||'';
+}
+
+function startEdit(wi){
+  const s=SETS[cur];
+  editingW={setId:s.id, workIdx:wi};
+  document.getElementById('editTA').value=psgText(s.id,wi);
+  document.getElementById('ppBody').style.display='none';
+  document.getElementById('editWrap').style.display='flex';
+  document.getElementById('editTA').focus();
+}
+
+function cancelEdit(){
+  editingW=null;
+  document.getElementById('ppBody').style.display='';
+  document.getElementById('editWrap').style.display='none';
+}
+
+function saveEdit(){
+  if(!editingW) return;
+  uPsg[editingW.setId][editingW.workIdx]=document.getElementById('editTA').value;
+  editingW=null;
+  document.getElementById('ppBody').style.display='';
+  document.getElementById('editWrap').style.display='none';
+  renderPassage();
+}
+
+// ─── passage render ──────────────────────────────────
+function renderPassage(){
+  const s=SETS[cur];
+  document.getElementById('ppTitle').textContent=s.title;
+  document.getElementById('ppSrc').textContent=s.source;
+
+  const works=s.passages||[{label:s.title,text:''}];
+  const tabsEl=document.getElementById('workTabsEl');
+  tabsEl.innerHTML='';
+  if(works.length>1){
+    works.forEach((w,i)=>{
+      const btn=document.createElement('button');
+      btn.className='wtab'+(i===(workIdx[s.id]||0)?' active':'');
+      btn.textContent=w.label.split('—')[0].trim().slice(0,14)||w.label.slice(0,14);
+      btn.onclick=()=>{ workIdx[s.id]=i; cancelEdit(); renderPassage(); };
+      tabsEl.appendChild(btn);
+    });
+  }
+
+  const wi=workIdx[s.id]||0;
+  const w=works[wi]||{label:'',text:''};
+  const text=psgText(s.id,wi);
+  const body=document.getElementById('ppBody');
+  body.style.display='';
+  document.getElementById('editWrap').style.display='none';
+
+  if(!text.trim()){
+    body.innerHTML=`<div class="p-empty">
+      <strong>${w.label}</strong>
+      <small>원문 지문을 입력하면 문제 옆에서 바로 참고할 수 있습니다.</small>
+      <button class="paste-btn" onclick="startEdit(${wi})">✏ 지문 입력하기</button>
+    </div>`;
+  } else {
+    body.innerHTML=`<div class="p-label">${w.label}</div>
+      <div class="p-text">${text.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;')}</div>
+      <button class="paste-btn" style="margin-top:14px;" onclick="startEdit(${wi})">✏ 수정</button>`;
+  }
+}
+
+// ─── set tabs ────────────────────────────────────────
+function renderTabs(){
+  const el=document.getElementById('tabsEl');
+  el.innerHTML='';
+  SETS.forEach((s,i)=>{
+    const done=Object.keys(picks[s.id]).length;
+    const btn=document.createElement('button');
+    btn.className='stab'+(i===cur?' active':'')+(done>0?' in-progress':'');
+    btn.innerHTML=`세트 ${i+1}. ${s.title}<span class="dot"></span>`;
+    btn.onclick=()=>{ cur=i; cancelEdit(); workIdx[s.id]=workIdx[s.id]||0; renderAll(); document.getElementById('qpEl').scrollTop=0; };
+    el.appendChild(btn);
+  });
+}
+
+// ─── questions render ────────────────────────────────
+function renderQuestions(){
+  const s=SETS[cur];
+  const qp=document.getElementById('qpEl');
+  const sy=qp.scrollTop;
+  const list=document.getElementById('qlist');
+  list.innerHTML='';
+
+  s.questions.forEach(q=>{
+    const items=q.items.filter(it=>{
+      if(filt==='orig') return it.tag.includes('원본');
+      if(filt==='var')  return it.tag.includes('변형');
+      return true;
+    });
+    if(!items.length) return;
+
+    const block=document.createElement('div');
+    block.className='qblock';
+
+    const qhead=document.createElement('div');
+    qhead.className='qhead';
+    qhead.innerHTML=`<div class="qtext"><span class="qn">문항 ${q.num}.</span> ${q.desc}</div>
+      <button class="reveal-q">전체 확인</button>`;
+    qhead.querySelector('.reveal-q').onclick=()=>{
+      items.forEach(it=>{ if(picks[s.id][it.tag]) shown[s.id][it.tag]=true; });
+      renderQuestions();
+    };
+    block.appendChild(qhead);
+
+    items.forEach(it=>block.appendChild(buildItem(s.id, it)));
+    list.appendChild(block);
+  });
+
+  qp.scrollTop=sy;
+}
+
+function buildItem(setId, it){
+  const isVar=it.tag.includes('변형');
+  const picked=picks[setId][it.tag];
+  const isShown=shown[setId][it.tag];
+
+  const el=document.createElement('div');
+  el.className='item';
+
+  // Statement
+  el.innerHTML=`<div class="i-top">
+    <span class="tag ${isVar?'var':'orig'}">${it.tag}</span>
+    <span class="stmt">${it.text}</span>
+  </div>`;
+
+  // O/X buttons
+  const oxrow=document.createElement('div');
+  oxrow.className='oxrow';
+  ['O','X'].forEach(v=>{
+    const btn=document.createElement('button');
+    btn.className='oxbtn'+(picked===v?' pick-'+(v==='O'?'o':'x'):'')+(picked?' locked':'');
+    btn.textContent=v;
+    btn.onclick=()=>{
+      if(picks[setId][it.tag]) return;
+      picks[setId][it.tag]=v;
+      renderTabs(); updateScore(); renderQuestions();
+    };
+    oxrow.appendChild(btn);
+  });
+  el.appendChild(oxrow);
+
+  // Toggle button for answer/explanation (only after picking)
+  if(picked){
+    const tog=document.createElement('button');
+    tog.className='a-toggle vis';
+    tog.textContent=isShown?'정답·해설 닫기':'▼ 정답 및 해설 확인';
+    tog.onclick=()=>{
+      shown[setId][it.tag]=!shown[setId][it.tag];
+      renderQuestions();
+    };
+    el.appendChild(tog);
+
+    // Answer/explanation box (only when shown)
+    if(isShown){
+      const correct=picked===it.answer;
+      const box=document.createElement('div');
+      box.className='a-box vis '+(correct?'ok':'ng');
+      box.innerHTML=`
+        <div class="a-verdict ${correct?'ok':'ng'}">${correct?'✓ 정답':'✗ 오답'}</div>
+        <div class="a-ans">정답: ${it.answer}</div>
+        <div class="a-exp"><b>해설</b> ${it.explain}</div>`;
+      el.appendChild(box);
+    }
+  }
+
+  return el;
+}
+
+// ─── filters & reset ─────────────────────────────────
+document.getElementById('chipsEl').addEventListener('click', e=>{
+  const btn=e.target.closest('.chip');
+  if(!btn) return;
+  document.querySelectorAll('.chip').forEach(c=>c.classList.remove('active'));
+  btn.classList.add('active');
+  filt=btn.dataset.f;
+  renderQuestions();
+});
+
+document.getElementById('resetBtn').addEventListener('click', ()=>{
+  const s=SETS[cur];
+  if(!confirm(`'${s.title}' 세트 답안을 모두 초기화할까요?`)) return;
+  picks[s.id]={};
+  shown[s.id]={};
+  renderAll();
+});
+
+// ─── main render ─────────────────────────────────────
+function renderAll(){
+  renderTabs();
+  renderPassage();
+  renderQuestions();
+  updateScore();
+}
+
+renderAll();
+</script>
+</body>
+</html>
