@@ -1,0 +1,280 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>2026 강서고2 문학 OX 트레이너</title>
+<style>
+:root{
+  --ink:#241606; --brown:#5b3a1e; --brown-deep:#3a2410;
+  --paper:#f4efe4; --paper-2:#efe8d8; --card:#fffdf7;
+  --line:#d8cdb6; --line-soft:#e6ddca;
+  --o:#1e6f5c; --o-soft:#e2f0eb;
+  --x:#b23b2e; --x-soft:#f6e4e0;
+  --gold:#b8892b;
+  --sans:'Malgun Gothic','맑은 고딕','Apple SD Gothic Neo',system-ui,sans-serif;
+  --serif:'Nanum Myeongjo','Batang',serif;
+}
+*{box-sizing:border-box}
+html,body{margin:0;padding:0}
+body{
+  font-family:var(--sans); color:var(--ink);
+  background:
+    radial-gradient(circle at 12% 8%, rgba(184,137,43,.05), transparent 40%),
+    repeating-linear-gradient(0deg, transparent 0 27px, rgba(120,90,40,.03) 27px 28px),
+    var(--paper);
+  min-height:100vh;
+}
+.wrap{max-width:860px; margin:0 auto; padding:22px 16px 60px}
+button{font-family:var(--sans);cursor:pointer}
+
+.masthead{border-bottom:2px solid var(--brown-deep); padding-bottom:16px; margin-bottom:16px}
+.brand{display:flex;align-items:baseline;gap:10px;margin-bottom:10px}
+.brand-mark{background:var(--brown-deep); color:#f6efdf; font-weight:800; letter-spacing:.06em; padding:3px 10px; border-radius:3px; font-size:14px}
+.brand-sub{font-size:12.5px; color:var(--brown); letter-spacing:.02em; font-weight:600}
+.masthead-title{font-family:var(--serif); font-weight:800; color:var(--brown-deep); font-size:clamp(21px,4.4vw,30px); line-height:1.2; margin:0 0 8px; letter-spacing:-.01em}
+.masthead-desc{margin:0; font-size:13.5px; color:#5c4a34; line-height:1.6}
+.masthead-desc b{color:var(--brown-deep)}
+
+.tabs{display:grid; grid-template-columns:1fr 1fr 1fr; gap:8px; margin-bottom:16px}
+.tab{display:flex; align-items:center; gap:9px; text-align:left; background:var(--paper-2); border:1.5px solid var(--line); border-radius:8px; padding:10px 11px; transition:.15s}
+.tab:hover{border-color:var(--brown); background:#efe6d2}
+.tab.on{background:var(--brown-deep); border-color:var(--brown-deep)}
+.tab-num{font-family:var(--serif); font-size:19px; font-weight:800; color:var(--gold)}
+.tab.on .tab-num{color:#e9c877}
+.tab-body{display:flex; flex-direction:column; gap:2px; min-width:0}
+.tab-title{font-size:13px; font-weight:700; color:var(--brown-deep); line-height:1.25}
+.tab.on .tab-title{color:#fbf5e6}
+.tab-tag{font-size:10.5px; color:#836a48; letter-spacing:.02em}
+.tab.on .tab-tag{color:#d9c7a4}
+
+.board{background:var(--card); border:1.5px solid var(--line); border-radius:10px; padding:14px 15px; margin-bottom:14px}
+.board-bar{height:7px; background:var(--paper-2); border-radius:99px; overflow:hidden; margin-bottom:13px}
+.board-bar-fill{height:100%; background:linear-gradient(90deg,var(--gold),var(--brown)); border-radius:99px; transition:width .4s ease; width:0%}
+.board-stats{display:flex; gap:8px; margin-bottom:13px}
+.stat{flex:1; display:flex; flex-direction:column; align-items:center; gap:2px; padding:8px 4px; border-radius:8px; background:var(--paper-2)}
+.stat.ok{background:var(--o-soft)}
+.stat.no{background:var(--x-soft)}
+.stat.score{background:#f3ead2}
+.stat-num{font-family:var(--serif); font-size:22px; font-weight:800; color:var(--brown-deep); line-height:1}
+.stat.ok .stat-num{color:var(--o)}
+.stat.no .stat-num{color:var(--x)}
+.stat-den{font-size:12px; font-weight:600; color:#9a8763}
+.stat-label{font-size:11px; color:#7a6647; font-weight:600}
+.board-actions{display:flex; gap:8px; flex-wrap:wrap}
+.chip{background:var(--brown-deep); color:#f6efdf; border:none; border-radius:7px; padding:8px 13px; font-size:12.5px; font-weight:700; letter-spacing:.01em; transition:.15s}
+.chip:hover{background:#4a2e15}
+.chip:disabled{opacity:.4; cursor:not-allowed}
+.chip.ghost{background:transparent; color:var(--brown); border:1.5px solid var(--line)}
+.chip.ghost:hover{background:var(--paper-2)}
+
+.done-banner{background:linear-gradient(0deg,#f3ead2,#faf4e2); border:1.5px solid var(--gold); border-radius:8px; padding:11px 14px; font-size:13px; color:var(--brown-deep); margin-bottom:14px; font-weight:600}
+.done-banner b{color:var(--x); font-family:var(--serif); font-size:15px}
+.filter-note{font-size:12.5px; color:#7a6647; margin-bottom:10px}
+.linklike{background:none;border:none;color:var(--brown);text-decoration:underline;font-size:12.5px;font-weight:700;padding:0;cursor:pointer}
+
+.qsection{margin-bottom:24px}
+.qsection-title{font-size:13px; font-weight:800; color:#fbf5e6; letter-spacing:.02em; background:var(--brown-deep); padding:8px 12px; border-radius:6px; margin:0 0 12px}
+.card{background:var(--card); border:1.5px solid var(--line-soft); border-radius:10px; padding:14px 15px; margin-bottom:11px; transition:.15s}
+.card.done.ok{border-color:#bcd9cf; box-shadow:inset 3px 0 0 var(--o)}
+.card.done.no{border-color:#e6c3bc; box-shadow:inset 3px 0 0 var(--x)}
+.card-q{display:flex; gap:10px; align-items:flex-start; margin-bottom:12px}
+.qnum{font-family:var(--serif); font-weight:800; font-size:14px; color:#fff; background:var(--brown); width:22px; height:22px; border-radius:50%; display:flex; align-items:center; justify-content:center; flex:0 0 auto; margin-top:1px}
+.qtext{margin:0; font-size:15px; line-height:1.6; color:var(--ink); font-weight:500}
+
+.ox-row{display:flex; align-items:center; gap:10px}
+.oxbtn{width:52px; height:44px; border-radius:9px; font-family:var(--serif); font-size:22px; font-weight:800; border:2px solid var(--line); background:var(--paper-2); color:#9a8763; transition:.13s}
+.oxbtn.o:hover:not(:disabled){border-color:var(--o); color:var(--o); background:var(--o-soft)}
+.oxbtn.x:hover:not(:disabled){border-color:var(--x); color:var(--x); background:var(--x-soft)}
+.oxbtn.picked.o{background:var(--o); border-color:var(--o); color:#fff}
+.oxbtn.picked.x{background:var(--x); border-color:var(--x); color:#fff}
+.oxbtn.correct{box-shadow:0 0 0 3px rgba(184,137,43,.35)}
+.oxbtn:disabled{cursor:default}
+.oxbtn.o.correct:not(.picked){border-color:var(--o); color:var(--o); background:var(--o-soft)}
+.oxbtn.x.correct:not(.picked){border-color:var(--x); color:var(--x); background:var(--x-soft)}
+.verdict{font-size:13px; font-weight:800; letter-spacing:.02em; margin-left:2px}
+.verdict.good{color:var(--o)}
+.verdict.bad{color:var(--x)}
+
+.explain{margin-top:13px; padding:12px 13px; border-radius:8px; background:var(--paper-2); border:1px solid var(--line-soft)}
+.explain-head{display:flex; align-items:center; gap:9px; margin-bottom:7px}
+.ans-pill{font-size:12px; font-weight:800; padding:3px 10px; border-radius:99px; letter-spacing:.03em}
+.ans-pill.o{background:var(--o); color:#fff}
+.ans-pill.x{background:var(--x); color:#fff}
+.ref{font-size:11.5px; color:#836a48; font-weight:600; letter-spacing:.01em}
+.why{margin:0; font-size:13.5px; line-height:1.68; color:#4a3a26}
+
+.empty{text-align:center; padding:40px 0; color:#9a8763; font-size:14px}
+.foot{margin-top:30px; padding-top:14px; border-top:1px solid var(--line); text-align:center; font-size:11.5px; color:#9a8763; letter-spacing:.02em}
+
+@media (max-width:560px){
+  .tabs{grid-template-columns:1fr}
+  .tab{padding:9px 11px}
+  .board-stats{gap:6px}
+  .stat-num{font-size:19px}
+  .qtext{font-size:14px}
+}
+@media (prefers-reduced-motion:reduce){
+  .board-bar-fill,.tab,.card,.oxbtn,.chip{transition:none}
+}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header class="masthead" id="top">
+    <div class="brand">
+      <span class="brand-mark">갈무리</span>
+      <span class="brand-sub">까만선호쌤 · 문학 OX 트레이너</span>
+    </div>
+    <h1 class="masthead-title">2026 강서고2 1학기 기말고사 · 문학 OX</h1>
+    <p class="masthead-desc">작품에 대한 진술을 읽고 <b>O</b> 또는 <b>X</b>를 고르면 곧바로 정답과 상세 해설이 열립니다. 13개 작품·134문항으로 기말을 마무리하세요.</p>
+  </header>
+  <nav class="tabs" id="tabs" role="tablist"></nav>
+  <section class="board" aria-label="진행 현황">
+    <div class="board-bar"><div class="board-bar-fill" id="barFill"></div></div>
+    <div class="board-stats">
+      <div class="stat"><span class="stat-num" id="sAnswered">0<span class="stat-den" id="sTotal">/0</span></span><span class="stat-label">푼 문항</span></div>
+      <div class="stat ok"><span class="stat-num" id="sCorrect">0</span><span class="stat-label">맞음</span></div>
+      <div class="stat no"><span class="stat-num" id="sWrong">0</span><span class="stat-label">틀림</span></div>
+      <div class="stat score"><span class="stat-num" id="sScore">–<span class="stat-den">%</span></span><span class="stat-label">정답률</span></div>
+    </div>
+    <div class="board-actions">
+      <button class="chip" id="btnReveal">해설 모두 보기</button>
+      <button class="chip" id="btnRetry" disabled>틀린 문항 다시 풀기</button>
+      <button class="chip ghost" id="btnReset">이 지문 초기화</button>
+    </div>
+  </section>
+  <div id="doneBanner"></div>
+  <div id="filterNote"></div>
+  <main class="qlist" id="qlist"></main>
+  <footer class="foot">갈무리국어 · 까만선호쌤 갈무리스트 · 2026 강서고2 기말 대비</footer>
+</div>
+<script>
+const PASSAGES = [{"id": "w01", "tag": "고대가요 · 서정", "title": "황조가 (유리왕)", "sections": [{"name": "갈래 · 성격 · 주제", "items": [{"q": "황조가는 현전하는 고대 가요로, 개인적 정서를 노래한 서정시로 평가된다.", "a": "O", "ref": "개관", "why": "옳다. 황조가는 집단적 노동요·주술요와 달리 개인의 정서(외로움)를 노래한 현전 최고(最古)의 서정시로 본다."}, {"q": "황조가의 주제는 임을 잃은 슬픔과 외로움이다.", "a": "O", "ref": "개관", "why": "옳다. 짝을 잃은 처지에서 오는 고독과 임에 대한 그리움이 핵심 정서다."}, {"q": "황조가는 4구체 한역시(漢譯詩) 형태로 전한다.", "a": "O", "ref": "개관", "why": "옳다. 「삼국사기」에 4구의 한시 형태로 번역되어 전한다."}]}, {"name": "시어 · 표현", "items": [{"q": "‘꾀꼬리(황조)’는 화자의 처지와 대조되는 객관적 상관물이다.", "a": "O", "ref": "1~2구", "why": "옳다. 암수 정답게 노니는 꾀꼬리는 홀로 된 화자의 외로움을 부각하는 대조적 자연물(객관적 상관물)이다."}, {"q": "‘펄펄 나는 저 꾀꼬리 암수 서로 정답구나’는 화자의 외로움을 직접 진술한 부분이다.", "a": "X", "ref": "1~2구", "why": "틀리다. 이 부분은 정다운 꾀꼬리를 제시해 뒤의 화자 처지와 대비시키는 선경(先景)에 해당하며, 외로움은 뒤(‘뉘와 함께 돌아갈꼬’)에서 드러난다."}, {"q": "‘뉘와 함께 돌아갈꼬’에는 설의적 표현으로 화자의 고독이 심화되어 있다.", "a": "O", "ref": "3~4구", "why": "옳다. 함께 돌아갈 이가 없음을 설의적으로 표현하여 외로움을 강조한다."}, {"q": "황조가는 선경후정(先景後情)의 구성을 취하고 있다.", "a": "O", "ref": "구성", "why": "옳다. 앞의 두 구에서 꾀꼬리(경치)를, 뒤의 두 구에서 화자의 정서를 드러내는 선경후정 구조다."}]}, {"name": "배경 · 감상", "items": [{"q": "배경 설화에 따르면 화자는 화희와 치희 두 여인 사이의 다툼과 관련된 상황에 놓여 있다.", "a": "O", "ref": "배경설화", "why": "옳다. 유리왕의 두 계비 화희·치희의 갈등으로 치희가 떠난 뒤의 정서로 전해진다."}, {"q": "황조가의 정서는 만세전의 ‘나’가 느끼는 식민지적 울분과 본질적으로 같다.", "a": "X", "ref": "비교", "why": "틀리다. 황조가는 임을 잃은 개인적 외로움을 노래하며, 식민지 현실 인식과는 무관하다."}]}]}, {"id": "w02", "tag": "고대가요 · 서정", "title": "공무도하가 (백수 광부의 아내)", "sections": [{"name": "갈래 · 주제", "items": [{"q": "공무도하가는 임의 죽음을 슬퍼하는 개인적 서정을 노래한 고대 가요다.", "a": "O", "ref": "개관", "why": "옳다. 물에 빠져 죽은 임에 대한 슬픔과 체념을 노래한 서정시다."}, {"q": "이 작품의 주제는 임과의 사별에서 오는 슬픔과 한(恨)이다.", "a": "O", "ref": "개관", "why": "옳다. 임의 죽음이라는 이별에서 오는 애절한 슬픔이 주제다."}, {"q": "공무도하가는 ‘공후인’이라는 배경 설화와 함께 전한다.", "a": "O", "ref": "배경", "why": "옳다. 곽리자고의 아내 여옥이 지었다는 배경 설화(공후인)와 함께 전한다."}]}, {"name": "시상 전개 — 기승전결", "items": [{"q": "‘님아 그 물을 건너지 마오’는 임을 만류하는 애원에 해당한다.", "a": "O", "ref": "1구", "why": "옳다. 물을 건너려는 임을 붙잡는 만류(기)의 구절이다."}, {"q": "‘님은 끝내 그 물을 건너시네’에서 임의 죽음이 실제로 일어난 사건으로 확정된다.", "a": "X", "ref": "2구", "why": "틀리다. 이 구절은 임이 만류를 뿌리치고 물을 건너는 상황(승)이며, 죽음이 확정되는 것은 다음 구(‘물에 빠져 죽으니’)이다."}, {"q": "‘물에 빠져 죽으니’는 임의 죽음이라는 비극이 일어나는 부분이다.", "a": "O", "ref": "3구", "why": "옳다. 임의 죽음(전)이 일어나는 절정의 구절이다."}, {"q": "‘이 일을 어이할꼬’에는 남은 화자의 체념과 탄식이 드러난다.", "a": "O", "ref": "4구", "why": "옳다. 임을 잃은 뒤의 체념적 탄식(결)이 드러난다."}]}, {"name": "소재 · 상징", "items": [{"q": "‘물’은 작품 안에서 사랑 → 이별(죽음)의 다의적 의미로 변주된다.", "a": "O", "ref": "소재", "why": "옳다. ‘물’은 임과 화자를 잇는 동시에 갈라놓는(죽음) 이중적·다의적 상징으로 읽힌다."}, {"q": "공무도하가의 ‘물’은 화자와 임의 재회를 매개하는 긍정적 공간이다.", "a": "X", "ref": "소재", "why": "틀리다. ‘물’은 임의 죽음을 부르는 이별·단절의 공간이지 재회를 매개하지 않는다."}]}]}, {"id": "w03", "tag": "고려가요 · 이별", "title": "서경별곡", "sections": [{"name": "갈래 · 성격", "items": [{"q": "서경별곡은 이별의 정한을 노래한 고려가요다.", "a": "O", "ref": "개관", "why": "옳다. 임과의 이별을 적극적으로 거부하는 이별의 정한을 노래한 고려가요다."}, {"q": "서경별곡의 화자는 이별을 담담히 수용하는 체념적 태도를 보인다.", "a": "X", "ref": "전체", "why": "틀리다. 화자는 이별을 적극적으로 거부하고 임을 따르겠다는 강한 태도를 보인다(‘가시리’의 체념적 태도와 대비)."}, {"q": "‘위 두어렁셩 두어렁셩 다링디리’는 리듬을 살리는 여음구(후렴)이다.", "a": "O", "ref": "후렴", "why": "옳다. 악곡에 맞춘 여음구(후렴)로 운율을 형성한다."}]}, {"name": "화자의 태도 · 시상", "items": [{"q": "‘서경이 아즐가 서경이 셔울히마르는’에서 화자는 자신의 삶의 터전을 언급하며 시상을 연다.", "a": "O", "ref": "1연", "why": "옳다. 서경(평양)이라는 삶의 터전을 제시하며 이별 상황을 연다."}, {"q": "‘괴시란대 우러곰 좃니노이다’는 임이 사랑해 준다면 울면서라도 따르겠다는 적극적 태도이다.", "a": "O", "ref": "1연", "why": "옳다. 이별을 거부하고 임을 따르겠다는 적극적·의지적 태도가 드러난다."}, {"q": "‘구스리 아즐가 구스리 바회예 디신들’의 구슬은 변할 수 있는 임의 사랑을 상징한다.", "a": "X", "ref": "2연", "why": "틀리다. 구슬이 바위에 떨어져도 끈은 끊어지지 않듯, ‘긴(끈)=믿음·정(情)’은 변하지 않는다는 것으로, 변하지 않는 사랑·신뢰를 강조한다."}, {"q": "‘긴힛단 아즐가 긴힛단 그츠리잇가’는 믿음(정)은 끊어지지 않는다는 뜻을 설의적으로 나타낸다.", "a": "O", "ref": "2연", "why": "옳다. 끈(믿음)은 끊어지지 않는다는 신의를 설의적으로 강조한다."}]}, {"name": "대동강 · 사공", "items": [{"q": "‘대동강’은 이별의 공간이자 화자와 임을 가로막는 장애물로 기능한다.", "a": "O", "ref": "3연", "why": "옳다. 대동강은 임이 떠나는 이별의 공간이며 화자와 임을 갈라놓는 경계다."}, {"q": "화자는 배를 태워 임을 건네주는 사공을 원망한다.", "a": "O", "ref": "3연", "why": "옳다. 임을 배에 태워 건네주는 사공에게 원망을 돌린다(‘네 가시 럼난디 몰라셔’)."}, {"q": "서경별곡의 2연(구슬 노래)은 정석가에도 동일하게 나타나는 부분이다.", "a": "O", "ref": "비교", "why": "옳다. ‘구슬-끈’ 모티프의 연은 정석가에도 공통으로 나타나 당대 유행한 관용적 표현으로 본다."}]}]}, {"id": "w04", "tag": "고려가요 · 송축/사랑", "title": "정석가", "sections": [{"name": "갈래 · 주제", "items": [{"q": "정석가는 임에 대한 영원한 사랑을 노래한 고려가요다.", "a": "O", "ref": "개관", "why": "옳다. 불가능한 상황을 전제로 임과의 영원한 사랑(이별 없음)을 노래한다."}, {"q": "정석가의 주제는 임과 이별하고 싶다는 소망이다.", "a": "X", "ref": "개관", "why": "틀리다. 오히려 임과 절대 이별하지 않겠다는 영원한 사랑이 주제다."}, {"q": "서사(1연)의 ‘딩아 돌하’는 임금 또는 태평성대를 송축하는 의미로 해석되기도 한다.", "a": "O", "ref": "1연", "why": "옳다. 서사는 태평성대·임금에 대한 송축의 의미로 읽히며, 이후 연과 성격이 다소 구별된다."}]}, {"name": "불가능한 상황 설정", "items": [{"q": "‘구운 밤 닷 되를 심어 그 밤이 움이 돋아 싹이 나야’ 임과 이별하겠다는 것은 불가능한 상황을 전제한 표현이다.", "a": "O", "ref": "2연", "why": "옳다. 구운 밤에서 싹이 나는 불가능한 일을 조건으로 걸어, 이별이 결코 없음을 역설적으로 강조한다."}, {"q": "‘옥으로 연꽃을 새겨 바위에 접붙여 그 꽃이 피어야’ 이별하겠다는 것도 실현 가능한 조건이다.", "a": "X", "ref": "3연", "why": "틀리다. 옥 연꽃이 바위에서 피는 것은 불가능한 일이며, 이를 조건으로 삼아 이별이 없음을 강조하는 표현이다."}, {"q": "정석가는 불가능한 조건을 반복적으로 나열하여 영원한 사랑을 강조한다.", "a": "O", "ref": "전체", "why": "옳다. 여러 연에 걸쳐 불가능한 상황을 반복·나열해 임과의 영원한 사랑을 점층적으로 강조한다."}]}, {"name": "표현 · 비교", "items": [{"q": "정석가의 ‘구슬이 바위에 떨어진들 끈이야 끊어지겠습니까’ 부분은 서경별곡과 공통된다.", "a": "O", "ref": "6연·비교", "why": "옳다. ‘구슬-끈’ 모티프는 서경별곡과 공유되는 관용적 표현이다."}, {"q": "정석가는 반어와 역설적 발상을 통해 화자의 정서를 드러낸다.", "a": "O", "ref": "표현", "why": "옳다. 불가능한 상황을 조건으로 내세우는 역설적 발상으로 영원한 사랑을 표현한다."}]}]}, {"id": "w05", "tag": "한시 · 이별", "title": "송인 (정지상)", "sections": [{"name": "갈래 · 주제", "items": [{"q": "송인은 이별의 슬픔을 노래한 한시(7언 절구)이다.", "a": "O", "ref": "개관", "why": "옳다. 정지상의 7언 절구 한시로, 임과의 이별의 정한을 노래한다."}, {"q": "송인의 주제는 임과 이별하는 슬픔이다.", "a": "O", "ref": "개관", "why": "옳다. 대동강을 배경으로 한 이별의 슬픔이 주제다."}, {"q": "송인은 선경후정의 구성을 취한다.", "a": "O", "ref": "구성", "why": "옳다. 앞부분에서 자연 경치를, 뒷부분에서 이별의 정서를 드러내는 선경후정 구조다."}]}, {"name": "시상 · 표현", "items": [{"q": "‘비 갠 긴 둑에 풀빛이 짙은데’는 이별의 슬픔과 대조되는 밝고 생기 있는 자연 배경이다.", "a": "O", "ref": "기구", "why": "옳다. 생기 있는 봄 풀빛(밝은 배경)이 이별의 슬픔과 대조되어 정서를 심화한다."}, {"q": "‘대동강 물은 어느 때 마르려나’에서 강물은 이별의 눈물과 연결되어 과장적으로 표현된다.", "a": "O", "ref": "전·결구", "why": "옳다. 해마다 이별의 눈물을 보태니 대동강 물이 마르지 않는다는 과장(설의)으로 이별의 슬픔을 극대화한다."}, {"q": "‘이별 눈물 해마다 푸른 물결에 보태지네’는 이별의 슬픔을 과장하여 강조한 표현이다.", "a": "O", "ref": "결구", "why": "옳다. 이별의 눈물이 강물에 더해진다는 과장으로 슬픔의 깊이를 부각한다."}, {"q": "송인의 ‘대동강’은 서경별곡의 ‘대동강’과 마찬가지로 이별의 공간으로 기능한다.", "a": "O", "ref": "비교", "why": "옳다. 두 작품 모두 대동강을 이별의 공간으로 삼는다."}]}, {"name": "정서", "items": [{"q": "송인의 화자는 이별을 기쁜 마음으로 받아들이고 있다.", "a": "X", "ref": "전체", "why": "틀리다. 화자는 이별을 깊이 슬퍼하며, 마르지 않는 강물에 눈물을 견주어 슬픔을 강조한다."}]}]}, {"id": "w06", "tag": "가사 · 강호한정", "title": "상춘곡 (정극인)", "sections": [{"name": "갈래 · 성격 · 주제", "items": [{"q": "상춘곡은 조선 전기 사대부 가사로, 봄 경치를 즐기는 흥취와 안빈낙도를 노래한다.", "a": "O", "ref": "개관", "why": "옳다. 조선 전기 양반(은일) 가사로, 춘흥과 안빈낙도가 주제다."}, {"q": "상춘곡은 정격 가사로, 결사의 마지막 구가 시조 종장과 유사한 형식을 취한다.", "a": "O", "ref": "형식", "why": "옳다. 결사 마지막 구가 3-5-4-3의 시조 종장 형식을 따르는 정격 가사다."}, {"q": "상춘곡에는 임금의 은혜(군은)에 대한 감사가 작품 전면에 드러난다.", "a": "X", "ref": "개관", "why": "틀리다. 상춘곡에는 군은에 대한 언급이 거의 없다(누항사·도산십이곡과 대비되는 특징)."}]}, {"name": "속세 ↔ 자연 대립", "items": [{"q": "‘홍진에 묻힌 분네’의 ‘홍진’은 속세를 의미하며 자연과 대립한다.", "a": "O", "ref": "서사", "why": "옳다. ‘홍진(붉은 먼지)=속세’로, 자연(산림)과 대립 구도를 이룬다."}, {"q": "‘산림에 묻혀 있어 지락을 모를 것가’는 자연 속 삶에 대한 자부심을 설의적으로 드러낸다.", "a": "O", "ref": "서사", "why": "옳다. 자연에 사는 지극한 즐거움을 설의법으로 표현해 자부심을 드러낸다."}, {"q": "‘풍월주인’은 속세의 부귀영화를 누리는 사람을 가리킨다.", "a": "X", "ref": "서사", "why": "틀리다. ‘풍월주인’은 자연의 주인이 되었다는 뜻으로, 자연 친화적 태도를 집약한 표현이다."}]}, {"name": "표현 기법", "items": [{"q": "‘도화 행화는 석양리에 피어 있고 / 녹양방초는 세우 중에 푸르도다’는 색채 대비와 대구를 이룬다.", "a": "O", "ref": "본사", "why": "옳다. 붉은색(도화·행화)과 녹색(녹양방초)의 색채 대비, 대구법으로 봄의 아름다움을 부각한다."}, {"q": "‘수풀에 우는 새는 춘기를 못내 겨워 소리마다 교태로다’의 새는 화자의 흥취가 투영된 감정이입 대상이다.", "a": "O", "ref": "본사", "why": "옳다. 새에 화자의 봄 흥취를 투영한 감정이입(객관적 상관물)이다."}, {"q": "‘청향은 잔에 지고’는 후각을 시각으로 옮긴 공감각적 표현이다.", "a": "O", "ref": "본사", "why": "옳다. 맑은 향기(후각)가 잔에 지는 모습(시각)으로 형상화된 공감각적 표현이다."}, {"q": "‘공명도 날 꺼리고 부귀도 날 꺼리니’는 화자가 부귀공명을 간절히 바라는 마음을 표현한 것이다.", "a": "X", "ref": "결사", "why": "틀리다. 주객전도 표현으로, 실제로는 화자가 부귀공명을 멀리하는 태도를 반대로 나타낸 것이다."}]}, {"name": "공간 이동 · 상춘곡 vs 누항사", "items": [{"q": "상춘곡은 집 → 정자 → 시냇가 → 산봉우리로 화자의 공간이 점차 확장된다.", "a": "O", "ref": "시상전개", "why": "옳다. 좁은 곳→넓은 곳, 낮은 곳→높은 곳으로 동선이 확장된다."}, {"q": "상춘곡(전기 가사)은 누항사(후기 가사)와 달리 생업의 어려움을 사실적으로 그린다.", "a": "X", "ref": "비교", "why": "틀리다. 생업의 곤궁함을 사실적으로 그린 것은 후기 가사 누항사이며, 상춘곡은 생업 언급 없이 자연을 즐기는 풍류를 노래한다."}]}]}, {"id": "w07", "tag": "가사 · 강호한정(후기)", "title": "누항사 (박인로)", "sections": [{"name": "갈래 · 주제", "items": [{"q": "누항사는 조선 후기 가사로, 곤궁한 생활 속에서 안빈낙도하려는 선비의 삶을 노래한다.", "a": "O", "ref": "개관", "why": "옳다. 임진왜란 후의 궁핍한 생활과 빈이무원·안빈낙도를 노래한 후기 가사다."}, {"q": "누항사의 주제어라 할 수 있는 ‘빈이무원’은 가난하지만 원망하지 않는다는 뜻이다.", "a": "O", "ref": "결사", "why": "옳다. ‘빈이무원’은 가난 속에서도 원망하지 않는 태도로, 작품 주제가 집약된 말이다."}, {"q": "누항사는 자연을 이상화하기만 할 뿐 현실의 궁핍은 전혀 드러내지 않는다.", "a": "X", "ref": "전체", "why": "틀리다. 누항사는 소를 빌리지 못하는 등 현실의 궁핍을 사실적·구체적으로 노출한다(전기 가사와의 차이)."}]}, {"name": "서사 · 본사 — 궁핍과 참전", "items": [{"q": "‘설 데인 숙냉애 뷘 배 쇡일 뿐이로다’는 화자의 궁핍한 생활을 사실적으로 보여 준다.", "a": "O", "ref": "서사", "why": "옳다. 덜 데운 숭늉으로 빈 배를 속인다는 표현으로 궁핍을 구체적으로 드러낸다."}, {"q": "‘안빈 일념’은 화자가 가난 속에서도 지키려는 가치관을 집약한 말이다.", "a": "O", "ref": "서사", "why": "옳다. 가난 속에서 편안한 마음을 지키려는 화자의 신념(안빈일념)이다."}, {"q": "‘병과 오재예 감사심을 가져 이셔’는 임진왜란 참전 경험을 회상한 부분이다.", "a": "O", "ref": "본사1", "why": "옳다. ‘병과 오재(전쟁 5년)’로 임진왜란 참전을 회상하는 부분이다."}]}, {"name": "소 빌리기 삽화", "items": [{"q": "‘허위허위’와 ‘설피설피’는 각각 소를 빌리러 갈 때의 기대감과 돌아올 때의 실망감을 나타내는 의태어다.", "a": "O", "ref": "본사3~4", "why": "옳다. ‘허위허위(기대)’와 ‘설피설피(실망)’의 의태어 대비로 화자의 심리 변화를 드러낸다."}, {"q": "소 주인은 소를 빌려줄 수 없다는 뜻을 직설적으로 딱 잘라 말한다.", "a": "X", "ref": "본사4", "why": "틀리다. 소 주인은 건넛집과의 약속을 핑계로 우회적·완곡하게 거절한다."}, {"q": "‘풍채 저근 형용애 개 짖을 뿐이로다’는 거절당한 화자의 참담·서글픔을 고조한다.", "a": "O", "ref": "본사4", "why": "옳다. 초라한 모습에 개마저 짖는 상황으로 화자의 서글픔을 심화한다."}, {"q": "소 주인에게 소를 빌리러 간 삽화는 화자와 주인의 대화를 직접 제시해 현장감을 살린다.", "a": "O", "ref": "본사3~4", "why": "옳다. 대화체를 활용해 일상 장면을 사실적·생동감 있게 전달한다."}]}, {"name": "결사 · 상춘곡 비교", "items": [{"q": "‘단사표음을 이도 족히 너기노라’에는 안빈낙도의 태도가 드러난다.", "a": "O", "ref": "결사", "why": "옳다. 소박한 음식(단사표음)에 만족하는 안빈낙도의 태도다."}, {"q": "‘온포(溫飽)’는 화자가 추구하는 이상적 가치로 긍정적으로 그려진다.", "a": "X", "ref": "결사", "why": "틀리다. ‘온포(따뜻이 입고 배불리 먹음)’는 화자가 멀리하는 부정적(세속적) 대상이다."}, {"q": "누항사 결사에는 충효·화형제·신붕우 같은 유교적 도리를 지키려는 태도가 나타난다.", "a": "O", "ref": "결사", "why": "옳다. 유교적 도리 추구로 내적 갈등을 해소하려는 태도가 드러난다."}]}]}, {"id": "w08", "tag": "연시조 · 강호/학문", "title": "도산십이곡 (이황)", "sections": [{"name": "갈래 · 구성", "items": [{"q": "도산십이곡은 전 12수의 연시조로, 전 6곡(언지)과 후 6곡(언학)으로 구성된다.", "a": "O", "ref": "개관", "why": "옳다. 전 6곡=언지(자연에 대한 정서), 후 6곡=언학(학문 수양)으로 구성된 연시조다."}, {"q": "도산십이곡의 전 6곡(언학)은 학문 수양의 자세를, 후 6곡(언지)은 자연에 대한 정서를 노래한다.", "a": "X", "ref": "구성", "why": "틀리다. 전 6곡이 ‘언지(자연 정서)’, 후 6곡이 ‘언학(학문 수양)’이다. 명칭이 뒤바뀐 함정이다."}, {"q": "이황은 이 작품을 우리말 노래로 지어 제자들이 부르며 교훈을 새기게 하려 하였다.", "a": "O", "ref": "발문", "why": "옳다. 발문에 따르면 우리말 노래로 지어 제자들이 향유하며 바람직한 가치를 새기게 하려는 교육적 의도가 있었다."}]}, {"name": "언지 — 자연에 대한 정서", "items": [{"q": "‘천석고황을 고쳐 무엇하료’는 자연을 사랑하는 마음을 고치지 않겠다는 뜻으로 자연에 살겠다는 의지다.", "a": "O", "ref": "제1곡", "why": "옳다. ‘천석고황(자연 사랑이 고질병처럼 깊음)’을 고치지 않겠다는 설의로, 자연에 살겠다는 의지를 나타낸다."}, {"q": "‘연하로 지블 삼고 풍월로 버들 사마’는 자연을 집·벗으로 삼는 자연 친화적 태도다.", "a": "O", "ref": "제2곡", "why": "옳다. 연하·풍월(자연)을 집과 벗으로 삼는 물아일체·자연 친화의 태도다."}, {"q": "‘피미일인(彼美一人)’은 화자가 흠모하는 자연물을 가리킨다.", "a": "X", "ref": "제4곡", "why": "틀리다. ‘피미일인’은 임금을 가리키며, 자연 속에서도 임금을 잊지 못하는 연군지정을 드러낸다."}]}, {"name": "언학 — 학문 수양", "items": [{"q": "‘고인도 날 못 보고~’와 ‘당시예 녀던 길흘~’은 연쇄법을 사용해 내용을 유기적으로 연결한다.", "a": "O", "ref": "제9·10곡", "why": "옳다. 앞 구절의 일부를 다음 구절에서 반복하는 연쇄법이 쓰였다."}, {"q": "‘녀던 길’과 ‘년듸·어듸’는 모두 학문 수양의 길을 뜻하는 같은 의미의 시어다.", "a": "X", "ref": "제9·10곡", "why": "틀리다. ‘녀던 길’=학문 수양의 길, ‘년듸·어듸’=벼슬길로 서로 대조되는 시어다."}, {"q": "제11곡의 청산·유수는 변함없고 그치지 않는 속성으로 학문 수양의 본보기가 된다.", "a": "O", "ref": "제11곡", "why": "옳다. 만고에 푸른 청산(불변)과 밤낮으로 그치지 않는 유수(지속)를 본받아 학문에 정진하려는 의지를 드러낸다."}, {"q": "‘만고상청(萬古常靑)’은 변함없이 끊임없이 학문에 정진하겠다는 의지를 담고 있다.", "a": "O", "ref": "제11곡", "why": "옳다. 자연의 불변·지속성을 본받아 끊임없이 수양하겠다는 의지가 담긴 말이다."}]}, {"name": "표현 · 종합", "items": [{"q": "도산십이곡의 자연은 단순한 서정 대상이 아니라 도학적 이념을 전하는 매개체 성격이 강하다.", "a": "O", "ref": "종합", "why": "옳다. 자연을 통해 학문·수양의 이념을 전하는 목적 문학적 성격이 강하다."}, {"q": "도산십이곡은 설의법·대구법·연쇄법을 두루 활용한다.", "a": "O", "ref": "표현", "why": "옳다. 설의법·대구법·연쇄법이 두루 나타난다."}, {"q": "상춘곡·누항사와 달리 도산십이곡은 가사가 아니라 연시조 갈래에 속한다.", "a": "O", "ref": "비교", "why": "옳다. 상춘곡·누항사는 가사, 도산십이곡은 연시조(평시조 12수)다."}]}]}, {"id": "w09", "tag": "고전소설 · 전기(傳奇)", "title": "만복사저포기 (김시습)", "sections": [{"name": "갈래 · 성격", "items": [{"q": "만복사저포기는 김시습의 「금오신화」에 실린 우리나라 최초의 한문 소설이다.", "a": "O", "ref": "개관", "why": "옳다. 「금오신화」 수록작으로, 우리나라 최초의 한문 소설로 평가된다."}, {"q": "만복사저포기는 산 사람과 죽은 이(귀신)의 사랑을 다룬 명혼(冥婚)·전기 소설이다.", "a": "O", "ref": "개관", "why": "옳다. 죽은 여인과의 사랑을 다룬 명혼(시애) 소설이자 전기(傳奇) 소설이다."}, {"q": "이 작품의 주제는 생사를 초월한 남녀 간의 애절한 사랑이다.", "a": "O", "ref": "개관", "why": "옳다. 삶과 죽음의 경계를 넘어선 지고지순한 사랑이 주제다."}]}, {"name": "전기적 요소 · 여인의 정체 암시", "items": [{"q": "‘문득 공중에서 말소리가 들렸다’는 현실에서 불가능한 전기적 요소이다.", "a": "O", "ref": "발단", "why": "옳다. 공중의 말소리는 비현실적(전기적) 요소로, 앞으로의 기이한 만남을 예고한다."}, {"q": "여인이 부처께 바친 글에서 ‘풀밭 임시 거처에 머문 지 3년’이라 한 것은 여인이 죽은 존재임을 우회적으로 암시한다.", "a": "O", "ref": "전개", "why": "옳다. ‘풀밭·임시 거처’는 무덤을, ‘3년’은 탈상 시기를 암시하여 여인이 죽은 존재임을 넌지시 드러낸다."}, {"q": "‘내 무덤에 맺힌 천고의 원한’이라는 삽입 가사 구절은 여인이 살아 있는 인간임을 확증한다.", "a": "X", "ref": "전개", "why": "틀리다. ‘내 무덤’은 여인이 죽은 존재(귀신)임을 드러내는 결정적 시어로, 살아 있는 인간임을 확증하는 것이 아니다."}, {"q": "새벽에 여종이 자취 없이 사라진 것은 여종 역시 사람이 아님을 보여 주는 전기적 요소다.", "a": "O", "ref": "전개", "why": "옳다. 닭 울음·종소리(새벽)에 여종이 사라지는 것은 귀신의 활동 시간이 끝났음을 보여 주는 전기적 요소다."}]}, {"name": "양생의 오판 · 현실성 장치", "items": [{"q": "양생은 술 향기가 인간 세계의 것이 아님을 느끼고도 ‘귀한 댁 처자’로 여기며 의심을 거둔다.", "a": "O", "ref": "전개", "why": "옳다. 양생은 이상함을 느끼면서도 양반가 규수로 합리화하며 의심을 거두는 오판을 한다."}, {"q": "‘남원’ 같은 실제 지명과 ‘3월 24일 연등회’ 같은 풍속은 작품에 현실성을 부여한다.", "a": "O", "ref": "발단", "why": "옳다. 실제 지명·풍속·왜구 침략의 역사적 배경 등이 비현실적 사건에 현실감을 부여한다."}, {"q": "여인이 왜구의 난으로 죽었다는 설정은 여인의 비극이 역사적 사실에서 비롯됨을 보여 준다.", "a": "O", "ref": "위기~결말", "why": "옳다. 왜구 침략이라는 역사적 사실이 여인의 비극적 죽음의 배경이 되어 사실성을 더한다."}]}, {"name": "결말 · 삽입시의 기능", "items": [{"q": "양생이 지리산에 들어가 평생 혼자 산 것은 죽은 여인에 대한 절의로 볼 수 있다.", "a": "O", "ref": "결말", "why": "옳다. 세속과 인연을 끊고 사랑을 지키는 지고지순한 태도(절의)로 해석된다."}, {"q": "작품 속 삽입 시·가사는 사건 전개를 지연시킬 뿐 인물의 정서와는 무관하다.", "a": "X", "ref": "전체", "why": "틀리다. 삽입 시·가사는 인물의 내면·정서를 서정적으로 드러내는 핵심 기능을 한다."}, {"q": "‘외로운 비취새·짝 잃은 원앙새’는 양생의 고독이 투영된 객관적 상관물이다.", "a": "O", "ref": "발단", "why": "옳다. 짝 없는 새에 양생의 외로움을 이입한 감정이입(객관적 상관물)이다."}]}]}, {"id": "w10", "tag": "현대시 · 전통 정한", "title": "초혼 (김소월)", "sections": [{"name": "갈래 · 주제", "items": [{"q": "초혼은 임의 죽음에서 오는 슬픔과 그리움을 노래한 현대시다.", "a": "O", "ref": "개관", "why": "옳다. 사별한 임에 대한 슬픔·그리움·한(恨)을 노래한 김소월의 시다."}, {"q": "‘초혼(招魂)’은 죽은 사람의 혼을 부르는 전통 상례 의식에서 유래한 제목이다.", "a": "O", "ref": "제목", "why": "옳다. 사람이 죽었을 때 그 혼을 부르는 고복(皐復) 의식(초혼)에서 비롯된 제목이다."}, {"q": "초혼의 주제는 임과의 재회에 대한 확신과 기쁨이다.", "a": "X", "ref": "개관", "why": "틀리다. 초혼은 임의 죽음에서 오는 절망적 슬픔과 그리움을 노래하며, 재회의 기쁨과는 거리가 멀다."}]}, {"name": "표현 · 정서", "items": [{"q": "‘산산이 부서진 이름이여!’ 등에서 영탄법과 반복을 통해 격정적 슬픔을 드러낸다.", "a": "O", "ref": "1연", "why": "옳다. 영탄·반복을 통해 임을 잃은 격정적 슬픔을 직접적으로 분출한다."}, {"q": "‘부르다가 내가 죽을 이름이여!’는 임을 향한 간절한 그리움을 극단적으로 표현한다.", "a": "O", "ref": "1연", "why": "옳다. 죽을 만큼 애타게 임을 부른다는 극한적 표현으로 그리움의 깊이를 드러낸다."}, {"q": "‘선 채로 이 자리에 돌이 되어도’는 임을 기다리는 화자의 태도를 망부석 모티프로 형상화한다.", "a": "O", "ref": "4연", "why": "옳다. 돌(망부석)이 되어서라도 임을 부르겠다는 태도로 한의 정서를 형상화한다."}, {"q": "‘붉은 해는 서산마루에 걸리었다’ 등 하강적 이미지는 화자의 절망감을 심화한다.", "a": "O", "ref": "3연", "why": "옳다. 지는 해 등 하강적·소멸적 이미지가 화자의 절망감을 심화한다."}]}, {"name": "전통 · 종합", "items": [{"q": "초혼은 임을 떠나보내는 이별의 정한을 다룬다는 점에서 전통적 정서를 계승한다.", "a": "O", "ref": "종합", "why": "옳다. 임과의 사별에서 오는 한(恨)을 다뤄 우리 시가의 전통적 정한을 계승한다."}, {"q": "초혼의 화자는 임의 죽음을 담담히 받아들이며 감정을 절제한다.", "a": "X", "ref": "전체", "why": "틀리다. 초혼의 화자는 감정을 절제하기보다 영탄·반복으로 격정적 슬픔을 강하게 분출한다."}]}]}, {"id": "w11", "tag": "개화가사 · 계몽", "title": "동심가 (이중원)", "sections": [{"name": "갈래 · 주제", "items": [{"q": "동심가는 개화기에 창작된 개화가사로, 문명개화와 자주독립을 계몽적으로 노래한다.", "a": "O", "ref": "개관", "why": "옳다. 개화기의 개화가사로, 마음을 합쳐 문명개화에 힘쓰자는 계몽적 주제를 담는다."}, {"q": "동심가의 주제는 전통적 인습으로의 회귀와 은둔이다.", "a": "X", "ref": "개관", "why": "틀리다. 동심가는 잠에서 깨어 문명개화에 힘쓰자는 계몽·각성을 노래하며, 인습 회귀와는 반대다."}, {"q": "‘잠을 깨세 잠을 깨세’ 같은 반복은 계몽적 어조로 각성을 촉구한다.", "a": "O", "ref": "전체", "why": "옳다. 반복·청유형 어조로 대중의 각성과 참여를 촉구하는 계몽적 성격을 드러낸다."}]}, {"name": "표현 · 형식", "items": [{"q": "‘사쳔 년이 꿈 쇽이라’의 ‘꿈’은 미개하고 각성하지 못한 상태를 비유한다.", "a": "O", "ref": "전체", "why": "옳다. ‘꿈(잠)’은 문명개화 이전의 미몽·미개 상태를 비유한다."}, {"q": "‘만국이 회동하야 사해가 일가로다’는 세계와 교류하는 개화의 시대상을 반영한다.", "a": "O", "ref": "전체", "why": "옳다. 세계 여러 나라가 모이고 사해가 한 집이 된다는 표현으로 개화의 시대상을 드러낸다."}, {"q": "동심가는 4·4조를 바탕으로 한 가사의 율격을 계승하고 있다.", "a": "O", "ref": "형식", "why": "옳다. 개화가사는 전통 가사의 4·4조 율격을 계승하면서 개화기의 내용을 담았다."}, {"q": "동심가는 순수 서정을 지향하여 어떠한 계몽적 의도도 담고 있지 않다.", "a": "X", "ref": "전체", "why": "틀리다. 동심가는 문명개화·각성을 촉구하는 뚜렷한 계몽적 의도를 지닌 개화가사다."}]}]}, {"id": "w12", "tag": "근대소설 · 풍자", "title": "태평천하 (채만식)", "sections": [{"name": "갈래 · 서술 방식", "items": [{"q": "태평천하는 판소리 사설체를 활용해 서술자가 독자에게 말을 건네며 인물을 풍자한다.", "a": "O", "ref": "전체", "why": "옳다. ‘-입니다·-겠다요’ 경어체의 판소리 사설체로 서술자가 개입해 인물을 조롱·희화화한다."}, {"q": "태평천하의 서술자는 인물에 대해 어떠한 판단도 하지 않고 객관적으로만 서술한다.", "a": "X", "ref": "전체", "why": "틀리다. 서술자가 빈번히 개입(편집자적 논평)하여 인물을 비판·풍자한다."}, {"q": "‘태평천하’라는 제목은 식민지 현실을 미화하는 윤 직원의 인식을 반어적으로 풍자한다.", "a": "O", "ref": "제목", "why": "옳다. 억압적 식민지 현실을 ‘태평천하’로 미화하는 왜곡된 역사 인식을 반어적으로 비판한 제목이다."}]}, {"name": "인물 · 갈등", "items": [{"q": "윤 직원은 손자 종수·종학이 각각 군수·경찰서장이 되기를 바란다.", "a": "O", "ref": "앞부분", "why": "옳다. 윤 직원은 손자들을 일제 권력(군수·경찰서장)에 앉혀 재산·안위를 지키려 한다."}, {"q": "윤 직원은 종학의 체포 소식에 손자의 안위를 진심으로 걱정한다.", "a": "X", "ref": "절정", "why": "틀리다. 윤 직원의 충격은 손자 걱정이 아니라, 사회주의가 자기 재산을 위협한다는 공포·배신감 때문이다."}, {"q": "윤 직원은 사회주의를 옛날의 화적·부랑당과 동일시하여 인식한다.", "a": "O", "ref": "절정", "why": "옳다. 사회주의(독립운동)를 재산을 빼앗는 화적·도적과 같은 것으로 보는 편협한 인식을 드러낸다."}, {"q": "소제목 ‘망진자는 호야’는 외부의 적이 윤 직원 가문을 무너뜨림을 예고한다.", "a": "X", "ref": "절정", "why": "틀리다. 외부가 아니라 내부(가장 믿던 손자 종학)에 의한 가문 몰락을 암시한다."}]}, {"name": "결말 · 종합", "items": [{"q": "‘장수의 죽음을 만난 군졸들처럼’은 윤 직원 일가의 암담한 앞날을 직유로 암시한다.", "a": "O", "ref": "결말", "why": "옳다. 장수=윤 직원(몰락), 군졸=가족으로 보아 일가의 몰락을 직유로 암시한다."}, {"q": "태평천하에서 종학은 직접 등장하지 않지만 유일하게 풍자되지 않는 긍정적 인물로 볼 수 있다.", "a": "O", "ref": "전체", "why": "옳다. 윤 직원·윤 주사·종수가 풍자 대상인 반면, 사회주의 운동을 하는 종학은 풍자에서 벗어난 인물로 읽힌다."}, {"q": "‘전보’는 종학의 체포 소식을 전하며 사건의 극적 반전과 몰락을 예고하는 장치다.", "a": "O", "ref": "절정", "why": "옳다. 전보는 사건의 극적 반전을 이끌고 집안 몰락을 예고하며, 직접 등장하지 않는 종학을 간접 제시한다."}]}]}, {"id": "w13", "tag": "근대소설 · 사실주의", "title": "만세전 (염상섭)", "sections": [{"name": "갈래 · 구조", "items": [{"q": "만세전은 1인칭 주인공 시점의 사실주의 소설로, 여로형(원점 회귀) 구조를 취한다.", "a": "O", "ref": "개관", "why": "옳다. ‘나(이인화)’의 1인칭 시점, 동경→조선→동경의 원점 회귀형 여로 구조를 지닌다."}, {"q": "만세전의 여로는 ‘동경 → 조선 → 동경’으로, 주인공이 출발점으로 되돌아오는 구조다.", "a": "O", "ref": "구조", "why": "옳다. 동경에서 출발해 조선을 거쳐 다시 동경으로 돌아오는 원점 회귀형 여로다."}, {"q": "만세전의 원제는 ‘묘지(墓地)’로, 식민지 현실을 무덤에 빗댄 데서 비롯되었다.", "a": "O", "ref": "개관", "why": "옳다. 원제 ‘묘지’는 식민지 조선을 무덤·공동묘지로 형상화한 데서 온 제목이다."}]}, {"name": "여정에서의 현실 인식", "items": [{"q": "목욕탕에서 일본인들이 ‘요보·생번’이라 하는 것은 조선인을 멸시하는 태도를 보여 준다.", "a": "O", "ref": "장면1", "why": "옳다. ‘요보·생번’은 일본인이 조선인을 비하하는 호칭으로, 조선인 멸시를 드러낸다."}, {"q": "노동자 모집원의 이야기는 조선인을 속여 일본에 팔아넘기는 인신매매의 실상을 드러낸다.", "a": "O", "ref": "장면2", "why": "옳다. 조선 노동자를 속여 일본 공장·탄광에 팔아넘기는 일제 수탈의 실상을 폭로한다."}, {"q": "‘나’는 관념적 학문에 몰두했던 자신을 ‘책상 도련님’이라 부르며 반성한다.", "a": "O", "ref": "장면3", "why": "옳다. 현실과 동떨어진 관념적 지식에 몰두했던 자신을 반성(자기 성찰)한다."}, {"q": "‘무덤이다! 구더기가 끓는 무덤이다!’는 식민지 조선의 절망적 현실을 형상화한 핵심 상징이다.", "a": "O", "ref": "장면6", "why": "옳다. ‘무덤·구더기’는 암담한 식민지 현실을 형상화한 작품의 핵심 상징(원제 ‘묘지’와 직결)이다."}]}, {"name": "인물 · 표현", "items": [{"q": "일본인 행세를 하는 조선인 형사는 정체가 드러날까 전전긍긍하는 복잡한 심리를 보인다.", "a": "O", "ref": "장면4", "why": "옳다. 조선인이면서 일본인 행세를 하며 본색이 탄로날까 불안해하는 비굴한 심리를 드러낸다."}, {"q": "‘현명한 처세술’은 굴종적 삶을 긍정하는 화자의 진심을 그대로 드러낸 표현이다.", "a": "X", "ref": "장면6", "why": "틀리다. ‘현명한 처세술’은 굴종적 처세를 비꼬는 반어적 표현이다."}, {"q": "만세전은 1인칭 주인공 시점으로 ‘나’의 내면 심리를 직접 서술한다.", "a": "O", "ref": "전체", "why": "옳다. ‘깜짝 놀랐다’ 등 ‘나’의 심리가 직접 제시되는 1인칭 주인공 시점이다."}]}, {"name": "지식인의 한계 · 종합", "items": [{"q": "‘나’는 여로를 따라 식민지 현실을 견문하며 점차 자아를 각성한다.", "a": "O", "ref": "전체", "why": "옳다. 여정에서 현실을 견문하며 자아를 각성하는 여로형 소설의 특징을 보인다."}, {"q": "‘나’는 각성한 현실 인식을 바탕으로 적극적인 실천과 저항에 나선다.", "a": "X", "ref": "전체", "why": "틀리다. ‘나’의 인식은 성장하지만 냉소·자조에 머물 뿐 실천으로 나아가지 못하는 무기력한 지식인이다."}, {"q": "만세전이 그린 조선의 참담함의 원인에는 일제의 수탈, 민중의 무지, 봉건적 인습 등이 있다.", "a": "O", "ref": "종합", "why": "옳다. 일제 수탈, 민중의 무지, 아들 지상주의 같은 봉건적 인습, 젊은이의 무기력 등이 원인으로 제시된다."}]}]}];
+
+// ---- state ----
+let tab = 0;
+const answers = {};        // key -> {picked, correct}
+let onlyWrong = false;
+let revealAll = false;
+
+const $ = (id) => document.getElementById(id);
+const esc = (s) => s.replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;");
+
+function flatten(pIdx){
+  const out=[]; const p=PASSAGES[pIdx];
+  p.sections.forEach((sec,si)=>sec.items.forEach((it,ii)=>{
+    out.push(Object.assign({key:`${pIdx}-${si}-${ii}`, sec:sec.name, si, ii}, it));
+  }));
+  return out;
+}
+
+function renderTabs(){
+  const el=$("tabs"); el.innerHTML="";
+  PASSAGES.forEach((p,i)=>{
+    const b=document.createElement("button");
+    b.className="tab"+(i===tab?" on":""); b.setAttribute("role","tab");
+    b.setAttribute("aria-selected", i===tab);
+    b.innerHTML=`<span class="tab-num">${String(i+1).padStart(2,"0")}</span>
+      <span class="tab-body"><span class="tab-title">${esc(p.title)}</span><span class="tab-tag">${esc(p.tag)}</span></span>`;
+    b.onclick=()=>{ tab=i; onlyWrong=false; revealAll=false; render(); window.scrollTo({top:0,behavior:"smooth"}); };
+    el.appendChild(b);
+  });
+}
+
+function pick(f, choice){
+  if(answers[f.key]) return;
+  answers[f.key]={picked:choice, correct:choice===f.a};
+  render();
+}
+
+function render(){
+  renderTabs();
+  const flat=flatten(tab);
+  const total=flat.length;
+  const answeredList=flat.filter(f=>answers[f.key]);
+  const answered=answeredList.length;
+  const correct=answeredList.filter(f=>answers[f.key].correct).length;
+  const wrong=answered-correct;
+  const pct=total?Math.round(answered/total*100):0;
+  const scorePct=answered?Math.round(correct/answered*100):0;
+
+  $("barFill").style.width=pct+"%";
+  $("sAnswered").firstChild.nodeValue=answered;
+  $("sTotal").textContent="/"+total;
+  $("sCorrect").textContent=correct;
+  $("sWrong").textContent=wrong;
+  $("sScore").firstChild.nodeValue = answered?scorePct:"–";
+
+  $("btnReveal").textContent=revealAll?"해설 숨기기":"해설 모두 보기";
+  $("btnRetry").disabled=!wrong;
+
+  // done banner
+  const db=$("doneBanner");
+  if(answered===total && total>0){
+    db.className="done-banner";
+    db.innerHTML=`이 지문 ${total}문항 완료 · 정답률 <b>${scorePct}%</b>` +
+      (wrong>0?` · 틀린 ${wrong}문항을 다시 풀어 보세요.`:` · 전부 맞혔습니다.`);
+  } else { db.className=""; db.innerHTML=""; }
+
+  const fn=$("filterNote");
+  if(onlyWrong){ fn.className="filter-note";
+    fn.innerHTML=`틀린 문항만 보는 중 · <button class="linklike" id="showAll">전체 보기</button>`;
+  } else { fn.className=""; fn.innerHTML=""; }
+
+  // visible
+  const visible = onlyWrong ? flat.filter(f=>!answers[f.key]||!answers[f.key].correct) : flat;
+  const grouped=[];
+  visible.forEach(f=>{ let g=grouped.find(x=>x.si===f.si); if(!g){g={si:f.si,name:f.sec,rows:[]};grouped.push(g);} g.rows.push(f); });
+
+  const list=$("qlist"); list.innerHTML="";
+  if(visible.length===0){ list.innerHTML=`<div class="empty">틀린 문항이 없습니다. 전체 보기로 돌아가세요.</div>`; bind(); return; }
+
+  grouped.forEach(g=>{
+    const sec=document.createElement("section"); sec.className="qsection";
+    sec.innerHTML=`<h2 class="qsection-title">${esc(g.name)}</h2>`;
+    g.rows.forEach(f=>{
+      const ans=answers[f.key];
+      const show=!!ans||revealAll;
+      const picked=ans?ans.picked:null;
+      const card=document.createElement("article");
+      card.className="card"+(ans?(ans.correct?" done ok":" done no"):"");
+      let html=`<div class="card-q"><span class="qnum">Q</span><p class="qtext">${esc(f.q)}</p></div>
+        <div class="ox-row">
+          <button class="oxbtn o${picked==="O"?" picked":""}${show&&f.a==="O"?" correct":""}" data-k="${f.key}" data-c="O" ${ans?"disabled":""} aria-label="맞다 O">O</button>
+          <button class="oxbtn x${picked==="X"?" picked":""}${show&&f.a==="X"?" correct":""}" data-k="${f.key}" data-c="X" ${ans?"disabled":""} aria-label="틀리다 X">X</button>
+          ${ans?`<span class="verdict ${ans.correct?"good":"bad"}">${ans.correct?"정답":"오답"}</span>`:""}
+        </div>`;
+      if(show){
+        html+=`<div class="explain">
+          <div class="explain-head"><span class="ans-pill ${f.a==="O"?"o":"x"}">정답 ${f.a}</span><span class="ref">${esc(f.ref)}</span></div>
+          <p class="why">${esc(f.why)}</p></div>`;
+      }
+      card.innerHTML=html;
+      sec.appendChild(card);
+    });
+    list.appendChild(sec);
+  });
+  bind();
+}
+
+function bind(){
+  document.querySelectorAll(".oxbtn").forEach(b=>{
+    if(b.disabled) return;
+    b.onclick=()=>{
+      const key=b.getAttribute("data-k"), c=b.getAttribute("data-c");
+      const f=flatten(tab).find(x=>x.key===key);
+      pick(f,c);
+    };
+  });
+  const sa=$("showAll"); if(sa) sa.onclick=()=>{ onlyWrong=false; render(); };
+}
+
+$("btnReveal").onclick=()=>{ revealAll=!revealAll; render(); };
+$("btnReset").onclick=()=>{ flatten(tab).forEach(f=>delete answers[f.key]); revealAll=false; onlyWrong=false; render(); window.scrollTo({top:0,behavior:"smooth"}); };
+$("btnRetry").onclick=()=>{ flatten(tab).forEach(f=>{ if(answers[f.key]&&!answers[f.key].correct) delete answers[f.key]; }); onlyWrong=true; revealAll=false; render(); window.scrollTo({top:0,behavior:"smooth"}); };
+
+render();
+</script>
+</body>
+</html>

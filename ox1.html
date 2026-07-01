@@ -1,0 +1,280 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>2026 강서고2 독서 OX 트레이너</title>
+<style>
+:root{
+  --ink:#241606; --brown:#5b3a1e; --brown-deep:#3a2410;
+  --paper:#f4efe4; --paper-2:#efe8d8; --card:#fffdf7;
+  --line:#d8cdb6; --line-soft:#e6ddca;
+  --o:#1e6f5c; --o-soft:#e2f0eb;
+  --x:#b23b2e; --x-soft:#f6e4e0;
+  --gold:#b8892b;
+  --sans:'Malgun Gothic','맑은 고딕','Apple SD Gothic Neo',system-ui,sans-serif;
+  --serif:'Nanum Myeongjo','Batang',serif;
+}
+*{box-sizing:border-box}
+html,body{margin:0;padding:0}
+body{
+  font-family:var(--sans); color:var(--ink);
+  background:
+    radial-gradient(circle at 12% 8%, rgba(184,137,43,.05), transparent 40%),
+    repeating-linear-gradient(0deg, transparent 0 27px, rgba(120,90,40,.03) 27px 28px),
+    var(--paper);
+  min-height:100vh;
+}
+.wrap{max-width:860px; margin:0 auto; padding:22px 16px 60px}
+button{font-family:var(--sans);cursor:pointer}
+
+.masthead{border-bottom:2px solid var(--brown-deep); padding-bottom:16px; margin-bottom:16px}
+.brand{display:flex;align-items:baseline;gap:10px;margin-bottom:10px}
+.brand-mark{background:var(--brown-deep); color:#f6efdf; font-weight:800; letter-spacing:.06em; padding:3px 10px; border-radius:3px; font-size:14px}
+.brand-sub{font-size:12.5px; color:var(--brown); letter-spacing:.02em; font-weight:600}
+.masthead-title{font-family:var(--serif); font-weight:800; color:var(--brown-deep); font-size:clamp(21px,4.4vw,30px); line-height:1.2; margin:0 0 8px; letter-spacing:-.01em}
+.masthead-desc{margin:0; font-size:13.5px; color:#5c4a34; line-height:1.6}
+.masthead-desc b{color:var(--brown-deep)}
+
+.tabs{display:grid; grid-template-columns:1fr 1fr 1fr; gap:8px; margin-bottom:16px}
+.tab{display:flex; align-items:center; gap:9px; text-align:left; background:var(--paper-2); border:1.5px solid var(--line); border-radius:8px; padding:10px 11px; transition:.15s}
+.tab:hover{border-color:var(--brown); background:#efe6d2}
+.tab.on{background:var(--brown-deep); border-color:var(--brown-deep)}
+.tab-num{font-family:var(--serif); font-size:19px; font-weight:800; color:var(--gold)}
+.tab.on .tab-num{color:#e9c877}
+.tab-body{display:flex; flex-direction:column; gap:2px; min-width:0}
+.tab-title{font-size:13px; font-weight:700; color:var(--brown-deep); line-height:1.25}
+.tab.on .tab-title{color:#fbf5e6}
+.tab-tag{font-size:10.5px; color:#836a48; letter-spacing:.02em}
+.tab.on .tab-tag{color:#d9c7a4}
+
+.board{background:var(--card); border:1.5px solid var(--line); border-radius:10px; padding:14px 15px; margin-bottom:14px}
+.board-bar{height:7px; background:var(--paper-2); border-radius:99px; overflow:hidden; margin-bottom:13px}
+.board-bar-fill{height:100%; background:linear-gradient(90deg,var(--gold),var(--brown)); border-radius:99px; transition:width .4s ease; width:0%}
+.board-stats{display:flex; gap:8px; margin-bottom:13px}
+.stat{flex:1; display:flex; flex-direction:column; align-items:center; gap:2px; padding:8px 4px; border-radius:8px; background:var(--paper-2)}
+.stat.ok{background:var(--o-soft)}
+.stat.no{background:var(--x-soft)}
+.stat.score{background:#f3ead2}
+.stat-num{font-family:var(--serif); font-size:22px; font-weight:800; color:var(--brown-deep); line-height:1}
+.stat.ok .stat-num{color:var(--o)}
+.stat.no .stat-num{color:var(--x)}
+.stat-den{font-size:12px; font-weight:600; color:#9a8763}
+.stat-label{font-size:11px; color:#7a6647; font-weight:600}
+.board-actions{display:flex; gap:8px; flex-wrap:wrap}
+.chip{background:var(--brown-deep); color:#f6efdf; border:none; border-radius:7px; padding:8px 13px; font-size:12.5px; font-weight:700; letter-spacing:.01em; transition:.15s}
+.chip:hover{background:#4a2e15}
+.chip:disabled{opacity:.4; cursor:not-allowed}
+.chip.ghost{background:transparent; color:var(--brown); border:1.5px solid var(--line)}
+.chip.ghost:hover{background:var(--paper-2)}
+
+.done-banner{background:linear-gradient(0deg,#f3ead2,#faf4e2); border:1.5px solid var(--gold); border-radius:8px; padding:11px 14px; font-size:13px; color:var(--brown-deep); margin-bottom:14px; font-weight:600}
+.done-banner b{color:var(--x); font-family:var(--serif); font-size:15px}
+.filter-note{font-size:12.5px; color:#7a6647; margin-bottom:10px}
+.linklike{background:none;border:none;color:var(--brown);text-decoration:underline;font-size:12.5px;font-weight:700;padding:0;cursor:pointer}
+
+.qsection{margin-bottom:24px}
+.qsection-title{font-size:13px; font-weight:800; color:#fbf5e6; letter-spacing:.02em; background:var(--brown-deep); padding:8px 12px; border-radius:6px; margin:0 0 12px}
+.card{background:var(--card); border:1.5px solid var(--line-soft); border-radius:10px; padding:14px 15px; margin-bottom:11px; transition:.15s}
+.card.done.ok{border-color:#bcd9cf; box-shadow:inset 3px 0 0 var(--o)}
+.card.done.no{border-color:#e6c3bc; box-shadow:inset 3px 0 0 var(--x)}
+.card-q{display:flex; gap:10px; align-items:flex-start; margin-bottom:12px}
+.qnum{font-family:var(--serif); font-weight:800; font-size:14px; color:#fff; background:var(--brown); width:22px; height:22px; border-radius:50%; display:flex; align-items:center; justify-content:center; flex:0 0 auto; margin-top:1px}
+.qtext{margin:0; font-size:15px; line-height:1.6; color:var(--ink); font-weight:500}
+
+.ox-row{display:flex; align-items:center; gap:10px}
+.oxbtn{width:52px; height:44px; border-radius:9px; font-family:var(--serif); font-size:22px; font-weight:800; border:2px solid var(--line); background:var(--paper-2); color:#9a8763; transition:.13s}
+.oxbtn.o:hover:not(:disabled){border-color:var(--o); color:var(--o); background:var(--o-soft)}
+.oxbtn.x:hover:not(:disabled){border-color:var(--x); color:var(--x); background:var(--x-soft)}
+.oxbtn.picked.o{background:var(--o); border-color:var(--o); color:#fff}
+.oxbtn.picked.x{background:var(--x); border-color:var(--x); color:#fff}
+.oxbtn.correct{box-shadow:0 0 0 3px rgba(184,137,43,.35)}
+.oxbtn:disabled{cursor:default}
+.oxbtn.o.correct:not(.picked){border-color:var(--o); color:var(--o); background:var(--o-soft)}
+.oxbtn.x.correct:not(.picked){border-color:var(--x); color:var(--x); background:var(--x-soft)}
+.verdict{font-size:13px; font-weight:800; letter-spacing:.02em; margin-left:2px}
+.verdict.good{color:var(--o)}
+.verdict.bad{color:var(--x)}
+
+.explain{margin-top:13px; padding:12px 13px; border-radius:8px; background:var(--paper-2); border:1px solid var(--line-soft)}
+.explain-head{display:flex; align-items:center; gap:9px; margin-bottom:7px}
+.ans-pill{font-size:12px; font-weight:800; padding:3px 10px; border-radius:99px; letter-spacing:.03em}
+.ans-pill.o{background:var(--o); color:#fff}
+.ans-pill.x{background:var(--x); color:#fff}
+.ref{font-size:11.5px; color:#836a48; font-weight:600; letter-spacing:.01em}
+.why{margin:0; font-size:13.5px; line-height:1.68; color:#4a3a26}
+
+.empty{text-align:center; padding:40px 0; color:#9a8763; font-size:14px}
+.foot{margin-top:30px; padding-top:14px; border-top:1px solid var(--line); text-align:center; font-size:11.5px; color:#9a8763; letter-spacing:.02em}
+
+@media (max-width:560px){
+  .tabs{grid-template-columns:1fr}
+  .tab{padding:9px 11px}
+  .board-stats{gap:6px}
+  .stat-num{font-size:19px}
+  .qtext{font-size:14px}
+}
+@media (prefers-reduced-motion:reduce){
+  .board-bar-fill,.tab,.card,.oxbtn,.chip{transition:none}
+}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header class="masthead" id="top">
+    <div class="brand">
+      <span class="brand-mark">갈무리</span>
+      <span class="brand-sub">까만선호쌤 · 독서 OX 트레이너</span>
+    </div>
+    <h1 class="masthead-title">2026 강서고2 1학기 기말고사 · 독서 OX</h1>
+    <p class="masthead-desc">진술을 읽고 <b>O</b> 또는 <b>X</b>를 고르면 곧바로 정답과 상세 해설이 열립니다. 지문 근거까지 함께 확인하세요.</p>
+  </header>
+  <nav class="tabs" id="tabs" role="tablist"></nav>
+  <section class="board" aria-label="진행 현황">
+    <div class="board-bar"><div class="board-bar-fill" id="barFill"></div></div>
+    <div class="board-stats">
+      <div class="stat"><span class="stat-num" id="sAnswered">0<span class="stat-den" id="sTotal">/0</span></span><span class="stat-label">푼 문항</span></div>
+      <div class="stat ok"><span class="stat-num" id="sCorrect">0</span><span class="stat-label">맞음</span></div>
+      <div class="stat no"><span class="stat-num" id="sWrong">0</span><span class="stat-label">틀림</span></div>
+      <div class="stat score"><span class="stat-num" id="sScore">–<span class="stat-den">%</span></span><span class="stat-label">정답률</span></div>
+    </div>
+    <div class="board-actions">
+      <button class="chip" id="btnReveal">해설 모두 보기</button>
+      <button class="chip" id="btnRetry" disabled>틀린 문항 다시 풀기</button>
+      <button class="chip ghost" id="btnReset">이 지문 초기화</button>
+    </div>
+  </section>
+  <div id="doneBanner"></div>
+  <div id="filterNote"></div>
+  <main class="qlist" id="qlist"></main>
+  <footer class="foot">갈무리국어 · 까만선호쌤 갈무리스트 · 2026 강서고2 기말 대비</footer>
+</div>
+<script>
+const PASSAGES = [{"id": "p1", "tag": "인문 · 매체 철학", "title": "빌렘 플루서의 사진 철학", "sections": [{"name": "매체 · 이미지 구분", "items": [{"q": "플루서는 인간이 세계를 일정한 방식으로 코드화한 것을 ‘매체’로 보았다.", "a": "O", "ref": "1문단", "why": "옳다. 플루서는 인식 주체로서의 인간이 대상으로서의 세계를 일정한 방식으로 코드화한 것을 ‘매체’로 규정했다. 즉 매체는 세계 그 자체가 아니라, 인간이 세계를 기호 체계로 옮겨 놓은 결과물이다."}, {"q": "플루서는 의사소통의 중심 매체가 ‘문자 → 이미지 → 문자’의 순서로 변화해 왔다고 보았다.", "a": "X", "ref": "1문단", "why": "틀리다. 순서가 반대다. 매체는 ‘이미지 → 문자 → 이미지’로 변화해 왔다. 문자 이전의 이미지가 전통적 이미지, 문자 이후의 이미지가 기술 이미지다. 앞뒤 요소를 바꿔치기한 함정 선지다."}, {"q": "문자 이후에 과학 기술로 만들어진 이미지를 ‘기술 이미지’라고 한다.", "a": "O", "ref": "1문단", "why": "옳다. 문자 이전, 동굴 벽·종이 등에 드러나는 이미지가 ‘전통적 이미지’이고, 문자 이후 과학 기술을 매개로 만들어진 이미지가 ‘기술 이미지’다."}, {"q": "기술 이미지는 과학 이론에 따라 제작된 장치를 통해 만들어진다.", "a": "O", "ref": "1문단", "why": "옳다. 기술 이미지란 과학 기술을 매개로 하여 인화지나 모니터 등을 통해 드러나는 이미지로, 과학 이론에 따라 제작된 장치(예: 카메라)를 통해 만들어진다."}, {"q": "‘코드화’란 대상을 지시하기로 합의된 기호를 규칙 체계에 따라 배열하는 과정이다.", "a": "O", "ref": "1문단", "why": "옳다. 코드화는 ‘어떤 대상을 지시하기로 합의된 기호’를 ‘일정한 규칙 체계인 코드’에 따라 배열하는 과정이다. 기호와 코드(규칙 체계) 두 요소가 모두 들어가야 정확한 정의다."}]}, {"name": "전통적 이미지 vs 기술 이미지", "items": [{"q": "전통적 이미지는 생산자가 대상을 보고 떠올린 심상을 물리적 표면에 코드화한 것이다.", "a": "O", "ref": "2문단", "why": "옳다. 전통적 이미지는 생산자가 ‘실재하는 대상을 보고 떠올린 심상’을 벽이나 종이 같은 물리적 표면에 코드화한 것이다. ‘대상을 보고’ 떠올린다는 점이 핵심이다."}, {"q": "전통적 이미지를 이루는 요소들은 실제 세계의 사물·사건을 지시하므로 직관으로 파악할 수 있다.", "a": "O", "ref": "2문단", "why": "옳다. 동굴 벽화의 불·들소 형상이 각각 실제 불·들소를 지시하듯, 전통적 이미지의 요소는 실제 시공간의 사물·사건을 직접 지시한다. 그래서 수용자가 대부분 직관으로 의미를 파악할 수 있다."}, {"q": "기술 이미지인 사진의 점들은 세계를 지시하는 의미를 담고 있다.", "a": "X", "ref": "3문단", "why": "틀리다. 사진은 빛과 필름 입자의 화학 반응으로 만들어진 ‘아무 의미를 갖지 않은 점들’로 이루어져 있고, 이 점들은 세계를 지시하지 않는다. ‘점들이 세계를 지시한다’는 것은 전통적 이미지의 특성과 뒤섞은 함정이다."}, {"q": "플루서는 기술 이미지가 실제 세계와 일치하는지의 여부가 무엇보다 중요하다고 보았다.", "a": "X", "ref": "3문단", "why": "틀리다. 플루서는 피사체 없이 점들의 조합만으로 만드는 컴퓨터 합성 사진을 들어, 기술 이미지가 실제 세계와 일치하는지의 여부는 ‘중요하지 않다’고 보았다. 중요성을 정반대로 서술한 선지다."}, {"q": "컴퓨터 합성 사진은 피사체에서 반사된 빛 없이 점들의 조합만으로 만들 수 있다.", "a": "O", "ref": "3문단", "why": "옳다. 플루서가 통념을 깨기 위해 든 사례가 바로 이것이다. 피사체(대상)에서 반사되는 빛 없이도 점들의 조합만으로 만들 수 있다는 점이, 사진이 실제 세계를 반영한다는 생각을 반박하는 근거가 된다."}, {"q": "사람들이 사진을 실제 세계의 반영으로 여기는 것은 기술 이미지를 전통적 이미지처럼 수용했기 때문이다.", "a": "O", "ref": "2문단", "why": "옳다. 플루서는 이 통념의 원인을, 사람들이 기술 이미지를 전통적 이미지와 유사한 방식으로 수용한 데서 찾았다. 그래서 그는 두 이미지의 근본적 차이를 드러내고자 했다."}]}, {"name": "카메라의 불투명성 · 주체성", "items": [{"q": "카메라가 사진을 자동으로 생성하므로 그 과정은 객관적이라고 보아야 한다.", "a": "X", "ref": "4문단", "why": "틀리다. 플루서는 카메라가 자동으로 생성한다고 해서 그 과정을 객관적이라 간주해서는 안 된다고 했다. 카메라 내부의 코드화가 결국 장치 설계자가 사전에 계획한 과정이기 때문이다."}, {"q": "카메라 내부의 코드화는 결국 장치 설계자가 사전에 계획한 과정이다.", "a": "O", "ref": "4문단", "why": "옳다. 이것이 바로 카메라의 자동 생성 과정을 ‘객관적’이라 볼 수 없는 이유다. 기계의 자동적 결과물 이면에는 설계자의 인위적 의도가 미리 짜여 있다."}, {"q": "촬영자는 장치가 제공하는 범주 안에서 셔터 속도·조리개 값 등만 선택하게 된다.", "a": "O", "ref": "4문단", "why": "옳다. 카메라의 불투명성 때문에 촬영자는 내부에서 사진이 어떻게 생산되는지 모른 채, 장치가 허락한 범주(셔터 속도·조리개 값 등) 안에서만 선택하게 된다."}, {"q": "플루서는 인간이 장치의 ‘수행인’으로 전락하여 주체성을 상실할 수 있다고 우려했다.", "a": "O", "ref": "4문단", "why": "옳다. 촬영자가 장치가 제공하는 범주 안에서 버튼만 누르는 존재가 되면, 인간은 장치를 단순히 작동하는 ‘수행인’으로 전락해 주체성을 상실할 가능성이 크다고 보았다."}, {"q": "카메라의 ‘불투명성’은 촬영자가 내부 작동 원리를 명확히 인지하도록 돕는 성질이다.", "a": "X", "ref": "4문단", "why": "틀리다. 불투명성은 오히려 내부 작동 원리를 ‘알 수 없게’ 하는 성질이다. 이 때문에 촬영자는 사진이 어떻게 생산되는지 모른 채 장치에 종속된다. 의미를 정반대로 뒤집은 함정이다."}]}, {"name": "사진 철학의 지향 · 의의", "items": [{"q": "플루서는 기술 이미지 시대를 거부하고 전통적 이미지로 회귀할 것을 주장했다.", "a": "X", "ref": "5문단", "why": "틀리다. 플루서의 목적은 시대를 거부·회귀하는 것이 아니라, 기술 이미지와 장치를 비판적으로 고찰하여 장치의 지배에 종속되지 않는 ‘자유의 가능성’을 모색하는 것이다. ‘회귀’는 대표적 매력적 오답 유형이다."}, {"q": "수용자는 사진의 의미를 해석하려는 능동적 태도를 지녀야 한다.", "a": "O", "ref": "5문단", "why": "옳다. 플루서는 수용자가 사진을 있는 그대로 받아들이지 말고, 무의미한 점들의 나열 속에서 의미를 해석하려는 능동적 태도를 지녀야 한다고 강조했다."}, {"q": "촬영자는 장치의 구속에서 벗어나 자신의 주체성을 드러내는 사진을 생산해야 한다.", "a": "O", "ref": "5문단", "why": "옳다. 촬영자는 장치의 구속에 길들지 않고 비판적으로 창작하여 자신의 주체성을 드러내는 사진을 생산해야 한다. 이것이 생산자에게 요구되는 태도다."}, {"q": "플루서 사진 철학의 의의는 자동화 시대에 인간 자유의 공간을 마련하려 했다는 점에 있다.", "a": "O", "ref": "5문단", "why": "옳다. 그의 사진 철학은 장치의 자동화가 빨라지는 시대에 인간의 상상력과 지혜가 설 자리, 즉 ‘인간 자유의 공간’을 마련하려 했다는 점에서 의의를 지닌다."}]}, {"name": "기출 변형 — 적용 · 비판적 이해", "items": [{"q": "[변형] 화가가 도화지에 붓으로 그린 사과 그림은 생산자의 심상을 물리적 표면에 코드화한 전통적 이미지다.", "a": "O", "ref": "2문단 · 복습 6번", "why": "옳다. 화가가 실제 사과를 보고 떠올린 심상을 도화지(물리적 표면)에 코드화한 것이므로 전통적 이미지에 해당한다. 그 형상은 실제 사과를 지시한다."}, {"q": "[변형] 디지털 카메라로 촬영한 사과 사진의 점들은 사과라는 실제 대상을 지시한다.", "a": "X", "ref": "3문단 · 복습 6번", "why": "틀리다. 사진은 기술 이미지이므로 그 점들은 실제 대상(사과)을 지시하지 않는다. 전통적 이미지(그림)와 달리 기술 이미지의 점들은 세계와의 지시 관계가 없다."}, {"q": "[변형] 백남준이 모니터 회로를 조작해 이미지를 왜곡한 것은 장치의 지배에 저항하며 주체성을 드러낸 행위로 볼 수 있다.", "a": "O", "ref": "4~5문단 · 복습 11번", "why": "옳다. 설계자가 사전에 계획한 코드화 과정을 비틀어 장치에 저항하고, 능동적 개입을 강조한 백남준의 작업은 촬영자가 장치의 구속에서 벗어나 주체성을 드러내야 한다는 플루서의 주장과 맥을 같이한다."}, {"q": "[변형] 연출된 전쟁 사진을 진실된 기록이라 찬사한 관람객의 태도는, 기술 이미지를 전통적 이미지처럼 수용한 결과다.", "a": "O", "ref": "2문단 · 복습 13번", "why": "옳다. 사진(기술 이미지)이 실제 세계를 있는 그대로 지시한다고 믿은 것은, 기술 이미지를 전통적 이미지와 동일한 방식으로 수용했기 때문이다. 이것이 바로 플루서가 비판한 통념이다."}, {"q": "[변형] 스마트폰 카메라의 자동 보정 결과물을 의심 없이 공유하는 것은, 인간이 장치의 수행인으로 전락한 상태를 보여준다.", "a": "O", "ref": "4~5문단 · 복습 15번", "why": "옳다. 장치가 제시하는 대로 수용하고 비판적 사유를 하지 않는 태도는, 인간이 장치의 ‘수행인’으로 전락해 주체성을 상실한 상태를 보여준다."}, {"q": "[변형] 카메라의 자동 보정으로 만들어진 사진은 기술 이미지가 아니므로 수용자의 능동적 해석이 필요 없다.", "a": "X", "ref": "5문단 · 복습 15번", "why": "틀리다. 자동 보정 결과물도 과학 기술로 만든 기술 이미지다. 따라서 수용자의 능동적 해석은 배제될 것이 아니라 오히려 더 강하게 요구된다."}]}, {"name": "어휘 — ‘거쳐(ⓐ)’의 문맥적 의미", "items": [{"q": "‘매체가 이미지에서 문자를 거쳐 다시 이미지로 변화했다’의 ‘거쳐’는 ‘어떤 과정·단계를 겪거나 밟다’의 뜻이다.", "a": "O", "ref": "복습 4번", "why": "옳다. 여기서 ‘거쳐’는 시간적·역사적 단계를 통과한다는 의미다. ‘인류는 수렵 채집 시대를 거쳐 농경 시대로 진입했다’의 ‘거쳐’와 같은 쓰임이다."}, {"q": "‘그 서류는 내 손을 거쳐야 결재가 난다’의 ‘거쳐’는 ⓐ와 같은 문맥적 의미로 쓰였다.", "a": "X", "ref": "복습 4번", "why": "틀리다. 이때의 ‘거쳐’는 ‘어떤 사람을 통하다 / 검사·심사를 받다’의 뜻이므로 ⓐ(과정·단계를 밟다)와 다르다."}]}]}, {"id": "p2", "tag": "과학 · 식물 생리", "title": "옥신의 작용 원리", "sections": [{"name": "극성 수송 · 세포 생장", "items": [{"q": "대표적 옥신인 IAA는 줄기 상단부에서 생성되어 하단부로 수송된다.", "a": "O", "ref": "1문단", "why": "옳다. 인돌아세트산(IAA)은 주로 줄기 상단부에서 생성되어 하단부로 수송된다. 방향(상단부→하단부)을 반대로 바꾸는 함정이 자주 출제된다."}, {"q": "옥신의 극성 수송은 중력의 영향을 받아 아래쪽으로만 일어나는 이동 방식이다.", "a": "X", "ref": "1문단", "why": "틀리다. 극성 수송은 세포막 한쪽에 치우친 수송체 단백질에 의해 한 방향으로만 일어나는 것으로, ‘중력과는 무관한’ 수송 방식이다. 중력을 원인으로 든 것이 오류다."}, {"q": "옥신이 한쪽 방향으로만 이동하는 것은 세포막 한쪽에 치우친 수송체 단백질 때문이다.", "a": "O", "ref": "1문단", "why": "옳다. 옥신 수송체 단백질이 세포막의 한쪽에 치우쳐 위치하기 때문에, 옥신이 한쪽 방향으로만 이동하는 극성 수송이 일어난다."}, {"q": "익스팬신은 셀룰로오스 섬유 사이의 결합을 약하게 하여 세포벽의 유연성을 높인다.", "a": "O", "ref": "2문단", "why": "옳다. 옥신이 세포벽을 산성화하면 활성화된 익스팬신이 셀룰로오스 섬유 사이의 결합을 약하게 하고, 그 결과 세포벽의 유연성이 높아진다."}, {"q": "익스팬신은 셀룰로오스 섬유 자체를 분해하여 세포벽을 완전히 없앤다.", "a": "X", "ref": "2문단", "why": "틀리다. 익스팬신은 섬유 사이의 결합을 ‘약하게’ 할 뿐, 섬유 자체를 분해하지는 않는다. ‘분해’는 탈리 과정에서 에틸렌이 촉진하는 세포벽 분해 효소와 관련된 내용으로, 이를 뒤섞은 함정이다."}, {"q": "세포벽이 유연해진 뒤 삼투현상으로 물이 유입되면 팽압을 견디는 범위 내에서 세포가 생장한다.", "a": "O", "ref": "2문단", "why": "옳다. 유연성이 높아진 상태에서 삼투현상으로 세포 내부에 물이 유입되면, 내부 팽압을 견디는 범위 내에서 세포 생장이 이루어진다."}]}, {"name": "농도 · 기관별 반응", "items": [{"q": "옥신 농도가 높아질수록 모든 기관에서 생장 촉진 효과가 계속 강해진다.", "a": "X", "ref": "3문단", "why": "틀리다. 옥신 농도가 최고 생장점까지는 촉진이 강해지지만, 그 이후에는 촉진 정도가 낮아지다가 일정 농도에 이르면 오히려 생장이 억제된다. 위로 볼록한 곡선 형태다."}, {"q": "뿌리는 줄기보다 옥신 감수성이 높아, 줄기가 촉진되는 농도에서도 이미 억제될 수 있다.", "a": "O", "ref": "3문단", "why": "옳다. 감수성이 높다는 것은 더 낮은 농도에서도 반응이 유발된다는 뜻이다. 그래서 뿌리는 줄기 생장이 촉진되는 농도에서도 이미 생장이 억제될 수 있다."}, {"q": "식물의 눈은 생장 반응이 시작되는 옥신 농도가 뿌리보다 높고 줄기보다 낮다.", "a": "O", "ref": "3문단", "why": "옳다. 감수성 순서는 뿌리 > 눈 > 줄기다. 즉 눈은 뿌리보다는 둔감(더 높은 농도에서 시작)하고 줄기보다는 민감(더 낮은 농도에서 시작)하다."}, {"q": "동일한 옥신 농도라면 모든 기관이 똑같은 생장 반응을 보인다.", "a": "X", "ref": "3문단", "why": "틀리다. 기관마다 옥신 감수성이 다르기 때문에, 동일한 농도라도 어떤 기관은 촉진되고 어떤 기관은 억제되는 등 서로 다른 반응을 보일 수 있다."}]}, {"name": "굴광성 · 굴지성", "items": [{"q": "포토트로핀은 빛을 받은 쪽에서 활성화되어 그늘진 쪽으로 옥신 수송을 유발한다.", "a": "O", "ref": "4문단", "why": "옳다. 광수용체 포토트로핀은 빛을 받은 쪽에서 활성화되어, 옥신을 그늘진 쪽으로 수송한다. 그 결과 그늘진 쪽 농도가 높아진다."}, {"q": "굴광성은 옥신이 빛을 받은 쪽에 더 많이 분포하여 그쪽 생장이 촉진되는 현상이다.", "a": "X", "ref": "4문단", "why": "틀리다. 옥신은 빛이 ‘닿지 않는 쪽(그늘진 쪽)’에 더 많이 분포한다. 그늘진 쪽 생장이 촉진되어 줄기가 빛을 향해 굽는 것이 굴광성이다. 분포 방향을 반대로 서술한 함정이다."}, {"q": "식물을 수평으로 눕히면 녹말체가 아래쪽으로 이동하고 옥신도 아래쪽에 더 분포한다.", "a": "O", "ref": "5문단", "why": "옳다. 중력 자극을 감지하는 세포 내 녹말체가 아래쪽으로 이동하고, 옥신도 그쪽(아래쪽)에 더 많이 분포하게 된다."}, {"q": "줄기의 음의 굴지성은 아래쪽 세포 생장이 촉진되어 중력 반대 방향으로 굽는 현상이다.", "a": "O", "ref": "5문단", "why": "옳다. 줄기는 아래쪽에 옥신이 많아지면 아래쪽 세포 생장이 촉진되고, 그 결과 줄기가 중력 반대 방향(위)으로 굽는 음의 굴지성이 나타난다."}, {"q": "뿌리는 아래쪽 세포 생장이 촉진되어 중력 반대 방향으로 굽는 양의 굴지성을 보인다.", "a": "X", "ref": "5문단", "why": "틀리다. 뿌리는 옥신 감수성이 높아, 옥신이 몰린 아래쪽 세포의 생장이 오히려 ‘억제’된다. 그래서 뿌리는 중력 방향(아래)으로 굽는 양의 굴지성을 보인다. 촉진/억제와 굽는 방향이 뒤바뀐 함정이다."}]}, {"name": "탈리 과정 — 옥신 · 에틸렌", "items": [{"q": "옥신은 세포 사이의 조직 결합을 유지하고, 에틸렌은 세포벽 분해 효소의 합성을 촉진한다.", "a": "O", "ref": "6문단", "why": "옳다. 두 호르몬은 대비되는 기능을 한다. 옥신은 조직 결합을 유지(탈리 억제)하고, 에틸렌은 세포벽 분해 효소 합성을 촉진(탈리 유도)한다."}, {"q": "탈리층에서 세포벽 분해 효소 합성이 증가할수록 세포 간 조직 결합력이 강해진다.", "a": "X", "ref": "6문단", "why": "틀리다. 분해 효소 합성이 증가할수록 조직 결합력은 ‘약해진다’(반비례). 결합력이 약해져야 세포 간 분리, 즉 탈리가 일어난다."}, {"q": "어린잎은 옥신 농도가 높아 탈리층 세포의 에틸렌 반응성이 낮게 유지된다.", "a": "O", "ref": "6문단", "why": "옳다. 성장이 활발한 어린잎은 옥신 농도가 높아 옥신이 에틸렌의 작용을 앞도한다. 그래서 탈리층의 에틸렌 반응성이 낮게 유지되어 탈리가 억제된다."}, {"q": "잎이 노화되면 옥신 생산·수송이 감소하여 탈리층이 에틸렌에 더 민감해진다.", "a": "O", "ref": "6문단", "why": "옳다. 노화가 진행되면 옥신의 생산·수송이 줄어들어 옥신의 억제력이 약해지고, 탈리층이 상대적으로 에틸렌에 더 민감해져 탈리 현상이 강화된다."}, {"q": "코르크층은 잎이 떨어지기 훨씬 전에 미리 형성되어 잎을 붙잡아 두는 역할을 한다.", "a": "X", "ref": "6문단", "why": "틀리다. 코르크층은 잎을 붙잡아 두는 것이 아니라, 세포 간 분리가 ‘일어날 때’ 탈리층에 형성되어 병원균이 식물체에 침입하는 것을 막는 역할을 한다. 형성 시점과 기능을 모두 왜곡한 함정이다."}]}, {"name": "기출 변형 — 실험 · 그래프 적용", "items": [{"q": "[변형] 그래프에서 뿌리는 가장 낮은 옥신 농도에서 생장이 억제되므로 감수성이 가장 높은 기관이다.", "a": "O", "ref": "3문단 · 복습 2번", "why": "옳다. 낮은 농도에서 이미 생리적 반응(억제 포함)이 나타난다는 것은 감수성이 높다는 뜻이다. 뿌리는 세 기관 중 감수성이 가장 높다."}, {"q": "[변형] 잎자루에 인공 옥신을 지속 처리한 실험군은 대조군보다 탈리 현상이 더 빨리 일어난다.", "a": "X", "ref": "6문단 · 복습 7번", "why": "틀리다. 옥신을 지속 공급하면 옥신 농도가 높게 유지되어 에틸렌 반응성이 낮아진다. 따라서 탈리는 오히려 ‘지연’된다. 대조군에서 정상적으로 탈리가 진행된다."}, {"q": "[변형] 줄기 상단부를 제거하고 인공 옥신 겔을 올려도 옥신은 수송체를 통해 하단부로 이동한다.", "a": "O", "ref": "1문단 · 복습 14번", "why": "옳다. 옥신 수송은 세포막의 수송체 단백질을 통한 극성 수송으로 이루어진다. 상단부를 제거해도 겔의 옥신은 수송체를 통해 하단부로 정상 이동한다."}, {"q": "[변형] 굴광성과 굴지성은 모두 환경 자극에 따라 옥신이 비대칭적으로 분포하여 나타나는 생장 반응이다.", "a": "O", "ref": "4~5문단 · 복습 15번", "why": "옳다. 빛에 의한 굴광성, 중력에 의한 굴지성 모두 자극에 따라 옥신이 조직 내에 비대칭적으로 분포함으로써 유발되는 방향성 생장 반응이다."}, {"q": "[변형] 에틸렌 반응을 완전히 차단한 식물은 빛·중력에 의한 방향성 생장 능력까지 상실한다.", "a": "X", "ref": "4~6문단 · 복습 14번", "why": "틀리다. 에틸렌은 탈리 과정에만 관여한다. 굴광성·굴지성 같은 방향성 생장은 ‘옥신’의 작용이므로, 에틸렌 반응을 차단해도 방향성 생장 능력은 상실되지 않는다."}]}]}, {"id": "p3", "tag": "사회 · 국제 거래법", "title": "비엔나 협약 · 인코텀스", "sections": [{"name": "(가) 비엔나 협약 — 적용 범위", "items": [{"q": "비엔나 협약은 국제 거래뿐 아니라 국내 거래에도 적용된다.", "a": "X", "ref": "(가) 2문단", "why": "틀리다. 비엔나 협약은 ‘국제 거래에만’ 적용되는 국제 규범이다. 국내 거래에는 적용되지 않는다."}, {"q": "용역 거래나 주식 매매는 원칙적으로 비엔나 협약의 적용 대상에서 제외된다.", "a": "O", "ref": "(가) 2문단", "why": "옳다. 협약의 계약 대상은 ‘물품’에 한정되므로, 무형의 용역 거래나 주식 매매 등은 원칙적으로 적용 대상에서 제외된다."}, {"q": "개인용 물품 거래도 물품 거래이므로 비엔나 협약이 그대로 적용된다.", "a": "X", "ref": "(가) 2문단", "why": "틀리다. 물품 거래라도 매매 목적이 ‘개인용’인 경우는 각국 소비자 법과의 충돌을 피하기 위해 적용 대상에서 제외된다."}, {"q": "가입국 당사자 간 거래라도 합의에 따라 비엔나 협약의 적용을 배제할 수 있다.", "a": "O", "ref": "(가) 2문단", "why": "옳다. 협약은 가입국 당사자 간 거래에 적용되지만, 당사자 간 합의에 따라 그 적용을 배제할 수 있다. 국제 조약보다 당사자의 자유로운 의사를 존중하는 것이다."}]}, {"name": "(가) 청약 · 승낙 · 대응 청약", "items": [{"q": "무역계약은 계약서가 없어도 청약과 승낙의 합치로 성립할 수 있다.", "a": "O", "ref": "(가) 3문단", "why": "옳다. 무역계약은 계약서 없이도, 서로 대립하는 두 의사표시인 청약과 승낙의 합치에 의해 성립한다."}, {"q": "청약은 불특정 다수를 향해 이루어져야 한다.", "a": "X", "ref": "(가) 3문단", "why": "틀리다. 청약은 ‘특정인’을 향해 이루어져야 한다. 불특정 다수를 향한 것은 청약이 될 수 없다."}, {"q": "물품·수량·가격 등 핵심 내용을 갖추지 못한 단순 문의는 ‘청약의 유인’으로 청약과 구별된다.", "a": "O", "ref": "(가) 3문단", "why": "옳다. 확정성과 핵심 내용을 갖추지 못한 단순 문의·거래 제의는 청약이 되지 못하고 ‘청약의 유인’으로 청약과 구별된다."}, {"q": "피청약자가 조건을 변경한 의사표시도 승낙으로 인정되어 계약을 성립시킨다.", "a": "X", "ref": "(가) 4문단", "why": "틀리다. 승낙은 무조건적·절대적 동의여야 한다. 조건을 변경·추가한 의사표시는 승낙이 아니라 ‘대응 청약’이 되어, 그 자체로는 계약을 성립시키지 않는다."}, {"q": "대응 청약은 기존 청약의 효력을 소멸시키는 동시에 새로운 청약이 된다.", "a": "O", "ref": "(가) 4문단", "why": "옳다. 조건을 변경·추가한 의사표시는 기존 청약을 거절한 것으로 보아 그 효력을 소멸시키는 동시에, 새로운 청약(대응 청약)이 된다."}, {"q": "승낙은 서면으로만 가능하며 구두나 행위로는 인정되지 않는다.", "a": "X", "ref": "(가) 4문단", "why": "틀리다. 승낙은 청약과 마찬가지로 서면·구두·행위에 의해 모두 가능하다. 수단에 엄격한 제한을 두지 않는다."}]}, {"name": "(가) 도달주의 · 성립 시기", "items": [{"q": "무역계약의 성립 시기는 승낙의 효력이 발생한 때이다.", "a": "O", "ref": "(가) 5문단", "why": "옳다. 무역계약의 성립 시기는 승낙의 효력이 발생한 때, 곧 승낙의 의사표시가 상대방에게 도달한 때이다."}, {"q": "‘도달’은 상대방이 의사표시의 내용을 실제로 확인하고 이해한 때를 의미한다.", "a": "X", "ref": "(가) 5문단", "why": "틀리다. 도달은 상대방이 의사표시를 ‘인식할 수 있는 상태에 놓이는 것’을 의미할 뿐, 실제로 확인·이해했는지까지는 요구하지 않는다. ‘실제 확인·이해’를 요구한 것이 오류다."}, {"q": "수신자의 메일함에 전자메일이 도착한 것만으로도 ‘도달’한 것으로 본다.", "a": "O", "ref": "(가) 5문단", "why": "옳다. 도달주의에 따르면, 수신자가 실제로 열람했는지와 무관하게 메일함에 전자메일이 도착한 것만으로도 ‘도달’한 것으로 인정한다."}, {"q": "청약자가 정한 기간 내에 피청약자의 의사표시가 도달하지 않으면 그 효력이 발생하지 않는다.", "a": "O", "ref": "(가) 5문단", "why": "옳다. 청약자가 정한 기간 내에 의사표시가 도달하지 않으면 그 효력이 발생하지 않으며, 결과적으로 계약이 성립하지 않는다."}]}, {"name": "(나) 인코텀스 · 정형 거래 조건", "items": [{"q": "인코텀스는 위험의 이전과 비용 분담의 기준을 제시한다.", "a": "O", "ref": "(나) 2문단", "why": "옳다. 인코텀스는 위험의 이전과 비용 분담의 기준을 제시하여, 물품 인도와 관련된 매도인과 매수인의 의무를 구분해 준다."}, {"q": "위험이 매수인에게 이전되기 전까지는 매수인이 물품에 대한 책임을 진다.", "a": "X", "ref": "(나) 2문단", "why": "틀리다. 위험이 매수인에게 이전되기 전까지는 ‘매도인’이 책임을 진다. 책임 주체를 반대로 서술한 함정이다."}, {"q": "매도인의 물품 인도 의무가 완료된 때가 대체로 비용 분담의 분기점이 된다.", "a": "O", "ref": "(나) 2문단", "why": "옳다. 각 거래 조건에서 매도인의 물품 인도 의무가 완료된 때 위험이 이전되며, 이때가 대체로 비용 분담의 분기점이 된다."}, {"q": "인코텀스는 관행 차이로 인한 분쟁을 그대로 반영하기 위해 마련된 규칙이다.", "a": "X", "ref": "(나) 1문단", "why": "틀리다. 인코텀스는 국가·지역의 관행 차이로 인한 분쟁을 ‘방지’하기 위한 통일된 규칙이다. ‘그대로 반영’이 아니라 ‘통일’이 목적이다."}]}, {"name": "(나) EXW · FOB · CIF · DDP", "items": [{"q": "EXW는 매도인이 자신의 공장에 물품을 두는 때 인도가 이루어지며, 매도인은 최소의 의무만 부담한다.", "a": "O", "ref": "(나) 4문단", "why": "옳다. EXW(공장 인도)는 매도인이 자신의 공장에 물품을 두는 때 인도가 이루어지고, 이후 수출·운송·수입은 매수인이 책임지므로 매도인이 최소의 의무만 부담한다."}, {"q": "FOB와 CIF는 물품의 인도 시기가 서로 다르다.", "a": "X", "ref": "(나) 4문단", "why": "틀리다. FOB와 CIF는 물품의 인도 시기가 ‘동일’하다(선적항에서 선박에 적재하는 때). 다만 목적항까지의 운임·보험료 부담 주체가 다를 뿐이다."}, {"q": "CIF는 목적항까지의 운임과 보험료를 매도인이 부담한다는 점에서 FOB와 다르다.", "a": "O", "ref": "(나) 4문단", "why": "옳다. FOB는 인도 이후 위험·비용을 매수인이 모두 부담하지만, CIF는 목적항까지의 운임·보험료를 매도인이 부담한다는 점에서 차이가 있다."}, {"q": "DDP는 매도인이 수입 관세 납부까지 책임지는 최대 의무 조건이다.", "a": "O", "ref": "(나) 4문단", "why": "옳다. DDP(관세 지급 인도)는 매도인이 수출 통관·국제 운송·수입 통관과 수입 관세 납부까지 책임지므로, 매도인이 최대의 의무를 부담하는 조건이다."}, {"q": "매매계약 시 FOB는 목적항을, CIF는 선적항을 병기한다.", "a": "X", "ref": "(나) 3문단", "why": "틀리다. FOB는 ‘선적항’을, CIF는 ‘목적항’을 기재한다. 두 조건에 병기하는 장소를 서로 바꾼 함정이다. (EXW·DDP는 인도 장소를 기재)"}]}, {"name": "(나) 물품 가격 산정", "items": [{"q": "EXW 조건의 물품 가격은 생산 원가에 매도인의 이윤을 더한 것이다.", "a": "O", "ref": "(나) 5문단", "why": "옳다. EXW 조건의 물품 가격은 ‘생산 원가 + 매도인의 이윤’으로 구성된다. 매도인의 의무가 가장 작으므로 가격 구성도 가장 단순하다."}, {"q": "FOB 조건의 물품 가격은 EXW 가격에 선박 적재 비용을 더한 것이므로 EXW보다 높다.", "a": "O", "ref": "(나) 5문단", "why": "옳다. FOB 가격은 ‘EXW 가격 + 선박 적재까지 드는 비용’이다. 매도인이 부담하는 범위가 넓어진 만큼 EXW보다 가격이 높다."}, {"q": "EXW와 FOB의 물품 가격은 동일하여 거래 조건 선택에 영향을 주지 않는다.", "a": "X", "ref": "(나) 5문단", "why": "틀리다. 두 조건의 물품 가격은 다르다. 그래서 매도인·매수인은 운송·통관의 위험과 비용을 고려해 자신에게 유리한 조건을 전략적으로 선택할 수 있다."}]}, {"name": "기출 변형 — <보기> 적용", "items": [{"q": "[변형] ‘CIF 함부르크항’ 조건이면 함부르크항까지의 운임과 보험료는 매도인이 부담한다.", "a": "O", "ref": "(나) 4문단 · 복습 13번", "why": "옳다. CIF는 목적항까지의 운임과 보험료를 매도인이 부담한다. 따라서 목적항인 함부르크항까지의 운임·보험료는 매도인이 부담한다."}, {"q": "[변형] ‘FOB LA항’ 조건에서 물품이 선박에 적재된 때 위험이 매수인에게 이전된다.", "a": "O", "ref": "(나) 4문단 · 복습 4번", "why": "옳다. FOB는 선적항에서 지정 선박에 적재하는 때 인도가 이루어지고, 그 시점에 위험이 매수인에게 이전된다."}, {"q": "[변형] 가격을 알려 달라는 단순 문의 전자메일도 핵심 내용을 갖추면 자동으로 청약이 된다.", "a": "X", "ref": "(가) 3문단 · 복습 변형", "why": "틀리다. 핵심 내용(물품·수량·가격)과 확정적 의사가 없는 단순 문의는 ‘청약의 유인’일 뿐이다. ‘가격을 알려 달라’는 요청 자체는 확정적 의사표시가 아니므로 청약이 아니다."}, {"q": "[변형] 청약과 승낙이 구두로 이루어지면 무역계약은 성립할 수 없다.", "a": "X", "ref": "(가) 3~4문단 · 복습 13번", "why": "틀리다. 청약·승낙은 서면뿐 아니라 구두·행위로도 가능하며, 무역계약은 계약서가 없어도 두 의사표시의 합치로 성립한다. 구두라서 성립할 수 없다는 것은 오류다."}, {"q": "[변형] 피청약자의 무조건적인 승낙이 청약자에게 도달하면 무역계약이 성립한다.", "a": "O", "ref": "(가) 4~5문단 · 복습 14번", "why": "옳다. 성립 시기는 승낙의 효력이 발생(도달)한 때이므로, 무조건적 승낙이 청약자에게 도달하면 그때 무역계약이 성립한다."}]}]}];
+
+// ---- state ----
+let tab = 0;
+const answers = {};        // key -> {picked, correct}
+let onlyWrong = false;
+let revealAll = false;
+
+const $ = (id) => document.getElementById(id);
+const esc = (s) => s.replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;");
+
+function flatten(pIdx){
+  const out=[]; const p=PASSAGES[pIdx];
+  p.sections.forEach((sec,si)=>sec.items.forEach((it,ii)=>{
+    out.push(Object.assign({key:`${pIdx}-${si}-${ii}`, sec:sec.name, si, ii}, it));
+  }));
+  return out;
+}
+
+function renderTabs(){
+  const el=$("tabs"); el.innerHTML="";
+  PASSAGES.forEach((p,i)=>{
+    const b=document.createElement("button");
+    b.className="tab"+(i===tab?" on":""); b.setAttribute("role","tab");
+    b.setAttribute("aria-selected", i===tab);
+    b.innerHTML=`<span class="tab-num">${String(i+1).padStart(2,"0")}</span>
+      <span class="tab-body"><span class="tab-title">${esc(p.title)}</span><span class="tab-tag">${esc(p.tag)}</span></span>`;
+    b.onclick=()=>{ tab=i; onlyWrong=false; revealAll=false; render(); window.scrollTo({top:0,behavior:"smooth"}); };
+    el.appendChild(b);
+  });
+}
+
+function pick(f, choice){
+  if(answers[f.key]) return;
+  answers[f.key]={picked:choice, correct:choice===f.a};
+  render();
+}
+
+function render(){
+  renderTabs();
+  const flat=flatten(tab);
+  const total=flat.length;
+  const answeredList=flat.filter(f=>answers[f.key]);
+  const answered=answeredList.length;
+  const correct=answeredList.filter(f=>answers[f.key].correct).length;
+  const wrong=answered-correct;
+  const pct=total?Math.round(answered/total*100):0;
+  const scorePct=answered?Math.round(correct/answered*100):0;
+
+  $("barFill").style.width=pct+"%";
+  $("sAnswered").firstChild.nodeValue=answered;
+  $("sTotal").textContent="/"+total;
+  $("sCorrect").textContent=correct;
+  $("sWrong").textContent=wrong;
+  $("sScore").firstChild.nodeValue = answered?scorePct:"–";
+
+  $("btnReveal").textContent=revealAll?"해설 숨기기":"해설 모두 보기";
+  $("btnRetry").disabled=!wrong;
+
+  // done banner
+  const db=$("doneBanner");
+  if(answered===total && total>0){
+    db.className="done-banner";
+    db.innerHTML=`이 지문 ${total}문항 완료 · 정답률 <b>${scorePct}%</b>` +
+      (wrong>0?` · 틀린 ${wrong}문항을 다시 풀어 보세요.`:` · 전부 맞혔습니다.`);
+  } else { db.className=""; db.innerHTML=""; }
+
+  const fn=$("filterNote");
+  if(onlyWrong){ fn.className="filter-note";
+    fn.innerHTML=`틀린 문항만 보는 중 · <button class="linklike" id="showAll">전체 보기</button>`;
+  } else { fn.className=""; fn.innerHTML=""; }
+
+  // visible
+  const visible = onlyWrong ? flat.filter(f=>!answers[f.key]||!answers[f.key].correct) : flat;
+  const grouped=[];
+  visible.forEach(f=>{ let g=grouped.find(x=>x.si===f.si); if(!g){g={si:f.si,name:f.sec,rows:[]};grouped.push(g);} g.rows.push(f); });
+
+  const list=$("qlist"); list.innerHTML="";
+  if(visible.length===0){ list.innerHTML=`<div class="empty">틀린 문항이 없습니다. 전체 보기로 돌아가세요.</div>`; bind(); return; }
+
+  grouped.forEach(g=>{
+    const sec=document.createElement("section"); sec.className="qsection";
+    sec.innerHTML=`<h2 class="qsection-title">${esc(g.name)}</h2>`;
+    g.rows.forEach(f=>{
+      const ans=answers[f.key];
+      const show=!!ans||revealAll;
+      const picked=ans?ans.picked:null;
+      const card=document.createElement("article");
+      card.className="card"+(ans?(ans.correct?" done ok":" done no"):"");
+      let html=`<div class="card-q"><span class="qnum">Q</span><p class="qtext">${esc(f.q)}</p></div>
+        <div class="ox-row">
+          <button class="oxbtn o${picked==="O"?" picked":""}${show&&f.a==="O"?" correct":""}" data-k="${f.key}" data-c="O" ${ans?"disabled":""} aria-label="맞다 O">O</button>
+          <button class="oxbtn x${picked==="X"?" picked":""}${show&&f.a==="X"?" correct":""}" data-k="${f.key}" data-c="X" ${ans?"disabled":""} aria-label="틀리다 X">X</button>
+          ${ans?`<span class="verdict ${ans.correct?"good":"bad"}">${ans.correct?"정답":"오답"}</span>`:""}
+        </div>`;
+      if(show){
+        html+=`<div class="explain">
+          <div class="explain-head"><span class="ans-pill ${f.a==="O"?"o":"x"}">정답 ${f.a}</span><span class="ref">${esc(f.ref)}</span></div>
+          <p class="why">${esc(f.why)}</p></div>`;
+      }
+      card.innerHTML=html;
+      sec.appendChild(card);
+    });
+    list.appendChild(sec);
+  });
+  bind();
+}
+
+function bind(){
+  document.querySelectorAll(".oxbtn").forEach(b=>{
+    if(b.disabled) return;
+    b.onclick=()=>{
+      const key=b.getAttribute("data-k"), c=b.getAttribute("data-c");
+      const f=flatten(tab).find(x=>x.key===key);
+      pick(f,c);
+    };
+  });
+  const sa=$("showAll"); if(sa) sa.onclick=()=>{ onlyWrong=false; render(); };
+}
+
+$("btnReveal").onclick=()=>{ revealAll=!revealAll; render(); };
+$("btnReset").onclick=()=>{ flatten(tab).forEach(f=>delete answers[f.key]); revealAll=false; onlyWrong=false; render(); window.scrollTo({top:0,behavior:"smooth"}); };
+$("btnRetry").onclick=()=>{ flatten(tab).forEach(f=>{ if(answers[f.key]&&!answers[f.key].correct) delete answers[f.key]; }); onlyWrong=true; revealAll=false; render(); window.scrollTo({top:0,behavior:"smooth"}); };
+
+render();
+</script>
+</body>
+</html>
