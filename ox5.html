@@ -1,0 +1,196 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>대영고2 문학 통합 O·X 자가점검</title>
+<style>
+  :root{
+    --dark:#2B1A0A; --brown:#5A3A1A; --gold:#C99A3B; --gold-lt:#F3E6C8;
+    --paper:#FBF6EC; --card:#FFFFFF; --line:#E4D6BE;
+    --green:#1E6F5C; --red:#B23B2E; --muted:#7A6A52;
+  }
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--paper);color:var(--dark);
+    font-family:"Noto Sans CJK KR","Noto Sans KR",sans-serif;line-height:1.6;}
+  .wrap{max-width:880px;margin:0 auto;padding:20px 16px 90px;}
+  .masthead{background:linear-gradient(135deg,var(--brown),var(--dark));
+    color:#fff;border-radius:16px;padding:22px 24px;margin-bottom:16px;
+    box-shadow:0 6px 18px rgba(43,26,10,.18);}
+  .masthead-title{margin:0 0 6px;font-size:1.45rem;font-weight:900;}
+  .masthead-sub{margin:0;font-size:.9rem;color:var(--gold-lt);opacity:.95;}
+  .toolbar{display:flex;flex-wrap:wrap;gap:8px;align-items:center;
+    position:sticky;top:0;z-index:20;background:var(--paper);
+    padding:10px 0;margin-bottom:4px;border-bottom:1px solid var(--line);}
+  .scoreboard{margin-left:auto;font-weight:800;font-size:.9rem;color:var(--brown);
+    background:var(--gold-lt);padding:6px 14px;border-radius:20px;border:1px solid var(--line);}
+  .btn{cursor:pointer;border:1px solid var(--line);background:var(--card);
+    color:var(--brown);border-radius:20px;padding:6px 14px;font-size:.82rem;font-weight:700;}
+  .btn:hover{background:var(--gold-lt);}
+  .nav{display:flex;flex-wrap:wrap;gap:6px;margin:12px 0 6px;}
+  .nav a{font-size:.74rem;text-decoration:none;color:var(--brown);
+    border:1px solid var(--line);border-radius:14px;padding:3px 9px;background:#fff;}
+  .nav a:hover{background:var(--gold-lt);}
+  .chapter{margin:26px 0 8px;padding:10px 16px;border-radius:12px;
+    background:linear-gradient(90deg,var(--brown),#3a2408);color:#fff;}
+  .chapter h2{margin:0;font-size:1.1rem;font-weight:900;}
+  .chapter p{margin:2px 0 0;font-size:.8rem;color:var(--gold-lt);}
+  .work{background:var(--card);border:1px solid var(--line);border-radius:14px;
+    margin:14px 0;overflow:hidden;box-shadow:0 2px 8px rgba(43,26,10,.06);scroll-margin-top:64px;}
+  .work-head{background:linear-gradient(90deg,var(--gold-lt),#fff);
+    padding:12px 18px;border-bottom:2px solid var(--gold);display:flex;align-items:baseline;gap:10px;flex-wrap:wrap;}
+  .work-idx{font-weight:900;color:var(--gold);font-size:1.05rem;}
+  .work-title{font-weight:900;font-size:1.06rem;color:var(--dark);}
+  .work-tag{font-size:.7rem;background:var(--brown);color:#fff;border-radius:12px;padding:2px 10px;}
+  .work-prog{margin-left:auto;font-size:.8rem;color:var(--muted);font-weight:700;}
+  .sec-name{font-size:.78rem;font-weight:800;color:var(--brown);padding:10px 18px 2px;}
+  .q{padding:12px 18px;border-top:1px solid #F0E7D5;}
+  .q-text{font-size:.97rem;margin-bottom:10px;}
+  .q-text .num{display:inline-block;min-width:1.8em;font-weight:900;color:var(--gold);}
+  .choices{display:flex;gap:10px;}
+  .choice{width:52px;height:40px;border-radius:10px;border:2px solid var(--line);
+    background:#fff;font-size:1.15rem;font-weight:900;cursor:pointer;color:var(--muted);
+    display:flex;align-items:center;justify-content:center;transition:all .12s;}
+  .choice[data-v="O"]:hover{border-color:var(--green);color:var(--green);}
+  .choice[data-v="X"]:hover{border-color:var(--red);color:var(--red);}
+  .choice.sel-O{background:var(--green);border-color:var(--green);color:#fff;}
+  .choice.sel-X{background:var(--red);border-color:var(--red);color:#fff;}
+  .choice.correct{box-shadow:0 0 0 3px rgba(30,111,92,.25);}
+  .choice.wrong{box-shadow:0 0 0 3px rgba(178,59,46,.25);}
+  .verdict{margin-top:10px;font-size:.89rem;padding:10px 12px;border-radius:10px;
+    display:none;border-left:4px solid var(--gold);background:var(--gold-lt);}
+  .verdict.show{display:block;}
+  .verdict.ok{border-left-color:var(--green);background:#E9F4F0;}
+  .verdict.no{border-left-color:var(--red);background:#FBEBE8;}
+  .verdict .badge{font-weight:900;margin-right:6px;}
+  .verdict .ref{font-weight:800;color:var(--brown);}
+  .verdict .ans{font-weight:900;}
+  .verdict .ans.O{color:var(--green);} .verdict .ans.X{color:var(--red);}
+  .totop{position:fixed;right:16px;bottom:20px;z-index:30;background:var(--brown);color:#fff;
+    border:none;border-radius:50%;width:44px;height:44px;font-size:1.1rem;cursor:pointer;
+    box-shadow:0 3px 10px rgba(43,26,10,.3);}
+  .footer{text-align:center;color:var(--muted);font-size:.78rem;margin-top:30px;}
+  @media(max-width:520px){.masthead-title{font-size:1.18rem;}.q-text{font-size:.9rem;}}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="masthead">
+    <h1 class="masthead-title">대영고2 문학 통합 O·X 자가점검</h1>
+    <p class="masthead-sub">까만선호쌤 · 갈무리국어 | 17작품 · 142문항 자가점검</p>
+  </div>
+  <div class="toolbar">
+    <button class="btn" onclick="revealAll()">전체 정답 보기</button>
+    <button class="btn" onclick="resetAll()">다시 풀기</button>
+    <span class="scoreboard" id="score">푼 문항 0 · 정답 0</span>
+  </div>
+  <div class="nav" id="nav"></div>
+  <div id="app"></div>
+  <div class="footer">MADE BY BLACK CAPTAIN No.2 · 갈무리국어 &nbsp;|&nbsp; O 초록 / X 빨강으로 자가 점검하세요.</div>
+</div>
+<button class="totop" onclick="window.scrollTo({top:0,behavior:'smooth'})">↑</button>
+<script>
+const CHAPTERS = [{"name": "현대시 10작품", "sub": "각 10문항 · 100문항", "works": [{"id": "kkot", "tag": "존재·인식", "title": "꽃 — 김춘수", "sections": [{"name": "화자·주제", "items": [{"q": "이 시는 '이름을 부르는' 행위를 통해 존재에게 의미를 부여하는 과정을 그린다.", "a": "O", "ref": "명명(命名) 행위", "why": "'이름을 불러 주었을 때'라야 대상이 '꽃'이 되었다는 전개로, 명명을 통한 의미 부여가 핵심이다."}, {"q": "'몸짓에 지나지 않았다'는 아직 의미(관계)를 부여받지 못한 무의미한 존재 상태를 뜻한다.", "a": "O", "ref": "몸짓 = 무의미", "why": "이름을 불러 주기 전의 '그'는 하나의 '몸짓'일 뿐 의미 없는 존재였다."}, {"q": "화자는 존재들 사이의 단절과 고립을 예찬하며 이를 지향하고 있다.", "a": "X", "ref": "지향 = 관계 맺음", "why": "화자는 단절이 아니라 서로에게 '무엇이 되고 싶다'며 의미 있는 관계 맺음을 소망한다."}]}, {"name": "시어·표현", "items": [{"q": "'빛깔과 향기에 알맞은 / 누가 나의 이름을 불러다오'에는 참된 인식과 관계에 대한 소망이 담겨 있다.", "a": "O", "ref": "존재의 본질에 맞는 명명", "why": "자신의 본질(빛깔·향기)에 알맞게 불러 주기를 바라는 것은 참된 관계에 대한 소망이다."}, {"q": "'우리들은 모두 / 무엇이 되고 싶다'에서 '무엇'은 서로에게 잊혀지지 않는 '눈짓'을 뜻한다.", "a": "O", "ref": "눈짓 = 의미 있는 관계", "why": "마지막 연에서 '너는 나에게 나는 너에게 / 잊혀지지 않는 하나의 눈짓이 되고 싶다'로 구체화된다."}, {"q": "이 시는 구체적 자연 관찰을 통해 계절의 변화를 감각적으로 묘사한 작품이다.", "a": "X", "ref": "관념적·철학적 시", "why": "'꽃'은 실제 식물이 아니라 인식·존재·관계를 상징하는 관념적 소재다."}, {"q": "'하나의 몸짓 → 꽃 → 눈짓'으로 나아가며 관계의 의미가 심화·확대되는 구조를 보인다.", "a": "O", "ref": "점층적 심화 구조", "why": "무의미(몸짓)에서 명명된 존재(꽃), 상호적 관계(눈짓)로 의미가 확장된다."}]}, {"name": "종합·비교", "items": [{"q": "동일하거나 유사한 문장 구조의 반복을 통해 운율과 의미를 강조한다.", "a": "O", "ref": "통사 구조 반복", "why": "'~ 불러 주었을 때 / 그는 ~가 되었다' 등 유사 통사 구조가 반복된다."}, {"q": "이 시의 주제는 '존재의 본질 구현과 진정한 관계 형성에 대한 소망'이다.", "a": "O", "ref": "주제", "why": "명명을 통한 의미 부여와 상호 인식의 소망이 주제를 이룬다."}, {"q": "화자는 '이름 부르기' 이전 상태를 이상적인 것으로 여겨 그 상태로 돌아가기를 바란다.", "a": "X", "ref": "지향의 방향", "why": "이름 부르기 이전은 무의미한 상태이며, 화자는 그 이후의 관계 맺음을 지향한다."}]}]}, {"id": "radio", "tag": "문명 비판·사랑", "title": "라디오와 같이 사랑을 끄고 켤 수 있다면 — 장정일", "sections": [{"name": "화자·주제", "items": [{"q": "이 시는 '라디오(스위치)'라는 기계적 소재로 인스턴트화된 현대인의 사랑을 비판한다.", "a": "O", "ref": "사랑의 인스턴트화 비판", "why": "라디오 스위치처럼 손쉽게 켜고 끄는 사랑을 통해 즉각적·소모적 애정 방식을 비판한다."}, {"q": "화자는 진정한 사랑이 '스위치를 누르는' 것처럼 손쉽게 성립한다고 긍정적으로 예찬한다.", "a": "X", "ref": "비판적 태도", "why": "손쉬운 사랑에 대한 예찬이 아니라 그런 세태를 비판·성찰하는 태도가 담겨 있다."}, {"q": "'그'가 단추를 눌러 주었을 때 화자는 '그의 라디오'가 되었다는 설정은 김춘수 「꽃」의 구조를 패러디한 것이다.", "a": "O", "ref": "「꽃」 패러디", "why": "「꽃」의 명명 구조를 차용하되 '라디오/단추'로 바꿔 현대 문명 속 사랑을 풍자한다."}]}, {"name": "시어·표현", "items": [{"q": "'단추(스위치)'는 인간관계를 기계 조작처럼 즉물적으로 다루는 현대 문명을 상징한다.", "a": "O", "ref": "단추 = 기계적 조작", "why": "감정을 스위치 조작에 빗대어 관계의 도구화·기계화를 드러낸다."}, {"q": "'전파가 잡히지 않던 시절'은 서로 소통·교감하지 못하던 관계 이전의 상태를 뜻한다.", "a": "O", "ref": "교감 이전 상태", "why": "「꽃」의 '몸짓'에 대응하는, 관계가 성립되기 전의 무의미한 상태다."}, {"q": "이 시는 자연물을 의인화하여 계절의 순환과 생명력을 노래한다.", "a": "X", "ref": "문명 비판시", "why": "자연이 아니라 라디오·단추 등 문명적 소재로 현대인의 사랑을 풍자한다."}, {"q": "화자는 '누가 와서 나를 눌러 다오'처럼 「꽃」의 소망 어법을 뒤틀어 반어적 효과를 낸다.", "a": "O", "ref": "반어·풍자", "why": "「꽃」의 간절한 소망 어법을 기계 조작 어법으로 비틀어 풍자적 효과를 얻는다."}]}, {"name": "종합·비교", "items": [{"q": "원작(「꽃」)의 형식을 빌려 원작과 다른 주제를 드러내는 '패러디' 기법이 쓰였다.", "a": "O", "ref": "패러디", "why": "형식은 차용하되 주제를 전복해 현대 문명·사랑을 비판하는 패러디 시다."}, {"q": "이 시의 주제는 '기계 문명 속에서 인스턴트화·도구화되는 현대인의 사랑에 대한 비판'이다.", "a": "O", "ref": "주제", "why": "쉽게 켜고 끄는 사랑을 통해 소모적 애정 세태를 비판한다."}, {"q": "화자는 사랑이 손쉽게 조작 가능해진 세태에 아무런 문제의식을 느끼지 않는다.", "a": "X", "ref": "문제의식", "why": "손쉬운 사랑을 비판적으로 바라보는 반어적 문제의식이 시 전반에 깔려 있다."}]}]}, {"id": "motjam", "tag": "가족·연민", "title": "못 위의 잠 — 나희덕", "sections": [{"name": "화자·주제", "items": [{"q": "화자는 못 위에서 자는 '아비 제비'를 보며 유년 시절 실직했던 아버지를 떠올린다.", "a": "O", "ref": "제비 ↔ 아버지 동일시", "why": "아비 제비의 모습에서 실직한 아버지를 연상하는 회상 구조다."}, {"q": "이 시의 주된 정서는 실직한 아버지의 삶에 대한 연민과 애상이다.", "a": "O", "ref": "주제 = 연민", "why": "고달픈 아버지의 삶에 대한 연민·애상이 주제를 이룬다."}, {"q": "화자는 아버지를 무능한 존재로 규정하여 원망과 비난의 태도를 드러낸다.", "a": "X", "ref": "태도 = 연민", "why": "원망이 아니라 아버지의 삶을 이해하고 연민하는 태도가 드러난다."}]}, {"name": "시어·표현", "items": [{"q": "'못 위의 잠'은 아버지의 각박하고 위태로운 삶을 상징한다.", "a": "O", "ref": "못 = 고달픈 삶", "why": "못 위의 위태로운 잠은 아버지의 고달프고 각박한 처지를 상징한다."}, {"q": "'흙바람'은 궁핍하고 열악한 환경, 지속되는 삶의 시련을 의미한다.", "a": "O", "ref": "흙바람 = 시련", "why": "환경적 여건이 좋지 않은 상황과 지속되는 시련을 뜻한다."}, {"q": "'반쪽 난 달빛'은 생계를 책임진 어머니의 창백하고 고단한 얼굴을 시각적으로 형상화한 것이다.", "a": "O", "ref": "달빛 = 어머니", "why": "여인(어머니)의 창백함을 달빛의 창백함으로 옮겨 형상화했다."}, {"q": "'때 묻은 호두알은 쉽게 깨어지지 않고'는 아버지의 실업 상태가 오래 지속됨을 나타낸다.", "a": "O", "ref": "호두알 = 지속되는 실업", "why": "쉽게 깨지지 않는 호두알로 실업·시련의 장기 지속을 드러낸다."}]}, {"name": "종합·비교", "items": [{"q": "'제비'는 분위기를 전환하는 소재일 뿐 회상의 매개나 연민의 대상과는 무관하다.", "a": "X", "ref": "제비 = 회상 매개", "why": "제비는 과거를 이어주는 회상의 매개이자 연민의 대상이며, 단순 분위기 전환이 아니다."}, {"q": "'~습니다, ~봅니다' 같은 경어체를 사용해 아버지에 대한 느낌을 곡진하게 전한다.", "a": "O", "ref": "경어체", "why": "경어체 서술로 애틋하고 곡진한 정서를 전달한다."}, {"q": "명사형 시상 종결('못 하나, 그 위의 잠')로 여운을 조성한다.", "a": "O", "ref": "명사 종결", "why": "명사형으로 시를 마무리해 여운을 남긴다."}]}]}, {"id": "ppuri", "tag": "희생·생명", "title": "뿌리에게 — 나희덕", "sections": [{"name": "화자·주제", "items": [{"q": "이 시의 화자는 '흙'이며, 청자인 '뿌리'에게 말을 건네는 방식으로 전개된다.", "a": "O", "ref": "화자=흙, 청자=뿌리", "why": "흙(나)이 뿌리(너)에게 말을 건네는 대화체 구조다."}, {"q": "주제는 '생명의 탄생과 성장을 위한 (어머니의) 희생적인 사랑'이다.", "a": "O", "ref": "주제 = 희생적 사랑", "why": "뿌리를 위해 모든 것을 내어주는 흙의 희생적 사랑이 주제다."}, {"q": "화자인 흙은 뿌리의 성장을 시기·질투하며 성장을 방해하려 한다.", "a": "X", "ref": "태도 = 축복·희생", "why": "흙은 뿌리의 성장을 '하냥 축복'하며 자신을 기꺼이 희생한다."}]}, {"name": "시어·표현", "items": [{"q": "'밝은 피'는 흙이 뿌리에게 내어주는 물·영양분, 곧 사랑을 비유한 표현이다.", "a": "O", "ref": "밝은 피 = 영양분", "why": "뿌리에게 흘려보내는 영양분(사랑)을 '밝은 피'로 비유했다."}, {"q": "'어리석고도 은밀한 기쁨'은 역설적 표현으로, 희생 속에서 얻는 내면의 기쁨을 강조한다.", "a": "O", "ref": "역설", "why": "자기희생이 겉으로는 어리석어 보이나 그 속에 깊은 기쁨이 있음을 역설로 드러낸다."}, {"q": "흙은 '연한 흙 → 단단해진 흙/껍데기 → 다시 연한 흙'으로 변하며 생명의 순환을 보여 준다.", "a": "O", "ref": "순환 구조", "why": "흙의 상태 변화가 생명의 재생·순환 구조를 형성한다."}, {"q": "이 시는 시적 화자와 시적 대상 모두에 인격을 부여한 의인화가 사용되었다.", "a": "O", "ref": "의인화", "why": "흙과 뿌리를 모두 사람처럼 표현한 의인법이 쓰였다."}]}, {"name": "종합·비교", "items": [{"q": "이 시는 시간의 흐름에 따라 흙과 뿌리의 상태 변화가 대비되며 전개된다.", "a": "O", "ref": "시간 흐름 전개", "why": "시간에 따라 흙은 쇠퇴하고 뿌리는 성장하는 대비가 드러난다."}, {"q": "'푸른 줄기'의 '푸른'은 나무의 생명력을 부각하는 색채어다.", "a": "O", "ref": "색채어", "why": "'푸른'은 뿌리(나무)의 생명력을 시각적으로 부각한다."}, {"q": "1연과 마지막 연에 반복되는 '깊은 곳에서 네가 나의 뿌리였을 때'는 흙과 뿌리의 관계를 강조한다.", "a": "O", "ref": "구절 반복", "why": "동일 구절의 반복으로 관계를 강조하고 순환 구조를 완성한다."}]}]}, {"id": "jiknyeo", "tag": "분단·통일", "title": "직녀에게 — 문병란", "sections": [{"name": "화자·주제", "items": [{"q": "이 시는 견우와 직녀 설화를 차용하여 분단의 아픔과 통일에 대한 염원을 노래한다.", "a": "O", "ref": "설화 차용·통일 염원", "why": "견우·직녀의 이별을 민족 분단에 빗대어 통일 소망을 노래한다."}, {"q": "'은하수'는 견우와 직녀(남과 북)를 가로막는 분단의 장벽을 의미한다.", "a": "O", "ref": "은하수 = 분단 장벽", "why": "만남을 가로막는 은하수는 분단의 현실·장벽을 상징한다."}, {"q": "화자는 이별을 운명으로 받아들이며 만남을 포기하는 체념적 태도를 보인다.", "a": "X", "ref": "의지적 태도", "why": "'우리는 만나야 한다', '이별은 끝나야 한다'며 만남을 향한 강한 의지를 드러낸다."}]}, {"name": "시어·표현", "items": [{"q": "'오작교마저 끊어져 버린'은 만남의 매개(다리)조차 사라진 절망적 분단 상황을 나타낸다.", "a": "O", "ref": "오작교 = 만남의 매개", "why": "만남을 잇던 오작교가 끊어져 소통·만남이 단절된 상황을 뜻한다."}, {"q": "'노둣돌'은 은하수(장벽)를 건너 만남을 이루기 위한 매개·수단을 뜻한다.", "a": "O", "ref": "노둣돌 = 만남의 매개", "why": "가슴과 가슴으로 놓는 노둣돌은 만남을 실현할 매개다."}, {"q": "'이별이 너무 길다 / 슬픔이 너무 길다'의 반복은 분단의 고통을 심화·강조한다.", "a": "O", "ref": "반복", "why": "유사 시구의 반복으로 분단의 고통과 슬픔을 강조한다."}, {"q": "이 시는 개인적 실연의 아픔만을 다룰 뿐 사회·역사적 의미와는 무관하다.", "a": "X", "ref": "역사적 알레고리", "why": "표면의 사랑 이야기 이면에 분단 극복이라는 역사적 소망을 담은 알레고리다."}]}, {"name": "종합·비교", "items": [{"q": "'면도날(칼날) 위라도 딛고 건너가 만나야 할 우리'에는 고난을 무릅쓴 만남의 의지가 담겨 있다.", "a": "O", "ref": "고난 무릅쓴 의지", "why": "칼날 위라도 딛겠다는 표현으로 어떤 시련도 감수하려는 의지를 드러낸다."}, {"q": "'만나야 한다', '끝나야 한다' 같은 당위적 진술로 통일에 대한 신념을 표출한다.", "a": "O", "ref": "당위적 어조", "why": "당위·의지의 종결로 통일에 대한 확고한 신념을 드러낸다."}, {"q": "이 시의 청자인 '직녀(연인)'는 함께 분단을 극복해야 할 대상, 곧 민족(동포)을 함의한다.", "a": "O", "ref": "직녀 = 함께할 민족", "why": "만남을 함께 이뤄야 할 연인은 통일을 함께 이룰 동포·민족을 함의한다."}]}]}, {"id": "tomok", "tag": "저항·민주주의", "title": "타는 목마름으로 — 김지하", "sections": [{"name": "화자·주제", "items": [{"q": "이 시는 억압적 현실 속에서 '민주주의'에 대한 간절한 열망을 노래한다.", "a": "O", "ref": "주제 = 민주주의 열망", "why": "'민주주의여 만세'를 외치는, 자유·민주에 대한 강렬한 갈망이 주제다."}, {"q": "'타는 목마름'은 민주주의를 향한 화자의 절박하고 강렬한 갈망을 감각적으로 드러낸다.", "a": "O", "ref": "목마름 = 갈망", "why": "타는 듯한 목마름으로 민주주의에 대한 절박한 갈망을 표현한다."}, {"q": "화자는 현실에 순응하며 자유에 대한 열망을 스스로 억누르고 포기한다.", "a": "X", "ref": "저항 의지", "why": "억압에 굴하지 않고 몰래라도 민주주의를 새기는 저항 의지를 보인다."}]}, {"name": "시어·표현", "items": [{"q": "'숨죽여 흐느끼며 / 남몰래 쓴다'는 억압적 시대에 감시를 피해 저항하는 상황을 드러낸다.", "a": "O", "ref": "억압적 현실", "why": "남몰래 써야 하는 상황은 자유가 억압된 시대의 공포·저항을 드러낸다."}, {"q": "'신새벽'은 어둠(억압) 뒤에 올 새로운 시대(자유·민주)에 대한 희망을 함의한다.", "a": "O", "ref": "신새벽 = 희망", "why": "어둠을 지나 밝아오는 새벽은 도래할 자유·민주의 시대를 함의한다."}, {"q": "'민주주의여 만세'를 '떨리는 손 떨리는 가슴'으로 쓴다는 데서 두려움과 간절함이 동시에 드러난다.", "a": "O", "ref": "공포+간절함", "why": "떨림의 반복은 억압에 대한 두려움과 열망의 간절함을 함께 드러낸다."}, {"q": "이 시는 밝고 낙천적인 어조로 현실에 대한 만족감을 노래한다.", "a": "X", "ref": "비장·절박한 어조", "why": "억압적 현실 속 비장하고 절박한 어조가 지배적이다."}]}, {"name": "종합·비교", "items": [{"q": "'민주주의여'를 부르는 돈호법(영탄)과 반복을 통해 열망을 고조시킨다.", "a": "O", "ref": "돈호법·반복", "why": "대상을 직접 부르는 돈호법과 반복으로 열망을 고조한다."}, {"q": "감각적(시각·촉각) 이미지를 활용해 민주주의에 대한 갈망을 구체화한다.", "a": "O", "ref": "감각적 형상화", "why": "'타는 목마름' 등 감각적 이미지로 추상적 갈망을 구체화한다."}, {"q": "이 시에서 '민주주의'는 화자가 이미 충분히 누리고 있어 더는 갈망할 필요가 없는 대상이다.", "a": "X", "ref": "결핍된 대상", "why": "민주주의는 억압되어 부재하는, 목마르게 갈망하는 결핍의 대상이다."}]}]}, {"id": "byeo", "tag": "민중·연대", "title": "벼 — 이성부", "sections": [{"name": "화자·주제", "items": [{"q": "이 시는 '벼'를 통해 서로 의지하며 살아가는 민중의 강인함과 연대 의식을 형상화한다.", "a": "O", "ref": "벼 = 민중", "why": "서로 어우러져 자라는 벼로 민중의 공동체성·연대를 형상화한다."}, {"q": "'벼는 서로 어우러져 / 기대고 산다'는 민중의 공동체적 유대와 상생을 나타낸다.", "a": "O", "ref": "어우러짐 = 연대", "why": "서로 기대어 사는 모습은 민중의 유대·상생을 상징한다."}, {"q": "'벼'는 개인의 고립된 성공과 출세 욕망을 상징하는 소재다.", "a": "X", "ref": "공동체 상징", "why": "벼는 개인적 출세가 아니라 더불어 사는 민중의 공동체성을 상징한다."}]}, {"name": "시어·표현", "items": [{"q": "'서로가 서로의 몸을 묶어 / 더 튼튼해진 백성들'에는 연대를 통한 힘의 강화가 드러난다.", "a": "O", "ref": "연대 → 강인함", "why": "서로 묶여 튼튼해진다는 데서 연대가 만드는 힘을 드러낸다."}, {"q": "'벼는 소리 없이 떠나간다'처럼 고개 숙인 벼의 모습은 성숙·희생의 겸허함을 함의한다.", "a": "O", "ref": "고개 숙임 = 성숙·희생", "why": "익어 고개 숙인 벼는 겸허함과 자기희생적 성숙을 함의한다."}, {"q": "'죽음도 그리하여 원망하지 않고'는 대의를 위한 민중의 의연한 희생 의지를 나타낸다.", "a": "O", "ref": "의연한 희생", "why": "죽음마저 원망하지 않는 태도로 민중의 의연한 희생을 드러낸다."}, {"q": "이 시는 벼(자연물)에 인격을 부여하여 민중의 속성을 드러내는 의인화가 사용되었다.", "a": "O", "ref": "의인화", "why": "벼를 사람(백성)처럼 표현하는 의인법이 주된 기법이다."}]}, {"name": "종합·비교", "items": [{"q": "이 시의 어조는 민중에 대한 예찬과 신뢰가 담긴 긍정적 어조다.", "a": "O", "ref": "예찬적 어조", "why": "민중의 강인함·연대에 대한 예찬과 신뢰의 어조가 지배적이다."}, {"q": "화자는 민중을 나약하고 무력한 존재로 그려 동정의 대상으로만 삼는다.", "a": "X", "ref": "강인한 주체", "why": "민중은 동정 대상이 아니라 서로 기대어 강인해지는 능동적 주체로 그려진다."}, {"q": "이 시의 주제는 '고난 속에서도 서로 의지하며 강인하게 살아가는 민중의 삶'이다.", "a": "O", "ref": "주제", "why": "연대와 상생을 통한 민중의 강인한 삶이 주제다."}]}]}, {"id": "napjak", "tag": "서민·현실비판", "title": "납작납작 - 박수근 화법을 위하여 — 김혜순", "sections": [{"name": "화자·주제", "items": [{"q": "이 시는 박수근 화백의 그림 「세 여인」을 모티프로 삼아 서민의 고달픈 삶을 형상화한다.", "a": "O", "ref": "박수근 그림 모티프", "why": "박수근의 평면화 화법을 시로 변용해 서민의 삶을 그린다."}, {"q": "화자는 화가로 설정되어, 자신이 그린 그림을 두고 '하나님'에게 묻는 형식을 취한다.", "a": "O", "ref": "화가 화자·하나님 청자", "why": "그림을 그리는 화가가 하나님에게 질문하는 형식으로 전개된다."}, {"q": "주제는 '서민들의 고달픈 삶에 대한 연민과 현실 비판'이다.", "a": "O", "ref": "주제", "why": "서민의 고달픈 삶에 대한 연민과 부정적 현실 비판이 주제다."}]}, {"name": "시어·표현", "items": [{"q": "'납작납작', '납작하게'는 삶의 무게에 짓눌려 살아가는 서민의 모습을 형상화한 표현이다.", "a": "O", "ref": "납작 = 짓눌린 삶", "why": "평면화 기법을 넘어 세파에 짓눌린 서민의 삶을 형상화한다."}, {"q": "'하나님, 보시니 마땅합니까?'는 설의적 표현으로 부정적 현실에 대한 비판·항변을 담는다.", "a": "O", "ref": "설의법·항변", "why": "절대자에게 묻는 설의로 현실이 마땅하지 않음을 항변한다."}, {"q": "'가이없이 한없이 펄렁펄렁'은 세파에 흔들리는 서민의 나약하고 고달픈 삶을 나타낸다.", "a": "O", "ref": "펄렁펄렁 = 흔들리는 삶", "why": "의태어 '펄렁펄렁'으로 세파에 휘둘리는 서민의 삶을 드러낸다."}, {"q": "'가이없이 한없이 펄렁펄렁'은 현실의 억압에서 벗어난 자유로움과 밝은 미래를 뜻한다.", "a": "X", "ref": "빈출 함정", "why": "자유가 아니라 힘없이 세파에 흔들리는 고달픈 삶을 뜻한다(자주 나오는 함정)."}]}, {"name": "종합·비교", "items": [{"q": "'바라본다', '물어본다' 같은 현재형 어미로 현장감을 부여한다.", "a": "O", "ref": "현재형 어미", "why": "현재형 종결로 시적 상황에 현장감을 더한다."}, {"q": "미술 작품의 표현 기법을 시로 옮긴 '장르 간 변용'이 특징적이다.", "a": "O", "ref": "장르 간 변용", "why": "회화의 화법을 시로 형상화한 장르 간 변용이 두드러진다."}, {"q": "이 시는 서민의 삶을 관조적·객관적으로만 그릴 뿐 현실에 대한 비판 의식은 없다.", "a": "X", "ref": "비판 의식 존재", "why": "설의적 항변을 통해 부정적 현실에 대한 비판 의식을 뚜렷이 드러낸다."}]}]}, {"id": "gujamyeong", "tag": "여성·현실비판", "title": "우리 동네 구자명 씨 — 고정희", "sections": [{"name": "화자·주제", "items": [{"q": "이 시는 맞벌이 여성 '구자명 씨'를 통해 여성에게 전가된 가사·돌봄 부담을 비판한다.", "a": "O", "ref": "여성 희생 비판", "why": "맞벌이임에도 가정 일을 홀로 떠안은 여성의 현실을 비판한다."}, {"q": "구자명 씨가 버스에서 조는 까닭은 밤새 육아·간병·남편 뒷바라지로 잠을 빼앗겼기 때문이다.", "a": "O", "ref": "졸음의 원인", "why": "아기 젖 물리기·시어머니 약시중·남편 시중으로 잠을 잃었기 때문이다."}, {"q": "화자는 구자명 씨의 고단한 삶을 개인의 게으름 탓으로 돌려 비판한다.", "a": "X", "ref": "구조적 문제", "why": "개인 탓이 아니라 여성에게 희생을 강요하는 사회 구조를 문제 삼는다."}]}, {"name": "시어·표현", "items": [{"q": "'팬지꽃 아픔', '안개꽃 멍에'는 여성이 감당하는 고통과 희생의 무게를 비유한 표현이다.", "a": "O", "ref": "꽃 = 고통·멍에", "why": "여린 꽃 이미지에 '아픔·멍에'를 결합해 여성의 희생을 비유한다."}, {"q": "'죽음의 잠'은 가족의 안식을 위해 자신을 소진하는 구자명 씨의 부정적 상황을 나타낸다.", "a": "O", "ref": "죽음의 잠 = 소진", "why": "여성이 받쳐 든 가족의 안식이 그녀를 '죽음의 잠'으로 몰아가는 상황이다."}, {"q": "'부처님처럼 졸고 있는'은 구자명 씨의 고단한 졸음을 초월적 깨달음의 경지로 예찬한 것이다.", "a": "X", "ref": "반어적 함정", "why": "깨달음의 예찬이 아니라 고단함에 짓눌린 졸음을 반어적으로 드러낸 표현이다."}, {"q": "'거부의 화살을 당기고 있다'에는 여성에게 희생을 강요하는 현실에 대한 저항 의식이 담긴다.", "a": "O", "ref": "저항 의식", "why": "죽음의 잠을 향해 화살을 당긴다는 데서 부당한 현실에 대한 저항을 드러낸다."}]}, {"name": "종합·비교", "items": [{"q": "주변에서 흔히 볼 수 있는 인물을 통해 사회적 문제의식을 이끌어낸다.", "a": "O", "ref": "일상 인물 → 사회 문제", "why": "평범한 이웃 구자명 씨를 통해 여성 문제라는 사회적 인식을 끌어낸다."}, {"q": "이 시의 주제는 '가사와 노동을 이중으로 떠안은 여성의 희생적 삶에 대한 비판적 성찰'이다.", "a": "O", "ref": "주제", "why": "여성에게 전가된 이중 부담과 희생을 비판적으로 성찰한다."}, {"q": "이 시는 화자가 전형적 인물이 되어 자신의 체험을 직접 진술하는 방식을 취한다.", "a": "X", "ref": "관찰자적 시점", "why": "화자는 구자명 씨(전형적 인물)를 관찰하여 그 삶을 객관적으로 그려낸다."}]}]}, {"id": "muri", "tag": "만남·합일", "title": "우리가 물이 되어 — 강은교", "sections": [{"name": "화자·주제", "items": [{"q": "이 시는 '물'의 이미지를 통해 생명력 있는 만남과 합일에 대한 소망을 노래한다.", "a": "O", "ref": "물 = 만남·합일", "why": "흐르고 합쳐지는 물로 진정한 만남과 합일의 소망을 노래한다."}, {"q": "'우리가 물이 되어 만난다면'은 갈등을 씻어내는 생명력 있는 만남을 소망하는 표현이다.", "a": "O", "ref": "물 = 생명력 있는 만남", "why": "물이 되어 만나는 것은 메마름을 적시는 생명력 있는 만남의 소망이다."}, {"q": "화자는 만남을 두려워하며 서로 단절된 채 살아가기를 바란다.", "a": "X", "ref": "합일 지향", "why": "화자는 단절이 아니라 물처럼 하나로 어우러지는 합일을 지향한다."}]}, {"name": "시어·표현", "items": [{"q": "'불'은 갈등·죽음·소멸 등 부정적 현실을 상징하며 '물'과 대비된다.", "a": "O", "ref": "불 ↔ 물 대비", "why": "생명의 '물'과 대비되는 '불'은 소멸·갈등의 부정적 현실을 상징한다."}, {"q": "'죽은 나무뿌리를 적시기도 한다면'에는 메마른 생명을 되살리는 물의 생명력이 담긴다.", "a": "O", "ref": "물 = 재생·생명력", "why": "죽은 뿌리를 적시는 물은 재생·생명력을 함의한다."}, {"q": "'불이 지나간 뒤에 / 우리가 만난다면'은 시련과 소멸을 거친 뒤의 정화된 만남을 함의한다.", "a": "O", "ref": "불 이후의 만남", "why": "불(시련·소멸)을 지난 뒤의 만남은 정화되고 성숙한 합일을 함의한다."}, {"q": "이 시는 자연물(물·불)을 통해 관념적 소망을 형상화하는 대비적 구성을 취한다.", "a": "O", "ref": "대비적 구성", "why": "물과 불의 대비로 만남·합일의 소망을 형상화한다."}]}, {"name": "종합·비교", "items": [{"q": "'~만난다면, ~된다면' 같은 가정적 어법으로 소망을 간절하게 드러낸다.", "a": "O", "ref": "가정적 어법", "why": "가정법의 반복으로 만남·합일에 대한 간절한 소망을 드러낸다."}, {"q": "이 시의 주제는 '메마르고 삭막한 현실을 극복하는 생명력 있는 만남(합일)에 대한 소망'이다.", "a": "O", "ref": "주제", "why": "삭막한 현실을 넘어서는 생명력 있는 만남의 소망이 주제다."}, {"q": "'만리 밖에서 기다리는 그대여'에는 만남에 대한 소망과 지향이 담겨 있다.", "a": "O", "ref": "그대 = 만남의 대상", "why": "먼 곳에서 기다리는 '그대'는 화자가 만남을 소망하는 지향의 대상이다."}]}]}]}, {"name": "현대시 · 고전 · 소설 7작품", "sub": "각 6문항 · 42문항", "works": [{"id": "swikke", "tag": "현대시 · 성찰/저항", "title": "쉽게 씌어진 시 — 윤동주", "sections": [{"name": "주제 · 화자", "items": [{"q": "이 시는 무기력한 삶에 대한 부끄러움과 자기반성, 현실 극복 의지를 노래한다.", "a": "O", "ref": "주제", "why": "성찰에서 나아가 '아침'을 기다리는 극복 의지로 마무리된다."}, {"q": "6연의 '나'와 9·10연의 '나'는 모두 무기력한 현실적 자아를 가리킨다.", "a": "X", "ref": "자아", "why": "6연은 현실적 자아, 9·10연의 '최후의 나'는 성찰을 거친 본질적 자아다."}, {"q": "'부끄러운 일이다'는 시상이 반성으로 전환되는 계기가 된다.", "a": "O", "ref": "7연", "why": "안이하게 시 쓰는 자신을 부끄러워하며 반성으로 전환한다."}]}, {"name": "시어 · 표현", "items": [{"q": "'등불'과 '어둠'의 명암 대비로 희망과 부정적 현실을 드러낸다.", "a": "O", "ref": "9연", "why": "등불(희망·극복)↔어둠(부정적 현실)의 대비다."}, {"q": "'육첩방'은 화자가 지향하는 이상적 공간을 상징한다.", "a": "X", "ref": "1연", "why": "육첩방은 구속·억압·밀폐의 공간으로 식민지 현실을 상징한다."}, {"q": "1연을 8연에서 순서를 바꾸어 변주·반복함으로써 현실을 재인식한다.", "a": "O", "ref": "8연", "why": "1연(비→방)을 8연(방→비)으로 변주해 현실 극복의 발판을 마련한다."}]}]}, {"id": "daeseol", "tag": "현대시 · 참여/알레고리", "title": "대설 주의보 — 최승호", "sections": [{"name": "주제 · 발상", "items": [{"q": "자연현상인 폭설을 정치 상황에 빗댄 알레고리 기법의 참여시다.", "a": "O", "ref": "개관", "why": "대설(폭설)을 계엄령에 빗대 우회적으로 현실을 비판한다."}, {"q": "'백색의 계엄령'은 표면적으로 폭설을, 함축적으로 군사 독재를 의미한다.", "a": "O", "ref": "2연", "why": "1980년대 신군부의 폭압적 상황을 상징한다."}, {"q": "이 시의 화자는 표면에 뚜렷이 드러나 눈보라를 예찬한다.", "a": "X", "ref": "전체", "why": "화자는 드러나지 않으며, 눈보라(폭력)에 대한 비판·연약한 존재에 대한 연민을 보인다."}]}, {"name": "시어 · 대립", "items": [{"q": "'굴뚝새'는 거대한 세력 앞에서 위협받는 나약한 민중을 상징한다.", "a": "O", "ref": "1연", "why": "흑색 이미지로 '백색(눈)'과 대조되어 연약함이 부각된다."}, {"q": "'눈보라의 군단', '솔개'는 억압받는 민중의 편에 선 존재다.", "a": "X", "ref": "2·3연", "why": "군단·솔개는 굴뚝새(민중)를 위협하는 억압적 세력이다."}, {"q": "2연 끝행 '백색의 계엄령'을 4연에서 반복해 주제를 심화한다.", "a": "O", "ref": "4연", "why": "반복·변주로 폭력성과 공포를 강조한다."}]}]}, {"id": "gyomok", "tag": "현대시 · 저항/의지", "title": "교목 — 이육사", "sections": [{"name": "주제 · 태도", "items": [{"q": "이 시는 어떠한 시련에도 굴복하지 않는 강인한 의지와 지조를 노래한다.", "a": "O", "ref": "주제", "why": "지사적·저항적 태도가 일관된다."}, {"q": "'차라리 봄도 꽃피진 말아라'는 개인적 영화를 단호히 거부하는 표현이다.", "a": "O", "ref": "1연", "why": "'봄·꽃'(영화)을 부정 명령형으로 거부한다."}, {"q": "'낡은 거미집'은 화자가 지향하는 이상적 세계를 상징한다.", "a": "X", "ref": "2연", "why": "낡은 거미집은 억압적이고 혹독한 부정적 현실을 상징한다."}]}, {"name": "시어 · 표현", "items": [{"q": "'교목'은 화자와 동일시되는 존재로 의지와 절개를 형상화한다.", "a": "O", "ref": "전체", "why": "대상에 화자를 투영해 의지를 드러낸다."}, {"q": "'차마 바람도 흔들진 못해라'는 유혹에 흔들리는 나약함을 고백한 것이다.", "a": "X", "ref": "3연", "why": "어떤 외부의 힘(일제 탄압)에도 굴복하지 않겠다는 저항 의지의 정점이다."}, {"q": "각 연이 부정어('말아라·아니라·못해라')로 끝나며 의지가 점층된다.", "a": "O", "ref": "구성", "why": "부정형 종결로 결연함이 강조·점층된다."}]}]}, {"id": "yuchungryeol", "tag": "고전소설 · 영웅·군담", "title": "유충렬전 — 작자 미상", "sections": [{"name": "갈래 · 인물", "items": [{"q": "영웅의 일대기 구조를 따르는 영웅·군담 소설이다.", "a": "O", "ref": "개관", "why": "고귀한 혈통‒적강‒고난‒위기 극복의 일대기 구조다."}, {"q": "정한담·최일귀는 천상 익성이 지상에 내려온 존재로 설정된다.", "a": "O", "ref": "도입", "why": "적강 모티프로, 천상의 대전(對戰) 죄로 귀양 온 인물이다."}, {"q": "유심은 정한담의 뜻에 동조하여 남적 정벌을 적극 주장한다.", "a": "X", "ref": "도입", "why": "유심은 기병의 무모함을 간언하다 모함을 받아 유배된다."}]}, {"name": "사건 · 구성", "items": [{"q": "정한담이 천자에게 항서를 요구하는 장면은 국가적 위기의 절정이다.", "a": "O", "ref": "위기", "why": "천자가 굴복 직전에 몰리는 최대 위기다."}, {"q": "충렬은 조력자 없이 오로지 자신의 힘만으로 성장해 위기를 해결한다.", "a": "X", "ref": "전개", "why": "백룡사 노승에게 병법·도술을 배우는 등 조력자의 도움을 받는다."}, {"q": "천상계와 지상계가 대응하는 이원적 구성이 나타난다.", "a": "O", "ref": "전체", "why": "자미성·익성 등 천상계가 지상의 사건과 대응한다."}]}]}, {"id": "ilya", "tag": "고전수필 · 한문 기행", "title": "일야구도하기 — 박지원", "sections": [{"name": "주제 · 인식", "items": [{"q": "글쓴이는 강물 소리가 듣는 이의 마음가짐에 따라 달라진다고 본다.", "a": "O", "ref": "승", "why": "'듣는 사람이 어떻게 듣느냐에 달려 있을 뿐'이라 한다."}, {"q": "글쓴이는 물소리가 요란한 까닭을 옛 전쟁터였기 때문이라고 결론짓는다.", "a": "X", "ref": "전", "why": "그 통념(전쟁터 탓)을 부정하고, 인식은 마음에 달렸다고 본다."}, {"q": "이 글의 '도(道)'는 외물에 흔들리지 않는 마음가짐을 뜻한다.", "a": "O", "ref": "전", "why": "이목(외물)에 집착하지 않는 태도가 도의 내용이다."}]}, {"name": "구성 · 표현", "items": [{"q": "구체적 체험에서 보편적 이치를 이끌어 내는 유추적 전개를 취한다.", "a": "O", "ref": "전체", "why": "밤 도강 체험에서 삶의 이치(도)를 이끈다."}, {"q": "낮에는 시각이, 밤에는 청각이 두려움을 지배하는 대비가 나타난다.", "a": "O", "ref": "전", "why": "시각 차단으로 밤에는 소리(청각)에 공포가 쏠린다."}, {"q": "글쓴이는 감각(귀·눈)에 전적으로 의존해야 한다고 강조한다.", "a": "X", "ref": "전", "why": "감각에만 의존하면 병폐가 생긴다며 마음의 중심을 강조한다."}]}]}, {"id": "cheonbyeon", "tag": "현대소설 · 세태", "title": "천변풍경 — 박태원", "sections": [{"name": "갈래 · 시점", "items": [{"q": "뚜렷한 주인공·중심 사건 없이 여러 삽화를 나열하는 세태소설이다.", "a": "O", "ref": "개관", "why": "청계천 변 서민들의 일상을 삽화적으로 그린다."}, {"q": "인물(창수)의 시선에 초점화된 관찰·묘사(카메라 아이) 기법이 쓰인다.", "a": "O", "ref": "전체", "why": "창수의 눈을 따라 천변 풍경이 묘사된다."}, {"q": "서술자는 사건에 깊이 개입해 인물의 내면을 단정적으로 심판한다.", "a": "X", "ref": "시점", "why": "주로 관찰자적 시선으로 장면을 포착하며 심판적 개입은 두드러지지 않는다."}]}, {"name": "인물 · 주제", "items": [{"q": "창수는 서울을 맹목적으로 동경하는 시골 소년으로 그려진다.", "a": "O", "ref": "전반", "why": "'서울이라는 까닭만으로' 천변이 아름다워 보인다."}, {"q": "잔돈 실수로 냉대받는 사건은 도시 인심의 각박함을 드러낸다.", "a": "O", "ref": "중반", "why": "반찬 가게 주인의 냉대에서 각박함이 나타난다."}, {"q": "창수는 아버지와 함께 시골로 돌아가 안정을 얻으며 이야기가 마무리된다.", "a": "X", "ref": "결말", "why": "아버지는 홀로 떠나고, 창수는 홀로 남아 외로움을 느낀다."}]}]}, {"id": "obaltan", "tag": "현대소설 · 전후", "title": "오발탄 — 이범선", "sections": [{"name": "주제 · 상징", "items": [{"q": "'오발탄'은 방향을 잃고 파멸해 가는 전후 소시민을 상징한다.", "a": "O", "ref": "제목", "why": "잘못 쏘아진 탄환처럼 갈 곳을 모르는 철호를 상징한다."}, {"q": "철호는 아내의 죽음 앞에서 격정적으로 오열하며 무너진다.", "a": "X", "ref": "전개", "why": "오히려 무감각·무기력한 반응을 보인다(전후의 피폐)."}, {"q": "'가자'를 되뇌는 어머니의 말은 시대의 비극성을 환기한다.", "a": "O", "ref": "배경", "why": "월남 실향민의 상실과 시대적 비극을 압축한다."}]}, {"name": "사건 · 결말", "items": [{"q": "이를 '한목에 다 빼 달라'는 행동은 고통을 없애려는 자기 파괴적 충동을 보여 준다.", "a": "O", "ref": "후반", "why": "감당 못 할 고통을 한꺼번에 제거하려는 충동이다."}, {"q": "철호는 택시에서 분명한 목적지를 정하고 안정된 귀가로 마무리된다.", "a": "X", "ref": "결말", "why": "갈 곳을 정하지 못한 채 행렬에 떠밀려 가는 파국적 결말이다."}, {"q": "냉정하고 건조한 문체가 결말의 비극성을 심화한다.", "a": "O", "ref": "표현", "why": "감정을 절제한 서술이 비극을 강화한다."}]}]}]}];
+let answered=0, correct=0;
+
+function esc(s){return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');}
+
+function build(){
+  const app=document.getElementById('app');
+  const nav=document.getElementById('nav');
+  window.ITEMS=[]; window.picked=[]; window.workMeta=[];
+  let gi=0, wIndex=0;
+  CHAPTERS.forEach((ch,ci)=>{
+    const cdiv=document.createElement('div');
+    cdiv.className='chapter';
+    cdiv.innerHTML=`<h2>${esc(ch.name)}</h2><p>${esc(ch.sub)}</p>`;
+    app.appendChild(cdiv);
+    ch.works.forEach(p=>{
+      wIndex++;
+      const wid='w'+wIndex;
+      const qCount=p.sections.reduce((a,s)=>a+s.items.length,0);
+      window.workMeta.push({done:0, total:qCount, progId:'prog-'+wIndex});
+      // nav chip
+      const a=document.createElement('a'); a.href='#'+wid;
+      a.textContent=String(wIndex).padStart(2,'0'); nav.appendChild(a);
+      const work=document.createElement('div');
+      work.className='work'; work.id=wid;
+      let html=`<div class="work-head">
+        <span class="work-idx">${String(wIndex).padStart(2,'0')}</span>
+        <span class="work-title">${esc(p.title)}</span>
+        <span class="work-tag">${esc(p.tag)}</span>
+        <span class="work-prog" id="prog-${wIndex}">0 / ${qCount}</span></div>`;
+      const myWi=wIndex-1;
+      p.sections.forEach(sec=>{
+        html+=`<div class="sec-name">▸ ${esc(sec.name)}</div>`;
+        sec.items.forEach(it=>{
+          const id=gi++;
+          window.ITEMS.push({...it, wi:myWi});
+          window.picked.push(null);
+          html+=`<div class="q">
+            <div class="q-text"><span class="num">${id+1}.</span>${esc(it.q)}</div>
+            <div class="choices">
+              <button class="choice" data-v="O" onclick="pick(${id},'O')">O</button>
+              <button class="choice" data-v="X" onclick="pick(${id},'X')">X</button>
+            </div><div class="verdict" id="v-${id}"></div></div>`;
+        });
+      });
+      work.innerHTML=html; app.appendChild(work);
+    });
+  });
+}
+
+function pick(id,v){
+  const it=window.ITEMS[id];
+  const q=document.querySelectorAll('.q')[id];
+  const first=window.picked[id]===null;
+  window.picked[id]=v;
+  q.querySelectorAll('.choice').forEach(b=>b.classList.remove('sel-O','sel-X','correct','wrong'));
+  q.querySelector(`.choice[data-v="${v}"]`).classList.add('sel-'+v);
+  const ok=(v===it.a);
+  const vd=document.getElementById('v-'+id);
+  vd.className='verdict show '+(ok?'ok':'no');
+  vd.innerHTML=`<span class="badge">${ok?'✓ 정답':'✗ 오답'}</span>`+
+    `정답 <span class="ans ${it.a}">${it.a}</span> &nbsp;·&nbsp; `+
+    `<span class="ref">${esc(it.ref)}</span> — ${esc(it.why)}`;
+  q.querySelector(`.choice[data-v="${it.a}"]`).classList.add('correct');
+  if(!ok) q.querySelector(`.choice[data-v="${v}"]`).classList.add('wrong');
+  if(first){
+    answered++;
+    const m=window.workMeta[it.wi]; m.done++;
+    document.getElementById(m.progId).textContent=m.done+' / '+m.total;
+  }
+  correct=window.picked.reduce((a,pv,i)=>a+(pv!==null&&pv===window.ITEMS[i].a?1:0),0);
+  updateScore();
+}
+
+function updateScore(){
+  document.getElementById('score').textContent=
+    `푼 문항 ${answered} · 정답 ${correct}`+(answered?` (${Math.round(correct/answered*100)}%)`:'');
+}
+
+function revealAll(){
+  window.ITEMS.forEach((it,id)=>{
+    if(window.picked[id]===null){
+      const vd=document.getElementById('v-'+id);
+      vd.className='verdict show';
+      vd.innerHTML=`정답 <span class="ans ${it.a}">${it.a}</span> &nbsp;·&nbsp; `+
+        `<span class="ref">${esc(it.ref)}</span> — ${esc(it.why)}`;
+      document.querySelectorAll('.q')[id].querySelector(`.choice[data-v="${it.a}"]`).classList.add('correct');
+    }
+  });
+}
+
+function resetAll(){
+  answered=0;correct=0;
+  window.picked.fill(null);
+  window.workMeta.forEach(m=>{m.done=0;document.getElementById(m.progId).textContent='0 / '+m.total;});
+  document.querySelectorAll('.choice').forEach(b=>b.classList.remove('sel-O','sel-X','correct','wrong'));
+  document.querySelectorAll('.verdict').forEach(v=>{v.className='verdict';v.innerHTML='';});
+  updateScore();
+}
+
+build();
+</script>
+</body>
+</html>
